@@ -346,11 +346,15 @@ def _read_alloys(cell_path: Path) -> List[Dict[str, Any]]:
 
 
 def _read_doctrine(cell_path: Path) -> List[Dict[str, Any]]:
-    """Read approved doctrine from doctrine/approved.jsonl."""
-    ledger = cell_path / "doctrine" / "approved.jsonl"
-    if not ledger.exists():
-        return []
-    return [record for _, record in read_jsonl(ledger) if record.get("review_status", "approved") == "approved"]
+    """Read approved public rules and compatibility doctrine."""
+    records: List[Dict[str, Any]] = []
+    for ledger in (cell_path / "ledger" / "rules" / "approved.jsonl", cell_path / "doctrine" / "approved.jsonl"):
+        if not ledger.exists():
+            continue
+        for _, record in read_jsonl(ledger):
+            if record.get("review_status", "approved") == "approved":
+                records.append(record)
+    return records
 
 
 def _read_fragments(cell_path: Path) -> List[Dict[str, Any]]:
@@ -407,17 +411,18 @@ def _build_candidate_from_alloy(record: Dict[str, Any]) -> CandidateItem:
 
 
 def _build_candidate_from_doctrine(record: Dict[str, Any]) -> CandidateItem:
-    """Convert a doctrine record to a CandidateItem."""
+    """Convert an approved rule/doctrine record to a CandidateItem."""
+    source_cells = record.get("source_cell_ids") or []
     return CandidateItem(
-        item_id=record.get("doctrine_id", ""),
-        cell_id="",
+        item_id=record.get("rule_id") or record.get("doctrine_id", ""),
+        cell_id=record.get("cell_id") or (source_cells[0] if source_cells else ""),
         trust_tier="doctrine",
         statement=record.get("statement", ""),
-        rationale=record.get("scope"),
-        tags=[],
+        rationale=record.get("scope") or record.get("proposed_scope"),
+        tags=record.get("tags", []),
         kind="doctrine",
         status=record.get("review_status", "approved"),
-        confidence=None,
+        confidence=(record.get("confidence_summary") or {}).get("max_score") if isinstance(record.get("confidence_summary"), dict) else None,
     )
 
 

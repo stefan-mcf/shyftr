@@ -153,3 +153,108 @@ def distill_doctrine(
         "scope": scope,
         "approved_count_delta": after_approved - before_approved,
     }
+
+
+# ---------------------------------------------------------------------------
+# Phase 6 public shared-rule proposal workflow
+# ---------------------------------------------------------------------------
+from datetime import datetime as _datetime, timezone as _timezone
+from uuid import uuid4 as _uuid4
+
+
+def _now() -> str:
+    return _datetime.now(_timezone.utc).isoformat()
+
+
+def _public_rule_fingerprint(source_record_ids: Sequence[str], source_cell_ids: Sequence[str], scope: str, statement: str) -> str:
+    seed = "|".join(sorted(source_record_ids)) + "|" + "|".join(sorted(source_cell_ids)) + "|" + scope + "|" + statement.strip().lower()
+    return hashlib.sha256(seed.encode("utf-8")).hexdigest()[:16]
+
+
+def _read_rows(path: Path) -> List[Dict[str, Any]]:
+    return [record for _, record in read_jsonl(path)] if path.exists() else []
+
+
+def propose_rule_from_resonance(
+    cell_path: PathLike,
+    resonance_results: Sequence[Dict[str, Any]],
+    *,
+    scope: str,
+    statement: Optional[str] = None,
+    reviewer_status: str = "pending",
+    min_cell_diversity: int = 2,
+) -> Dict[str, Any]:
+    if not scope:
+        raise ValueError("rule scope is required")
+    source_cell_ids = sorted({cell for row in resonance_results for cell in row.get("source_cell_ids", [])})
+    if len(source_cell_ids) < min_cell_diversity and scope in {"global", "cross-cell", "shared"}:
+        raise ValueError("global/shared rule proposals require minimum cell diversity")
+    source_record_ids = sorted({record_id for row in resonance_results for record_id in row.get("source_record_ids", [])})
+    source_resonance_ids = sorted({row.get("resonance_id") for row in resonance_results if row.get("resonance_id")})
+    if not source_record_ids:
+        raise ValueError("rule proposal requires source records")
+    rule_statement = statement or f"Shared scoped rule from {len(source_cell_ids)} cells: {', '.join(source_record_ids)}"
+    fingerprint = _public_rule_fingerprint(source_record_ids, source_cell_ids, scope, rule_statement)
+    proposed_path = Path(cell_path) / "ledger" / "rules" / "proposed.jsonl"
+    rejected_fingerprints = {row.get("fingerprint") for row in _read_rows(proposed_path) if row.get("reviewer_status") == "rejected" or row.get("review_status") == "rejected"}
+    if fingerprint in rejected_fingerprints:
+        raise ValueError("rejected duplicate rule proposal from same evidence")
+    for row in _read_rows(proposed_path):
+        if row.get("fingerprint") == fingerprint:
+            return row
+    proposal = {
+        "rule_id": f"rule-{fingerprint}",
+        "source_resonance_ids": source_resonance_ids,
+        "source_pattern_ids": [rid for rid in source_record_ids if str(rid).startswith(("pat", "alloy"))],
+        "source_memory_ids": [rid for rid in source_record_ids if not str(rid).startswith(("pat", "alloy"))],
+        "source_record_ids": source_record_ids,
+        "source_cell_ids": source_cell_ids,
+        "proposed_scope": scope,
+        "scope": scope,
+        "minimum_cell_diversity_evidence": len(source_cell_ids),
+        "confidence_summary": {"max_score": max(float(row.get("score", 0.0)) for row in resonance_results), "result_count": len(resonance_results)},
+        "reviewer_status": reviewer_status,
+        "review_status": reviewer_status,
+        "reviewer_id": None,
+        "decision_timestamp": None,
+        "provenance": {"source_cell_ids": source_cell_ids, "source_record_ids": source_record_ids, "source_resonance_ids": source_resonance_ids, "derivation_kind": "shared_rule_proposal"},
+        "statement": rule_statement,
+        "fingerprint": fingerprint,
+        "created_at": _now(),
+    }
+    append_jsonl(proposed_path, proposal)
+    return proposal
+
+
+def list_rule_proposals(cell_path: PathLike, *, status: Optional[str] = None) -> List[Dict[str, Any]]:
+    rows = _read_rows(Path(cell_path) / "ledger" / "rules" / "proposed.jsonl")
+    if status:
+        rows = [row for row in rows if row.get("review_status") == status or row.get("reviewer_status") == status]
+    return rows
+
+
+def review_rule_proposal(cell_path: PathLike, rule_id: str, decision: str, reviewer_id: str = "operator", rationale: str = "reviewed") -> Dict[str, Any]:
+    if decision not in {"approve", "reject"}:
+        raise ValueError("decision must be approve or reject")
+    rows = {row.get("rule_id"): row for row in list_rule_proposals(cell_path)}
+    if rule_id not in rows:
+        raise ValueError(f"Unknown rule_id: {rule_id}")
+    original = rows[rule_id]
+    status = "approved" if decision == "approve" else "rejected"
+    event = dict(original)
+    event.update({"review_status": status, "reviewer_status": status, "reviewer_id": reviewer_id, "decision_timestamp": _now(), "review_rationale": rationale})
+    append_jsonl(Path(cell_path) / "ledger" / "rules" / "proposed.jsonl", event)
+    if decision == "approve":
+        approved = dict(event)
+        approved["review_status"] = "approved"
+        approved["trust_label"] = "local"
+        append_jsonl(Path(cell_path) / "ledger" / "rules" / "approved.jsonl", approved)
+    return event
+
+
+def approve_rule_proposal(cell_path: PathLike, rule_id: str, reviewer_id: str = "operator", rationale: str = "approved") -> Dict[str, Any]:
+    return review_rule_proposal(cell_path, rule_id, "approve", reviewer_id=reviewer_id, rationale=rationale)
+
+
+def reject_rule_proposal(cell_path: PathLike, rule_id: str, reviewer_id: str = "operator", rationale: str = "rejected") -> Dict[str, Any]:
+    return review_rule_proposal(cell_path, rule_id, "reject", reviewer_id=reviewer_id, rationale=rationale)

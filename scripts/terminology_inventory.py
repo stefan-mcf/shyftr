@@ -34,6 +34,7 @@ MIGRATION_DOCS = {
     "docs/plans/2026-05-06-shyftr-plain-language-canonical-rename-plan.md",
     "docs/status/plain-language-rename-ledger.md",
     "docs/concepts/terminology-compatibility.md",
+    "docs/status/phase-6-kickoff-reconciliation.md",
     "docs/sources/2026-05-06-shyftr-plain-lifecycle-naming-review.md",
 }
 COMPATIBILITY_FILES = {
@@ -102,8 +103,10 @@ def is_allowed_stale(rel: str, line: str) -> tuple[bool, str]:
         return True, "generic authority-source usage"
     if "historical" in low or "implementation notes" in low or "future-planning" in low:
         return True, "historical/document classification context"
-    if "local data boundary" in low or "trust boundary" in low or "alpha status boundary" in low or "non-hosted/non-production boundary" in low or "regulator boundary" in low or "safety boundary" in low or "product boundary" in low or "scope boundary" in low or "authority boundary" in low or "cleanup boundary" in low or "alpha boundary" in low or "future-capability boundary" in low or "current boundary" in low or "rule boundary" in low:
+    if "local data boundary" in low or "trust boundary" in low or "trust-boundary" in low or "alpha status boundary" in low or "non-hosted/non-production boundary" in low or "regulator boundary" in low or "safety boundary" in low or "product boundary" in low or "scope boundary" in low or "authority boundary" in low or "cleanup boundary" in low or "alpha boundary" in low or "future-capability boundary" in low or "current boundary" in low or "rule boundary" in low:
         return True, "generic safety boundary usage"
+    if "source_cell" in low or "source cell" in low or "federation source" in low:
+        return True, "phase 6 provenance source-cell field"
     if "source .venv/bin/activate" in low or ". .venv/bin/activate" in low:
         return True, "shell activation command"
     if "source code" in low or "open source" in low or "source file" in low or "source material" in low or "source note" in low or "source identity" in low or "source metadata" in low or "source hash" in low or "source id" in low or "source reference" in low or "source category" in low or "source module" in low or "source workspace" in low or "source context" in low or "source memory" in low or "source tree" in low or "source-tree" in low or "source-root" in low or "source_root" in low or "providing the sources" in low or "source and target" in low or "source quality" in low or "source ledger" in low or "source evidence" in low or "proposal source" in low or "truth source" in low or "the source." in low or "report_feed" in low:

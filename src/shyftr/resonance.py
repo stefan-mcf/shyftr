@@ -237,3 +237,138 @@ def get_high_resonance_alloys(
 ) -> List[ResonanceScore]:
     """Return resonance scores that meet the Doctrine proposal threshold."""
     return [score for score in resonance_scores if score.score >= threshold]
+
+
+# ---------------------------------------------------------------------------
+# Phase 6 public-model, registry-scoped resonance helpers
+# ---------------------------------------------------------------------------
+from dataclasses import asdict as _asdict
+from datetime import datetime as _datetime, timezone as _timezone
+from pathlib import Path as _Path
+from typing import Any as _Any
+from uuid import uuid4 as _uuid4
+
+from .ledger import read_jsonl as _read_jsonl
+from .models import Memory as _Memory, Pattern as _Pattern
+from .registry import get_cell as _get_registered_cell
+
+MemoryMatch = Tuple[str, str, str, str, float]
+PatternMatch = Tuple[str, str, str, str, float]
+
+
+def detect_similar_memories(memories: Sequence[_Memory], *, threshold: float = 0.25) -> List[MemoryMatch]:
+    ids = [memory.memory_id for memory in memories]
+    return _pairwise_cross_cell_matches(
+        ids,
+        {memory.memory_id: memory.cell_id for memory in memories},
+        {memory.memory_id: memory.statement for memory in memories},
+        threshold,
+    )
+
+
+def detect_similar_patterns(patterns: Sequence[_Pattern], *, threshold: float = 0.20) -> List[PatternMatch]:
+    ids = [pattern.pattern_id for pattern in patterns]
+    return _pairwise_cross_cell_matches(
+        ids,
+        {pattern.pattern_id: pattern.cell_id for pattern in patterns},
+        {pattern.pattern_id: pattern.summary for pattern in patterns},
+        threshold,
+    )
+
+
+def _records(path: _Path) -> List[Dict[str, _Any]]:
+    return [record for _, record in _read_jsonl(path)] if path.exists() else []
+
+
+def _load_memories(cell_path: _Path) -> List[_Memory]:
+    rows = _records(cell_path / "ledger" / "memories" / "approved.jsonl")
+    rows += _records(cell_path / "traces" / "approved.jsonl")
+    memories: List[_Memory] = []
+    for row in rows:
+        payload = dict(row)
+        if "trace_id" in payload and "memory_id" not in payload:
+            payload["memory_id"] = payload.pop("trace_id")
+        if "source_fragment_ids" in payload and "candidate_ids" not in payload:
+            payload["candidate_ids"] = payload.pop("source_fragment_ids")
+        payload.setdefault("candidate_ids", [payload["memory_id"]])
+        payload.setdefault("cell_id", cell_path.name)
+        try:
+            memories.append(_Memory.from_dict({k: v for k, v in payload.items() if k in _Memory.__dataclass_fields__}))
+        except Exception:
+            continue
+    return memories
+
+
+def _load_patterns(cell_path: _Path) -> List[_Pattern]:
+    rows = _records(cell_path / "ledger" / "patterns" / "approved.jsonl")
+    rows += _records(cell_path / "alloys" / "approved.jsonl")
+    patterns: List[_Pattern] = []
+    for row in rows:
+        payload = dict(row)
+        if "alloy_id" in payload and "pattern_id" not in payload:
+            payload["pattern_id"] = payload.pop("alloy_id")
+        if "source_trace_ids" in payload and "memory_ids" not in payload:
+            payload["memory_ids"] = payload.pop("source_trace_ids")
+        payload.setdefault("memory_ids", [payload["pattern_id"]])
+        payload.setdefault("theme", payload.get("summary", "pattern"))
+        payload.setdefault("cell_id", cell_path.name)
+        try:
+            patterns.append(_Pattern.from_dict({k: v for k, v in payload.items() if k in _Pattern.__dataclass_fields__}))
+        except Exception:
+            continue
+    return patterns
+
+
+def scan_registry_resonance(registry_path: str | _Path, cell_ids: Sequence[str], *, threshold: float = 0.25, require_cross_cell: bool = True, include_patterns: bool = True) -> List[Dict[str, _Any]]:
+    """Read explicitly selected registered cells and return advisory resonance results.
+
+    This helper is read-only: it never writes cell ledgers and refuses ambiguous
+    scans. Each result contains source cell IDs, source record IDs, provenance,
+    and an advisory proposal status.
+    """
+    selected = list(dict.fromkeys(cell_ids))
+    if require_cross_cell and len(selected) < 2:
+        return []
+    entries = [_get_registered_cell(registry_path, cell_id) for cell_id in selected]
+    memories: List[_Memory] = []
+    patterns: List[_Pattern] = []
+    for entry in entries:
+        path = _Path(entry.path)
+        if not (path / "config" / "cell_manifest.json").exists():
+            raise ValueError(f"registered cell is not initialized: {entry.cell_id}")
+        memories.extend(_load_memories(path))
+        if include_patterns:
+            patterns.extend(_load_patterns(path))
+    now = _datetime.now(_timezone.utc).isoformat()
+    results: List[Dict[str, _Any]] = []
+    for left_id, right_id, left_cell, right_cell, score in detect_similar_memories(memories, threshold=threshold):
+        cells = [left_cell, right_cell]
+        results.append({
+            "resonance_id": f"res-{_uuid4().hex[:12]}",
+            "source_cell_ids": cells,
+            "source_record_ids": [left_id, right_id],
+            "source_record_kinds": ["memory", "memory"],
+            "similarity_method": "token_jaccard",
+            "threshold": threshold,
+            "score": round(score * (1.0 + min(len(set(cells)) - 1, 2) * 0.1), 4),
+            "provenance": {"activity_id": f"activity-{_uuid4().hex[:12]}", "source_cell_ids": cells, "source_record_ids": [left_id, right_id], "derivation_kind": "registry_scoped_resonance"},
+            "created_at": now,
+            "proposal_status": "advisory",
+        })
+    if include_patterns:
+        for left_id, right_id, left_cell, right_cell, score in detect_similar_patterns(patterns, threshold=max(0.1, threshold - 0.05)):
+            cells = [left_cell, right_cell]
+            results.append({
+                "resonance_id": f"res-{_uuid4().hex[:12]}",
+                "source_cell_ids": cells,
+                "source_record_ids": [left_id, right_id],
+                "source_record_kinds": ["pattern", "pattern"],
+                "similarity_method": "token_jaccard",
+                "threshold": threshold,
+                "score": round(score * (1.0 + min(len(set(cells)) - 1, 2) * 0.1), 4),
+                "provenance": {"activity_id": f"activity-{_uuid4().hex[:12]}", "source_cell_ids": cells, "source_record_ids": [left_id, right_id], "derivation_kind": "registry_scoped_resonance"},
+                "created_at": now,
+                "proposal_status": "advisory",
+            })
+    results.sort(key=lambda row: (-row["score"], row["source_record_ids"]))
+    return results

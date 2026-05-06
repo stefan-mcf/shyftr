@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { api, DEFAULT_ROOT, Json } from "./api";
 import "./styles.css";
 
-const nav = ["Cells", "Review", "Charges", "Packs", "Signal", "Reports", "Settings"] as const;
+const nav = ["Cells", "Review", "Charges", "Packs", "Signal", "Multi-cell", "Reports", "Settings"] as const;
 type Tab = typeof nav[number];
 
 function JsonBlock({ value }: { value: unknown }) {
@@ -29,6 +29,8 @@ function App() {
   const [rationale, setRationale] = useState("");
   const [actionResult, setActionResult] = useState<Json | null>(null);
   const [raw, setRaw] = useState(false);
+  const [registryPath, setRegistryPath] = useState("./ledger/cell_registry.jsonl");
+  const [crossCellIds, setCrossCellIds] = useState("");
   const [error, setError] = useState("");
 
   async function run<T>(fn: () => Promise<T>): Promise<T | undefined> {
@@ -113,6 +115,9 @@ function App() {
     {tab === "Packs" && <section><h2>Pack Debugger</h2><textarea value={query} onChange={(e) => setQuery(e.target.value)} /><button onClick={async () => { const p = await run(() => api.pack(root, cellId, { query, external_system: "console", external_scope: "debugger", max_items: 10, max_tokens: 2000 })); if (p) setPack(p); }}>Generate Pack</button><JsonBlock value={pack || "Generate a Pack to inspect selected items, score trace, risks, and token budget."} /></section>}
 
     {tab === "Signal" && <section><h2>Signal Console</h2><textarea value={JSON.stringify({ loadout_id: (pack?.loadout_id as string) || "", result: "success", external_system: "console", external_scope: "manual", applied_trace_ids: pack?.selected_ids || [], useful_trace_ids: pack?.selected_ids || [], missing_memory_notes: [], verification_evidence: {} }, null, 2)} readOnly /><button onClick={async () => { const s = await run(() => api.signal(root, cellId, { loadout_id: (pack?.loadout_id as string) || "manual", result: "success", external_system: "console", external_scope: "manual", applied_trace_ids: pack?.selected_ids || [], useful_trace_ids: pack?.selected_ids || [], missing_memory_notes: [], verification_evidence: { console: true } })); if (s) setSignal(s); }}>Record Signal</button><JsonBlock value={signal || "Record a Signal after a Pack is used."} /></section>}
+
+
+    {tab === "Multi-cell" && <section><h2>Multi-cell review surfaces</h2><p>Local-first, explicit cross-cell only. Registry listing is metadata-only; resonance is dry-run/read-only; rules and imports require operator review.</p><label>Registry <input value={registryPath} onChange={(e) => setRegistryPath(e.target.value)} /></label><label>Explicit cell IDs <input value={crossCellIds} onChange={(e) => setCrossCellIds(e.target.value)} placeholder="project-alpha,project-beta" /></label><div className="actions"><button onClick={async () => { const r = await run(() => api.registryCells(registryPath)); if (r) setRows(r); }}>List registered cells</button><button onClick={async () => { const r = await run(() => api.resonanceScan({ registry: registryPath, cell_ids: crossCellIds.split(",").map((s) => s.trim()).filter(Boolean), threshold: 0.25 })); if (r) setRows(r); }}>Dry-run resonance scan</button><button onClick={async () => { const r = await run(() => api.ruleQueue(String(selectedCell?.cell_path || summary?.cell_path || ""))); if (r) setRows(r); }}>Rule review queue</button><button onClick={async () => { const r = await run(() => api.importQueue(String(selectedCell?.cell_path || summary?.cell_path || ""))); if (r) setRows(r); }}>Import review queue</button></div><p>Trust labels: local, imported, federated, verified. Cross-cell scope is active only when explicit cells are provided.</p><JsonBlock value={rows || "Choose a registry and explicit cells to inspect provenance and review queues."} /></section>}
 
     {tab === "Reports" && <section><h2>Hygiene, Sweep, Proposals, Metrics</h2><button onClick={() => loadTab("Reports")}>Load reports</button>{cellId && <a href={`${apiUrlForCsv(root, cellId)}`}>Export metrics CSV</a>}<div className="actions"><input value={targetId} onChange={(e) => setTargetId(e.target.value)} placeholder="proposal id" /><input value={rationale} onChange={(e) => setRationale(e.target.value)} placeholder="decision rationale" /><button onClick={async () => { const r = await run(() => api.decideProposal(root, cellId, targetId, { decision: "accept", rationale })); if (r) { setActionResult(r); loadTab("Reports"); refreshSummary(); } }}>Accept</button><button onClick={async () => { const r = await run(() => api.decideProposal(root, cellId, targetId, { decision: "reject", rationale })); if (r) { setActionResult(r); loadTab("Reports"); refreshSummary(); } }}>Reject</button><button onClick={async () => { const r = await run(() => api.decideProposal(root, cellId, targetId, { decision: "defer", rationale })); if (r) { setActionResult(r); loadTab("Reports"); refreshSummary(); } }}>Defer</button></div><JsonBlock value={actionResult || rows || "Load reports to inspect memory health, proposals, pilot usefulness, operator burden, and policy tuning. Enter a proposal ID to record an append-only decision."} /></section>}
 

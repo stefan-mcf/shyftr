@@ -238,3 +238,38 @@ def policy_tuning_report(cell_path: PathLike) -> Dict[str, Any]:
         "operational_state_decisions": operational[:25],
         "recommended_fixture_count": len(rejected) + len(operational),
     }
+
+
+# ---------------------------------------------------------------------------
+# Phase 6 multi-cell console projections
+# ---------------------------------------------------------------------------
+
+def registered_cells(registry_path: PathLike, *, cell_type: Optional[str] = None, tag: Optional[str] = None) -> Dict[str, Any]:
+    from .registry import list_cells
+    tags = [tag] if tag else None
+    cells = [entry.to_dict() for entry in list_cells(registry_path, cell_type=cell_type, tags=tags)]
+    return {"status": "ok", "cells": cells, "total": len(cells), "metadata_only": True}
+
+
+def cell_detail(registry_path: PathLike, cell_id: str) -> Dict[str, Any]:
+    from .registry import get_cell
+    entry = get_cell(registry_path, cell_id)
+    return {"status": "ok", "cell": entry.to_dict(), "metadata_only": True}
+
+
+def resonance_results(registry_path: PathLike, cell_ids: List[str], *, threshold: float = 0.25) -> Dict[str, Any]:
+    from .resonance import scan_registry_resonance
+    results = scan_registry_resonance(registry_path, cell_ids, threshold=threshold)
+    return {"status": "ok", "explicit_cross_cell_scope": True, "trust_label": "local", "results": results, "total": len(results)}
+
+
+def rule_review_queue(cell_path: PathLike, *, status: Optional[str] = None) -> Dict[str, Any]:
+    from .distill.rules import list_rule_proposals
+    rules = list_rule_proposals(cell_path, status=status)
+    return {"status": "ok", "rules": rules, "total": len(rules), "requires_operator_decision": True}
+
+
+def import_review_queue(cell_path: PathLike, *, status: Optional[str] = "pending") -> Dict[str, Any]:
+    from .federation import list_imports
+    imports = list_imports(cell_path, status=status)
+    return {"status": "ok", "imports": imports, "total": len(imports), "trust_labels": ["local", "imported", "federated", "verified"]}

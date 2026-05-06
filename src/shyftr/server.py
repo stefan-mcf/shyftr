@@ -471,6 +471,109 @@ def _register_routes(app: FastAPI) -> None:
             return JSONResponse(status_code=400, content={"status": "error", "message": str(exc)})
 
 
+    # -- Phase 6 explicit multi-cell surfaces -------------------------------
+
+    @app.get("/registry/cells")
+    async def registry_cells(registry: str, cell_type: Optional[str] = None, tag: Optional[str] = None) -> Dict[str, Any]:
+        from shyftr.console_api import registered_cells
+        return registered_cells(registry, cell_type=cell_type, tag=tag)
+
+    @app.get("/cells/{cell_id}")
+    async def registered_cell_detail(cell_id: str, registry: str) -> Dict[str, Any]:
+        from shyftr.console_api import cell_detail
+        return cell_detail(registry, cell_id)
+
+    @app.post("/cells/register")
+    async def register_cell_route(request: Request) -> JSONResponse:
+        body = await _parse_body(request)
+        try:
+            from shyftr.registry import register_cell, CellRegistryEntry
+            registry = body.pop("registry")
+            entry = CellRegistryEntry.from_dict(body)
+            return JSONResponse(content={"status": "ok", "cell": register_cell(registry, entry).to_dict()})
+        except Exception as exc:
+            return JSONResponse(status_code=400, content={"status": "error", "message": str(exc)})
+
+    @app.post("/resonance/scan")
+    async def resonance_scan_route(request: Request) -> JSONResponse:
+        body = await _parse_body(request)
+        registry = body.get("registry")
+        cell_ids = body.get("cell_ids") or body.get("cells") or []
+        if not registry or len(cell_ids) < 2:
+            return JSONResponse(status_code=422, content={"status": "error", "message": "registry and at least two explicit cell_ids are required"})
+        try:
+            from shyftr.resonance import scan_registry_resonance
+            return JSONResponse(content={"status": "ok", "dry_run": True, "results": scan_registry_resonance(registry, cell_ids, threshold=float(body.get("threshold", 0.25)))})
+        except Exception as exc:
+            return JSONResponse(status_code=400, content={"status": "error", "message": str(exc)})
+
+    @app.get("/rules/proposed")
+    async def rules_proposed(cell_path: str, status: Optional[str] = None) -> Dict[str, Any]:
+        from shyftr.console_api import rule_review_queue
+        return rule_review_queue(cell_path, status=status)
+
+    @app.post("/rules/{rule_id}/approve")
+    async def approve_rule_route(rule_id: str, request: Request) -> JSONResponse:
+        body = await _parse_body(request)
+        try:
+            from shyftr.distill.rules import approve_rule_proposal
+            return JSONResponse(content={"status": "ok", "event": approve_rule_proposal(body["cell_path"], rule_id, reviewer_id=body.get("reviewer", "operator"), rationale=body.get("rationale", "approved"))})
+        except Exception as exc:
+            return JSONResponse(status_code=400, content={"status": "error", "message": str(exc)})
+
+    @app.post("/rules/{rule_id}/reject")
+    async def reject_rule_route(rule_id: str, request: Request) -> JSONResponse:
+        body = await _parse_body(request)
+        try:
+            from shyftr.distill.rules import reject_rule_proposal
+            return JSONResponse(content={"status": "ok", "event": reject_rule_proposal(body["cell_path"], rule_id, reviewer_id=body.get("reviewer", "operator"), rationale=body.get("rationale", "rejected"))})
+        except Exception as exc:
+            return JSONResponse(status_code=400, content={"status": "error", "message": str(exc)})
+
+    @app.post("/cells/{cell_id}/export")
+    async def export_cell_route(cell_id: str, request: Request, root: str = ".") -> JSONResponse:
+        body = await _parse_body(request)
+        try:
+            from shyftr.federation import export_cell
+            cell = body.get("cell_path") or str(_resolve_cell(root, cell_id))
+            return JSONResponse(content=export_cell(cell, body["output_path"]))
+        except Exception as exc:
+            return JSONResponse(status_code=400, content={"status": "error", "message": str(exc)})
+
+    @app.post("/cells/{cell_id}/import")
+    async def import_cell_route(cell_id: str, request: Request, root: str = ".") -> JSONResponse:
+        body = await _parse_body(request)
+        try:
+            from shyftr.federation import import_package
+            cell = body.get("cell_path") or str(_resolve_cell(root, cell_id))
+            return JSONResponse(content=import_package(cell, body["package_path"]))
+        except Exception as exc:
+            return JSONResponse(status_code=400, content={"status": "error", "message": str(exc)})
+
+    @app.get("/imports/pending")
+    async def imports_pending(cell_path: str) -> Dict[str, Any]:
+        from shyftr.console_api import import_review_queue
+        return import_review_queue(cell_path, status="pending")
+
+    @app.post("/imports/{import_id}/approve")
+    async def approve_import_route(import_id: str, request: Request) -> JSONResponse:
+        body = await _parse_body(request)
+        try:
+            from shyftr.federation import approve_import
+            return JSONResponse(content={"status": "ok", "event": approve_import(body["cell_path"], import_id, reviewer=body.get("reviewer", "operator"), rationale=body.get("rationale", "approved"))})
+        except Exception as exc:
+            return JSONResponse(status_code=400, content={"status": "error", "message": str(exc)})
+
+    @app.post("/imports/{import_id}/reject")
+    async def reject_import_route(import_id: str, request: Request) -> JSONResponse:
+        body = await _parse_body(request)
+        try:
+            from shyftr.federation import reject_import
+            return JSONResponse(content={"status": "ok", "event": reject_import(body["cell_path"], import_id, reviewer=body.get("reviewer", "operator"), rationale=body.get("rationale", "rejected"))})
+        except Exception as exc:
+            return JSONResponse(status_code=400, content={"status": "error", "message": str(exc)})
+
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------

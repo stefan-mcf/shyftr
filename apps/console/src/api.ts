@@ -53,4 +53,8 @@ export const api = {
   reviewSpark: (root: string, cellId: string, sparkId: string, body: Json) => request<Json>(`/cell/${encodeURIComponent(cellId)}/sparks/${encodeURIComponent(sparkId)}/review?${rootParam(root)}`, { method: "POST", body: JSON.stringify(body) }),
   chargeAction: (root: string, cellId: string, chargeId: string, body: Json) => request<Json>(`/cell/${encodeURIComponent(cellId)}/charges/${encodeURIComponent(chargeId)}/action?${rootParam(root)}`, { method: "POST", body: JSON.stringify(body) }),
   decideProposal: (root: string, cellId: string, proposalId: string, body: Json) => request<Json>(`/cell/${encodeURIComponent(cellId)}/proposals/${encodeURIComponent(proposalId)}/decision?${rootParam(root)}`, { method: "POST", body: JSON.stringify(body) }),
+  registryCells: (registry: string) => request<RowList<Json>>(`/registry/cells?registry=${encodeURIComponent(registry)}`),
+  resonanceScan: (body: Json) => request<Json>("/resonance/scan", { method: "POST", body: JSON.stringify(body) }),
+  ruleQueue: (cellPath: string) => request<RowList<Json>>(`/rules/proposed?cell_path=${encodeURIComponent(cellPath)}`),
+  importQueue: (cellPath: string) => request<RowList<Json>>(`/imports/pending?cell_path=${encodeURIComponent(cellPath)}`),
 };

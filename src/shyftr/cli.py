@@ -470,6 +470,169 @@ def _add_proposals(sub: argparse.ArgumentParser) -> None:
     export.add_argument("--json", action="store_true", default=False, help="emit machine-readable JSON")
 
 
+
+# ---------------------------------------------------------------------------
+# Subcommand: cell / resonance / rule / import (Phase 6)
+# ---------------------------------------------------------------------------
+
+
+def cmd_cell_register(args: argparse.Namespace) -> None:
+    from shyftr.registry import CellRegistryEntry, register_cell
+    entry = CellRegistryEntry(
+        cell_id=args.cell_id,
+        cell_type=args.cell_type,
+        path=str(Path(args.path).expanduser().resolve()),
+        owner=args.owner,
+        tags=[tag for tag in (args.tags or "").split(",") if tag],
+        domain=args.domain,
+        trust_boundary=args.trust_boundary,
+        registered_at=args.registered_at or __import__("datetime").datetime.datetime.now(__import__("datetime").timezone.utc).isoformat(),
+        metadata=json.loads(args.metadata) if args.metadata else {},
+    )
+    _print_json(register_cell(args.registry, entry).to_dict())
+
+
+def cmd_cell_list(args: argparse.Namespace) -> None:
+    from shyftr.registry import list_cells
+    tags = [tag for tag in (args.tags or "").split(",") if tag] or None
+    _print_json({"status": "ok", "cells": [entry.to_dict() for entry in list_cells(args.registry, cell_type=args.cell_type, tags=tags)]})
+
+
+def cmd_cell_info(args: argparse.Namespace) -> None:
+    from shyftr.registry import get_cell
+    _print_json(get_cell(args.registry, args.cell_id).to_dict())
+
+
+def cmd_cell_unregister(args: argparse.Namespace) -> None:
+    from shyftr.registry import unregister_cell
+    _print_json(unregister_cell(args.registry, args.cell_id, args.reason))
+
+
+def cmd_cell_export(args: argparse.Namespace) -> None:
+    from shyftr.federation import export_cell
+    _print_json(export_cell(args.cell_path, args.output))
+
+
+def cmd_cell_import(args: argparse.Namespace) -> None:
+    from shyftr.federation import import_package
+    _print_json(import_package(args.cell_path, args.package))
+
+
+def cmd_resonance_scan(args: argparse.Namespace) -> None:
+    from shyftr.resonance import scan_registry_resonance
+    if not args.cell or len(args.cell) < 2:
+        raise ValueError("resonance scan requires at least two explicit --cell values")
+    _print_json({"status": "ok", "dry_run": True, "results": scan_registry_resonance(args.registry, args.cell, threshold=args.threshold)})
+
+
+def cmd_rule_propose_from_resonance(args: argparse.Namespace) -> None:
+    from shyftr.distill.rules import propose_rule_from_resonance
+    payload = json.loads(Path(args.resonance_json).read_text(encoding="utf-8"))
+    results = payload.get("results", payload if isinstance(payload, list) else [])
+    _print_json(propose_rule_from_resonance(args.cell_path, results, scope=args.scope, statement=args.statement))
+
+
+def cmd_rule_list(args: argparse.Namespace) -> None:
+    from shyftr.distill.rules import list_rule_proposals
+    _print_json({"status": "ok", "rules": list_rule_proposals(args.cell_path, status=args.status)})
+
+
+def cmd_rule_approve(args: argparse.Namespace) -> None:
+    from shyftr.distill.rules import approve_rule_proposal
+    _print_json(approve_rule_proposal(args.cell_path, args.rule_id, reviewer_id=args.reviewer, rationale=args.rationale))
+
+
+def cmd_rule_reject(args: argparse.Namespace) -> None:
+    from shyftr.distill.rules import reject_rule_proposal
+    _print_json(reject_rule_proposal(args.cell_path, args.rule_id, reviewer_id=args.reviewer, rationale=args.rationale))
+
+
+def cmd_import_list(args: argparse.Namespace) -> None:
+    from shyftr.federation import list_imports
+    _print_json({"status": "ok", "imports": list_imports(args.cell_path, status=args.status)})
+
+
+def cmd_import_approve(args: argparse.Namespace) -> None:
+    from shyftr.federation import approve_import
+    _print_json(approve_import(args.cell_path, args.import_id, reviewer=args.reviewer, rationale=args.rationale))
+
+
+def cmd_import_reject(args: argparse.Namespace) -> None:
+    from shyftr.federation import reject_import
+    _print_json(reject_import(args.cell_path, args.import_id, reviewer=args.reviewer, rationale=args.rationale))
+
+
+def _add_cell(sub: argparse.ArgumentParser) -> None:
+    cell_sub = sub.add_subparsers(dest="cell_action", required=True)
+    reg = cell_sub.add_parser("register", help="Register a Cell in an append-only registry")
+    reg.add_argument("--registry", required=True)
+    reg.add_argument("--cell-id", required=True)
+    reg.add_argument("--cell-type", required=True)
+    reg.add_argument("--path", required=True)
+    reg.add_argument("--owner", required=True)
+    reg.add_argument("--tags", default="")
+    reg.add_argument("--domain", required=True)
+    reg.add_argument("--trust-boundary", required=True)
+    reg.add_argument("--registered-at", default=None)
+    reg.add_argument("--metadata", default=None)
+    ls = cell_sub.add_parser("list", help="List registered Cells")
+    ls.add_argument("--registry", required=True)
+    ls.add_argument("--cell-type", default=None)
+    ls.add_argument("--tags", default=None)
+    info = cell_sub.add_parser("info", help="Show registered Cell metadata")
+    info.add_argument("--registry", required=True)
+    info.add_argument("cell_id")
+    unreg = cell_sub.add_parser("unregister", help="Append an unregister registry event")
+    unreg.add_argument("--registry", required=True)
+    unreg.add_argument("cell_id")
+    unreg.add_argument("--reason", required=True)
+    exp = cell_sub.add_parser("export", help="Export approved Cell records as a selective federation package")
+    exp.add_argument("--cell-path", type=_cell_path, required=True)
+    exp.add_argument("--output", required=True)
+    imp = cell_sub.add_parser("import", help="Import a federation package into a review queue")
+    imp.add_argument("--cell-path", type=_cell_path, required=True)
+    imp.add_argument("--package", required=True)
+
+
+def _add_resonance(sub: argparse.ArgumentParser) -> None:
+    resonance_sub = sub.add_subparsers(dest="resonance_action", required=True)
+    scan = resonance_sub.add_parser("scan", help="Dry-run registry-scoped cross-cell resonance")
+    scan.add_argument("--registry", required=True)
+    scan.add_argument("--cell", action="append", required=True)
+    scan.add_argument("--threshold", type=float, default=0.25)
+    scan.add_argument("--dry-run", action="store_true", default=True)
+
+
+def _add_rule(sub: argparse.ArgumentParser) -> None:
+    rule_sub = sub.add_subparsers(dest="rule_action", required=True)
+    propose = rule_sub.add_parser("propose-from-resonance")
+    propose.add_argument("cell_path", type=_cell_path)
+    propose.add_argument("--resonance-json", required=True)
+    propose.add_argument("--scope", required=True)
+    propose.add_argument("--statement", default=None)
+    ls = rule_sub.add_parser("list")
+    ls.add_argument("cell_path", type=_cell_path)
+    ls.add_argument("--status", default=None)
+    for name in ("approve", "reject"):
+        parser = rule_sub.add_parser(name)
+        parser.add_argument("cell_path", type=_cell_path)
+        parser.add_argument("rule_id")
+        parser.add_argument("--reviewer", default="operator")
+        parser.add_argument("--rationale", required=True)
+
+
+def _add_import(sub: argparse.ArgumentParser) -> None:
+    import_sub = sub.add_subparsers(dest="import_action", required=True)
+    ls = import_sub.add_parser("list")
+    ls.add_argument("cell_path", type=_cell_path)
+    ls.add_argument("--status", default=None)
+    for name in ("approve", "reject"):
+        parser = import_sub.add_parser(name)
+        parser.add_argument("cell_path", type=_cell_path)
+        parser.add_argument("import_id")
+        parser.add_argument("--reviewer", default="operator")
+        parser.add_argument("--rationale", required=True)
+
 # ---------------------------------------------------------------------------
 # Subcommand: hygiene
 # ---------------------------------------------------------------------------
@@ -1048,6 +1211,36 @@ def _resolve_subcommand(args: argparse.Namespace) -> None:
             return cmd_adapter_list(args)
         _fail(f"unknown adapter action: {args.adapter_action}")
 
+    if cmd_name == "cell":
+        return {
+            "register": cmd_cell_register,
+            "list": cmd_cell_list,
+            "info": cmd_cell_info,
+            "unregister": cmd_cell_unregister,
+            "export": cmd_cell_export,
+            "import": cmd_cell_import,
+        }[args.cell_action](args)
+
+    if cmd_name == "resonance":
+        if args.resonance_action == "scan":
+            return cmd_resonance_scan(args)
+        _fail(f"unknown resonance action: {args.resonance_action}")
+
+    if cmd_name == "rule":
+        return {
+            "propose-from-resonance": cmd_rule_propose_from_resonance,
+            "list": cmd_rule_list,
+            "approve": cmd_rule_approve,
+            "reject": cmd_rule_reject,
+        }[args.rule_action](args)
+
+    if cmd_name == "import":
+        return {
+            "list": cmd_import_list,
+            "approve": cmd_import_approve,
+            "reject": cmd_import_reject,
+        }[args.import_action](args)
+
     if cmd_name == "audit":
         if args.audit_action == "list":
             return cmd_audit_list(args)
@@ -1105,6 +1298,10 @@ def build_parser() -> argparse.ArgumentParser:
     _add_feedback(sub.add_parser("signal", help="Deprecated alias: record feedback for a pack"))
     _add_feedback(sub.add_parser("feedback", help="Record feedback for a pack"))
     _add_proposals(sub.add_parser("proposals", help="Export advisory runtime proposals"))
+    _add_cell(sub.add_parser("cell", help="Register, list, export, and import Cells"))
+    _add_resonance(sub.add_parser("resonance", help="Run explicit cross-cell resonance scans"))
+    _add_rule(sub.add_parser("rule", help="Review-gated shared rule workflow"))
+    _add_import(sub.add_parser("import", help="Review imported federation records"))
     _add_hygiene(sub.add_parser("hygiene", help="Run a hygiene report on a Cell"))
     _add_counters(sub.add_parser("counters", help="Show trace usage counters"))
     _add_sweep(sub.add_parser("sweep", help="Run a sweep dry-run analysis"))

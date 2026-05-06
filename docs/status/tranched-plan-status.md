@@ -25,7 +25,7 @@ Current status:
 | Phase 0-2 core local loop | implemented/proven | current status matrix, tests, local lifecycle, console build | regression guard only |
 | Phase 3 runtime/pilot harness | partial | runtime-neutral examples and synthetic fixtures exist | prove at least one real or replayable pilot loop before closing 8.5 |
 | Phase 4-5 local advisory/durability surfaces | implemented enough for alpha claims | sweep/challenge/quarantine, backup/restore, ledger verification, privacy/sensitivity tests | keep as regression guards during alpha |
-| Phase 6 distributed multi-cell intelligence | not implemented | current status matrix says no current surface | do not start without a separate approval and plan |
+| Phase 6 distributed multi-cell intelligence | implemented for local controlled pilots | registry, resonance, rule review, federation export/import, console/API surfaces, and demo tests | keep explicit-scope and review-gate regressions green; do not extend into Phase 7 from the Phase 6 plan |
 | Phase 7 private-core-adjacent differentiators | not public-run ready | advanced confidence/ranking/compaction can be moat-bearing | route private-core experiments first when needed |
 | Phase 8 productization | active | README, docs, alpha gate, CI are public-ready | continue at Tranche 8.5 |
 
@@ -37,7 +37,6 @@ Start from:
 
 Do not start from:
 
-- Phase 6 multi-cell work;
 - Phase 7 advanced confidence/ranking/simulation work;
 - Checkpoint E alpha-exit;
 - Checkpoint F stable-release language cleanup.
