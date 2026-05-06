@@ -148,7 +148,7 @@ Evidence collected during this run:
 | Field | Current value |
 | --- | --- |
 | tester count | 0 external testers completed during this local run |
-| exact SHA for tester packet | `c610174c037d9bf7999bc4d747488cada84d6df9` |
+| pre-template tested SHA | `c610174c037d9bf7999bc4d747488cada84d6df9` |
 | local alpha gate verdict | `ALPHA_GATE_READY` |
 | external alpha gate verdicts | none yet |
 | install friction | none from external testers yet |
@@ -165,7 +165,7 @@ External tester evidence rows to add when available:
 
 | Tester label | SHA | OS | Python | Node/npm | Alpha gate verdict | Install friction | Demo/lifecycle result | Concept clarity | Bugs/issues |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| pending | `c610174c037d9bf7999bc4d747488cada84d6df9` | pending | pending | pending | pending | pending | pending | pending | pending |
+| pending | record tester's `git rev-parse HEAD` | pending | pending | pending | pending | pending | pending | pending | pending |
 
 ## Wave 4: Tranche 8.5 closeout decision
 
@@ -192,6 +192,7 @@ Result:
 Next narrow hardening run:
 
 - Send the Wave 1 tester packet to 3-5 technical testers.
+- Before outreach, rerun Wave 0 gates and tell testers to record the exact SHA from `git rev-parse HEAD`.
 - Prefer the GitHub alpha test report template for returned results: `.github/ISSUE_TEMPLATE/alpha_test_report.md`.
 - Record each returned result in the Wave 3 table.
 - Re-run Wave 0 gates on the exact SHA if any tracked files change before tester outreach.
