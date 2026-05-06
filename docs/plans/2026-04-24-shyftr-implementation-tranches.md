@@ -1970,6 +1970,39 @@ If any item above fails, keep ShyftR labelled alpha and continue hardening. Pass
 
 ---
 
+## Checkpoint F: General Availability Cut / Alpha and MVP Language Removal
+
+### Objective
+Define the point where public-facing docs and metadata may stop using alpha, MVP, developer-preview, or controlled-pilot status language and present ShyftR as a stable local-first product line.
+
+### Expected timing
+Do not run this cleanup immediately after Checkpoint E. Checkpoint E only permits a beta/developer-preview posture. Checkpoint F requires a stronger evidence bundle: stable API contracts, repeatable installs, real integration use, migration safety, and documented support boundaries. Until Checkpoint F passes, any removal of alpha/MVP language must be limited to obviously stale historical prose and must not change the active public release posture.
+
+### Required evidence
+1. Checkpoint E has passed and its status decision is recorded in `docs/status/`.
+2. Versioned public API contracts from Tranche 8.3 are frozen for a named release line, with contract tests in CI.
+3. Install, smoke, lifecycle, public-readiness, console-build, and API-contract checks pass in CI on the exact release SHA.
+4. At least two non-operator environments have completed clean clone/install/demo/API use without maintainer intervention.
+5. At least one real runtime adapter or pilot harness has run through evidence -> candidate -> memory -> pack -> feedback repeatedly with reviewed diagnostics and no unresolved blocker data-loss, privacy, or ledger-integrity issues.
+6. Backup/restore, ledger verification, migration dry-run, and rollback guidance are documented and exercised on fixture cells and one operator-approved real local cell.
+7. Public docs, examples, and package metadata describe only implemented stable behavior; future/private-core capabilities are either absent from public landing docs or clearly labeled as separate plans/source notes.
+8. Security/privacy support boundaries are explicit: local-first operation, sensitivity/export rules, vulnerability reporting, unsupported deployment modes, and no hosted-service claims unless a hosted release is separately approved.
+9. A `docs/status/` release-readiness update records the exact SHA, CI run, known limitations, supported surfaces, and the explicit decision to remove alpha/MVP language.
+
+### Cleanup scope after pass
+When all evidence passes, perform a dedicated public-language cleanup tranche that:
+1. Rewrites README, `docs/status/**`, installation/development docs, package metadata, GitHub description/topics if needed, and public examples to remove current-status terms such as alpha, MVP, developer preview, controlled pilot, and prototype language.
+2. Preserves historical references inside `docs/plans/**`, `docs/sources/**`, `docs/feeds/**`, and compatibility/history docs only when they are clearly historical and not active product status.
+3. Replaces `scripts/alpha_gate.sh` and `ALPHA_GATE_READY` with a release-readiness gate name and verdict, or keeps the old script only as a compatibility wrapper with non-alpha public naming.
+4. Updates `scripts/public_readiness_check.py` so it no longer requires alpha posture language and instead enforces stable-release posture language.
+5. Runs a repo-wide status-language scan for `alpha`, `MVP`, `developer preview`, `controlled pilot`, `prototype`, `not production`, and adjacent wording; every remaining hit must be classified as historical/source/compatibility or removed.
+6. Commits the cleanup separately from feature work, then verifies exact-SHA CI and public metadata after push.
+
+### Stop condition
+If any required evidence is missing, keep active public docs in alpha/beta-style language and do not perform broad status-language removal. Passing this checkpoint permits removal of alpha/MVP posture wording; it does not by itself authorize hosted SaaS claims, package publication, paid support claims, or removal of local-first safety boundaries.
+
+---
+
 # Long-Term Product Cut Lines
 
 ## Replacement-Ready Backend
@@ -2101,3 +2134,5 @@ ShyftR becomes:
 53. Tranche 8.3 - Versioned Public API
 54. Tranche 8.4 - Desktop Shell
 55. Tranche 8.5 - Public Alpha
+56. Checkpoint E - Alpha Exit / Beta-Readiness Cut
+57. Checkpoint F - General Availability Cut / Alpha and MVP Language Removal
