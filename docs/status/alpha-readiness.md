@@ -63,13 +63,22 @@ Do not use:
 
 ## What feedback is useful
 
-- Did install from clone work?
-- Did `scripts/alpha_gate.sh` finish with `ALPHA_GATE_READY`?
-- Which README or docs step was confusing?
-- Did the lifecycle demo make the pack -> feedback loop understandable?
-- Did terminology help or confuse you?
-- Did the local console build or run cleanly?
-- What would block you from trying a small local pilot?
+Use the GitHub alpha test report template when possible:
+
+- `.github/ISSUE_TEMPLATE/alpha_test_report.md`
+
+Record:
+
+- tester label;
+- exact commit tested from `git rev-parse HEAD`;
+- OS and version;
+- Python version;
+- Node/npm versions if the console build runs;
+- whether `scripts/alpha_gate.sh` finished with `ALPHA_GATE_READY`;
+- install friction or full public-safe error output;
+- whether the lifecycle demo made the pack -> feedback loop understandable;
+- terminology or concept-clarity feedback;
+- anything that would block a small local pilot.
 
 ## Current boundary
 

@@ -15,7 +15,7 @@ labels: bug
 
 ## Reproduction
 
-Use synthetic data. Do not paste real Cell ledgers, secrets, tokens, or private operator data.
+Use synthetic data. Do not paste real cell ledgers, secrets, tokens, or private operator data.
 
 ## Expected behavior
 

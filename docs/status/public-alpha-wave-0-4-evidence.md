@@ -192,6 +192,7 @@ Result:
 Next narrow hardening run:
 
 - Send the Wave 1 tester packet to 3-5 technical testers.
+- Prefer the GitHub alpha test report template for returned results: `.github/ISSUE_TEMPLATE/alpha_test_report.md`.
 - Record each returned result in the Wave 3 table.
 - Re-run Wave 0 gates on the exact SHA if any tracked files change before tester outreach.
 - Close or split Tranche 8.5 only after the external evidence threshold is met or the remaining proof is explicitly rescoped.
