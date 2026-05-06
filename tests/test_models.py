@@ -4,10 +4,17 @@ import pytest
 
 from shyftr.models import (
     Alloy,
+    Candidate,
     DoctrineProposal,
+    Evidence,
+    Feedback,
     Fragment,
     Loadout,
+    Memory,
     Outcome,
+    Pack,
+    Pattern,
+    RuleProposal,
     Source,
     Trace,
 )
@@ -241,3 +248,60 @@ def test_outcome_schema_records_misses_and_non_application():
     assert outcome.contradicted_charge_ids == ["trace-contradicted"]
     assert outcome.over_retrieved_charge_ids == ["trace-over"]
     assert outcome.pack_misses == ["missing boundary condition"]
+
+
+def test_canonical_models_serialize_canonical_fields_and_read_legacy_aliases():
+    evidence = Evidence.from_dict({"source_id": "src-1", "cell_id": "c", "kind": "note", "sha256": "h", "captured_at": "t"})
+    assert evidence.evidence_id == "src-1"
+    assert "source_id" not in evidence.to_dict()
+    assert evidence.to_dict()["evidence_id"] == "src-1"
+
+    candidate = Candidate.from_dict({
+        "fragment_id": "frag-1",
+        "source_id": "src-1",
+        "cell_id": "c",
+        "kind": "lesson",
+        "text": "Use evidence.",
+        "source_excerpt": "excerpt",
+        "boundary_status": "pending",
+    })
+    assert candidate.candidate_id == "frag-1"
+    assert candidate.evidence_id == "src-1"
+    assert candidate.evidence_excerpt == "excerpt"
+    assert candidate.regulator_status == "pending"
+    assert "fragment_id" not in candidate.to_dict()
+
+    memory = Memory.from_dict({"trace_id": "trace-1", "cell_id": "c", "statement": "statement", "source_fragment_ids": ["frag-1"]})
+    assert memory.memory_id == "trace-1"
+    assert memory.candidate_ids == ["frag-1"]
+    assert "trace_id" not in memory.to_dict()
+
+    pattern = Pattern.from_dict({"alloy_id": "alloy-1", "cell_id": "c", "theme": "theme", "summary": "summary", "source_trace_ids": ["trace-1"]})
+    assert pattern.pattern_id == "alloy-1"
+    assert pattern.memory_ids == ["trace-1"]
+
+    rule = RuleProposal.from_dict({"doctrine_id": "rule-1", "source_alloy_ids": ["alloy-1"], "scope": "cell", "statement": "rule", "review_status": "pending"})
+    assert rule.rule_id == "rule-1"
+    assert rule.pattern_ids == ["alloy-1"]
+
+    pack = Pack.from_dict({"loadout_id": "loadout-1", "cell_id": "c", "trace_ids": ["trace-1"], "alloy_ids": ["alloy-1"], "doctrine_ids": ["rule-1"], "trust_label": "reviewed", "generated_at": "t"})
+    assert pack.pack_id == "loadout-1"
+    assert pack.memory_ids == ["trace-1"]
+
+    feedback = Feedback.from_dict({"outcome_id": "outcome-1", "cell_id": "c", "loadout_id": "loadout-1", "task_id": "task", "verdict": "success", "trace_ids": ["trace-1"], "ignored_charge_ids": ["old"]})
+    assert feedback.feedback_id == "outcome-1"
+    assert feedback.pack_id == "loadout-1"
+    assert feedback.memory_ids == ["trace-1"]
+    assert feedback.ignored_memory_ids == ["old"]
+
+
+def test_legacy_models_remain_importable_and_round_trip_old_fields():
+    legacy_source = Source(source_id="src", cell_id="c", kind="note", sha256="h", captured_at="t")
+    legacy_fragment = Fragment(fragment_id="frag", source_id="src", cell_id="c", kind="lesson", text="text")
+    legacy_trace = Trace(trace_id="trace", cell_id="c", statement="statement", source_fragment_ids=["frag"])
+    legacy_alloy = Alloy(alloy_id="alloy", cell_id="c", theme="theme", summary="summary", source_trace_ids=["trace"])
+    legacy_rule = DoctrineProposal(doctrine_id="rule", source_alloy_ids=["alloy"], scope="cell", statement="rule")
+    legacy_pack = Loadout(loadout_id="pack", cell_id="c", trace_ids=["trace"], alloy_ids=["alloy"], doctrine_ids=["rule"], trust_label="reviewed", generated_at="t")
+    legacy_feedback = Outcome(outcome_id="feedback", cell_id="c", loadout_id="pack", task_id="task", verdict="success")
+    for item in [legacy_source, legacy_fragment, legacy_trace, legacy_alloy, legacy_rule, legacy_pack, legacy_feedback]:
+        assert_round_trips(item)

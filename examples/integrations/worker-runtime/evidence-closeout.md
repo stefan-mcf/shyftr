@@ -1,22 +1,22 @@
-# Generic Worker Runtime Report Pulse
+# Generic Worker Runtime Report evidence
 
 Task ref: runtime-task-001
 External system: generic-worker-runtime
 External run: run-success-001
 Kind: report
 
-## Evidence: Successful Workflow
+## evidence: Successful Workflow
 
-The runtime requested a Pack from ShyftR before starting a task. The Pack
-included a high-confidence Charge about checking adapter config paths before
+The runtime requested a pack from ShyftR before starting a task. The pack
+included a high-confidence memory about checking adapter config paths before
 syncing JSONL logs. The worker applied that memory, validated the adapter
 config first, then ran the task to a successful result.
 
 Result: success
-Applied charge IDs: trace-runtime-config-paths
-Useful charge IDs: trace-runtime-config-paths
+Applied memory IDs: memory-runtime-config-paths
+Useful memory IDs: memory-runtime-config-paths
 
-## Evidence: Repeated Failure Signature
+## evidence: Repeated Failure Signature
 
 The same task kind previously failed three times with the same signature:
 
@@ -27,11 +27,11 @@ The same task kind previously failed three times with the same signature:
 The repeated signature indicates an environmental limit, not a durable memory
 quality issue.
 
-## Recovery Pattern
+## Recovery pattern
 
 After the repeated failure signature was reviewed, the runtime increased the
-timeout window from 30 seconds to 120 seconds and retried with the same Pack.
-Run 4 succeeded and produced this Pulse plus a Signal report.
+timeout window from 30 seconds to 120 seconds and retried with the same pack.
+Run 4 succeeded and produced this evidence plus a feedback report.
 
 ## Caution / Anti-pattern
 

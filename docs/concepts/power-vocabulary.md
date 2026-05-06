@@ -1,37 +1,37 @@
 # Power Vocabulary
 
-ShyftR uses a power-cell vocabulary for its durable memory architecture. The terms keep the system concrete: Cells store reviewed charge, Regulators control what becomes authoritative, and Packs deliver bounded energy to agents before work.
+ShyftR uses a power-cell vocabulary for its durable memory architecture. The terms keep the system concrete: cells store reviewed memory, regulators control what becomes authoritative, and packs deliver bounded energy to agents before work.
 
 ## Formal vocabulary
 
-- **Cell**: attachable memory/power unit.
-- **Pulse**: raw experience entering a Cell as append-only evidence.
-- **Spark**: extracted candidate lesson from a Pulse.
-- **Charge**: reviewed durable memory.
-- **Coil**: distilled pattern from multiple Charges.
-- **Rail**: high-confidence multi-Cell rule.
-- **Grid**: rebuildable retrieval/index layer.
-- **Pack**: bounded memory bundle supplied to an agent or runtime.
-- **Signal**: pulseback after a Pack is used.
-- **Regulator**: review/policy regulator controlling admission, promotion, retrieval, and export.
+- **cell**: attachable memory/power unit.
+- **evidence**: raw experience entering a cell as append-only evidence.
+- **candidate**: extracted candidate lesson from a evidence.
+- **memory**: reviewed durable memory.
+- **pattern**: distilled pattern from multiple memories.
+- **rule**: high-confidence multi-cell rule.
+- **grid**: rebuildable retrieval/index layer.
+- **pack**: bounded memory bundle supplied to an agent or runtime.
+- **feedback**: evidenceback after a pack is used.
+- **regulator**: review/policy regulator controlling admission, promotion, retrieval, and export.
 - **Decay**: confidence decay.
-- **Isolation**: Isolation for unsafe, conflicting, harmful, or untrusted memory.
+- **quarantine**: quarantine for unsafe, conflicting, harmful, or untrusted memory.
 
 ## Lifecycle
 
 ```text
-Spark -> Charge -> Coil -> Rail
+candidate -> memory -> pattern -> rule
 ```
 
-A Pulse is preserved as evidence. When a Pulse reveals a reusable lesson, it becomes a Spark checked by the Regulator. Approved Sparks become Charges. Related Charges can be distilled into Coils. Coils that prove broadly useful can be promoted onto Rails.
+A evidence is preserved as evidence. When a evidence reveals a reusable lesson, it becomes a candidate checked by the regulator. Approved candidates become memories. Related memories can be distilled into patterns. patterns that prove broadly useful can be promoted onto rules.
 
 ## Application loop
 
 ```text
-Grid builds from Cell ledgers.
-Agent receives a Pack.
-Agent reports Signal.
-Signals raise confidence, trigger decay, or isolate Charges.
+grid builds from cell ledgers.
+Agent receives a pack.
+Agent reports feedback.
+feedbacks raise confidence, trigger decay, or isolate memories.
 ```
 
-The Cell Ledger remains canonical truth. The Grid is rebuildable acceleration. The Pack is application. Signal is learning. Charge confidence is evolution.
+The cell ledger remains canonical truth. The grid is rebuildable acceleration. The pack is application. feedback is learning. memory confidence is evolution.

@@ -16,7 +16,7 @@ Status: public alpha baseline published; ongoing hardening and controlled-pilot 
 
 ## Findings register
 
-| ID | Severity | Finding | Resolution status | Evidence / action |
+| ID | Severity | Finding | Resolution status | evidence / action |
 |---|---:|---|---|---|
 | F-01 | high | README was vision-heavy and not optimized as a public landing page. | resolved locally | README rewritten to status/quickstart/safety/docs/checks. |
 | F-02 | high | Public current-capability truth source was missing. | resolved locally | Added `docs/status/current-implementation-status.md`. |
@@ -30,7 +30,7 @@ Status: public alpha baseline published; ongoing hardening and controlled-pilot 
 | F-10 | medium | Local ignored artifacts needed classification. | resolved locally | Readiness script checks tracked ignored files and risky untracked files. |
 | F-11 | medium | API and console docs were incomplete. | resolved locally | Added `docs/api.md` and `docs/console.md`. |
 | F-12 | medium | Examples lacked a public map and deterministic lifecycle script. | resolved locally | Added `examples/README.md` and `examples/run-local-lifecycle.sh`. |
-| F-13 | medium | Package metadata and release stance were ambiguous. | resolved locally | `pyproject.toml` metadata updated while retaining version `0.0.0`. |
+| F-13 | medium | package metadata and release stance were ambiguous. | resolved locally | `pyproject.toml` metadata updated while retaining version `0.0.0`. |
 | F-14 | medium | Contributor/security/community surface was incomplete. | resolved locally | Added CONTRIBUTING, SECURITY, CHANGELOG, PR and issue templates. |
 | F-15 | high | Public docs needed a clear alpha/future-capability boundary. | resolved locally | Public-facing status and README mark ShyftR as alpha without internal planning references. |
 | F-16 | medium | Public readiness scan was ad hoc. | resolved locally | Added `scripts/public_readiness_check.py`. |

@@ -35,7 +35,7 @@ class ProfileProjection:
 
 
 def build_profile(cell_path: PathLike, max_tokens: int = 2000) -> ProfileProjection:
-    """Build profile projections from reviewed memory without mutating Cell truth.
+    """Build profile projections from reviewed memory without mutating cell truth.
 
     The returned artifacts are derived summaries. They are safe to delete and
     rebuild because canonical truth remains in append-only Cell ledgers.

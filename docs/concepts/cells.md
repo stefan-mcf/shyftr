@@ -1,69 +1,69 @@
-# Memory Cells
+# memory cells
 
-ShyftR's primary abstraction is a Cell.
+ShyftR's primary abstraction is a cell.
 
-A Cell is an isolated, attachable, durable memory namespace with its own Cell Ledger, Regulator, reviewed Charges, Grid, reports, and policy. A Cell can attach to a person, assistant, agent, project, team, organization, application, domain, capability, or global rail layer.
+A cell is an isolated, attachable, durable memory namespace with its own cell ledger, regulator, reviewed memories, grid, reports, and policy. A cell can attach to a person, assistant, agent, project, team, organization, application, domain, capability, or global rule layer.
 
 Canonical system vocabulary:
 
-- ShyftR Cell: a bounded attachable memory unit.
-- Regulator: the review and policy layer controlling admission, promotion, retrieval, and export.
-- Cell Ledger: the append-only canonical truth inside a Cell.
-- Charge: a reviewed durable memory item.
-- Grid: the rebuildable retrieval and index layer.
-- Pack: the bounded memory bundle supplied to an agent or runtime.
-- Signal: the pulseback record that tells ShyftR whether retrieved memory helped or harmed.
+- ShyftR cell: a bounded attachable memory unit.
+- regulator: the review and policy layer controlling admission, promotion, retrieval, and export.
+- cell ledger: the append-only canonical truth inside a cell.
+- memory: a reviewed durable memory item.
+- grid: the rebuildable retrieval and index layer.
+- pack: the bounded memory bundle supplied to an agent or runtime.
+- feedback: the evidenceback record that tells ShyftR whether retrieved memory helped or harmed.
 
-The Regulator remains separate from durable truth storage. It is the Cell-local scope and policy surface implemented by admission checks, review gates, trust-tier filtering, retrieval limits, and export rules.
+The regulator remains separate from durable truth storage. It is the cell-local scope and policy surface implemented by admission checks, review gates, trust-tier filtering, retrieval limits, and export rules.
 
-## Why Cell?
+## Why cell?
 
-ShyftR is an attachable memory module. A Cell can be slotted into an agent, project, team, tool, or domain so reviewed experience can shift future behavior.
+ShyftR is an attachable memory module. A cell can be slotted into an agent, project, team, tool, or domain so reviewed experience can shift future behavior.
 
-## Common Cell types
+## Common cell types
 
 - `core`: default user or deployment memory
 - `personal`: personal assistant memory
 - `agent`: one autonomous agent's durable learning
 - `project`: project-local knowledge and heuristics
 - `team`: shared team memory
-- `organization`: organization-wide rail
+- `organization`: organization-wide rule
 - `application`: app-specific memory
 - `domain`: domain or capability memory
-- `global-rail`: multi-Cell promoted rail
+- `global-rule`: multi-cell promoted rule
 
 ## Default memory
 
-A user's default memory can be represented as a `core` Cell.
+A user's default memory can be represented as a `core` cell.
 
 Example:
 
 ```text
 cells/core/memory/
   ledger/
-  charges/
+  memories/
   grid/
   summaries/
   reports/
   config/
 ```
 
-This lets ShyftR handle ordinary assistant memory while using the same review, promotion, retrieval, and recursive distillation machinery as project, team, agent, and domain Cells.
+This lets ShyftR handle ordinary assistant memory while using the same review, promotion, retrieval, and recursive distillation machinery as project, team, agent, and domain cells.
 
 ## Lifecycle
 
 Core ShyftR code should depend on the portable lifecycle:
 
 ```text
-Spark -> Charge -> Coil -> Rail
+candidate -> memory -> pattern -> rule
 ```
 
-- Pulse: raw evidence preserved append-only before lifecycle promotion.
-- Spark: bounded candidate memory piece extracted from a Pulse.
-- Charge: reviewed durable memory.
-- Coil: recursive pattern distilled from related Charges.
-- Rail: shared promoted rule.
+- evidence: raw evidence preserved append-only before lifecycle promotion.
+- candidate: bounded candidate memory piece extracted from a evidence.
+- memory: reviewed durable memory.
+- pattern: recursive pattern distilled from related memories.
+- rule: shared promoted rule.
 
-## Rule
+## rule
 
-Core ShyftR code should depend on Cells, the Cell Ledger, the Regulator, Pulses, Sparks, Charges, Coils, Rails, the Grid, Packs, Signal, retrieval, and distillation. Integration-specific terms should live in adapters and metadata, not in the core data model.
+Core ShyftR code should depend on cells, the cell ledger, the regulator, evidences, candidates, memories, patterns, rules, the grid, packs, feedback, retrieval, and distillation. Integration-specific terms should live in adapters and metadata, not in the core data model.

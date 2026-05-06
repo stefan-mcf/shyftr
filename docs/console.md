@@ -1,6 +1,6 @@
 # ShyftR React Console
 
-Status: local developer console for inspecting and reviewing local Cells. It is not a hosted dashboard.
+Status: local developer-preview console for inspecting and reviewing local cells. It is not a hosted dashboard.
 
 ## Setup
 
@@ -21,10 +21,10 @@ The Vite dev server binds to `127.0.0.1` by default. The console expects the loc
 
 ## Current console capabilities
 
-The current console code and `src/shyftr/console_api.py` support local Cell summaries, Spark review queues, Charge exploration, proposal decisions, Pack/Signal flows, hygiene/diagnostics, pilot metrics, operator-burden views, and policy-tuning projections. Mutating UI paths delegate to existing Regulator/ledger functions; the console is not an independent truth store.
+The current console code and `src/shyftr/console_api.py` support local cell summaries, candidate review queues, memory exploration, proposal decisions, pack/feedback flows, hygiene/diagnostics, pilot metrics, operator-burden views, and policy-tuning projections. Mutating UI paths delegate to existing regulator/ledger functions; the console is not an independent truth store.
 
 ## Boundaries
 
-- Use synthetic or operator-approved local Cells.
+- Use synthetic or operator-approved local cells.
 - Do not commit screenshots unless they are scrubbed and intentionally added.
 - Do not imply cloud hosting or multi-tenant operation from this console.

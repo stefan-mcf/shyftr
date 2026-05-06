@@ -113,16 +113,16 @@ def test_full_cli_lifecycle(tmp_path: Path) -> None:
     result = _cli("ingest", cell, str(source_file), "--kind", "document")
     assert result.returncode == 0, f"ingest failed: {result.stderr}"
     ingest_data = json.loads(result.stdout)
-    assert ingest_data["source_id"].startswith("src-")
-    source_id: str = ingest_data["source_id"]
+    assert ingest_data["evidence_id"].startswith("src-")
+    source_id: str = ingest_data["evidence_id"]
 
     # 3. fragments
-    result = _cli("fragments", cell, source_id)
+    result = _cli("candidate", cell, source_id)
     assert result.returncode == 0, f"fragment failed: {result.stderr}"
     fragments = json.loads(result.stdout)
     assert isinstance(fragments, list)
     assert len(fragments) >= 1
-    fragment_id: str = fragments[0]["fragment_id"]
+    fragment_id: str = fragments[0]["candidate_id"]
 
     # 4. review approve
     result = _cli(
@@ -142,8 +142,8 @@ def test_full_cli_lifecycle(tmp_path: Path) -> None:
     )
     assert result.returncode == 0, f"promote failed: {result.stderr}"
     trace_data = json.loads(result.stdout)
-    assert trace_data["trace_id"].startswith("trace-")
-    trace_id: str = trace_data["trace_id"]
+    assert trace_data["memory_id"].startswith("trace-")
+    trace_id: str = trace_data["memory_id"]
 
     # 6. search
     result = _cli("search", cell, "ShyftR")
@@ -159,8 +159,8 @@ def test_full_cli_lifecycle(tmp_path: Path) -> None:
     )
     assert result.returncode == 0, f"loadout failed: {result.stderr}"
     loadout_data = json.loads(result.stdout)
-    assert loadout_data["loadout_id"].startswith("lo-")
-    loadout_id: str = loadout_data["loadout_id"]
+    assert loadout_data["pack_id"].startswith("lo-")
+    loadout_id: str = loadout_data["pack_id"]
 
     # 8. outcome
     result = _cli(
@@ -170,7 +170,7 @@ def test_full_cli_lifecycle(tmp_path: Path) -> None:
     )
     assert result.returncode == 0, f"outcome failed: {result.stderr}"
     outcome_data = json.loads(result.stdout)
-    assert outcome_data["outcome_id"].startswith("oc-")
+    assert outcome_data["feedback_id"].startswith("oc-")
     assert outcome_data["verdict"] == "success"
 
 

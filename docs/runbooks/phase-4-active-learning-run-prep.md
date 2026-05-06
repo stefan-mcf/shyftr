@@ -33,10 +33,10 @@ Phase 4 makes ShyftR visibly self-learning, but it must remain review-gated acti
 
 Canonical boundaries:
 
-- Cell ledgers remain canonical truth.
-- Sweep, Challenger, API, UI, and Grid surfaces are projections or delegated append-only writes.
+- cell ledgers remain canonical truth.
+- Sweep, Challenger, API, UI, and grid surfaces are projections or delegated append-only writes.
 - No second active-learning state store.
-- No silent confidence, retrieval, lifecycle, isolation, deprecation, deletion, or overwrite changes.
+- No silent confidence, retrieval, lifecycle, quarantine, deprecation, deletion, or overwrite changes.
 - Proposals require review before authority changes.
 
 ## Recommended larger-run sequencing
@@ -53,28 +53,28 @@ Recommended autonomous sequence:
    - Add proposal fixtures before UI/API expansion.
 2. Tranche 4.1G / Proposal Review Regression Gate
    - Lock accept/reject/defer/missing-rationale/duplicate-open behavior.
-   - Verify proposal acceptance does not mutate Charge authority.
+   - Verify proposal acceptance does not mutate memory authority.
 3. Phase 4.2 / Challenger Audit Loop
    - Start only after 4.1 and 4.1G pass full tests.
-   - Challenger emits audit Sparks/proposals; it must not delete, demote, isolate, or supersede automatically.
-4. Phase 4.3 / Isolation and Challenge Workflow
+   - Challenger emits audit candidates/proposals; it must not delete, demote, isolate, or supersede automatically.
+4. Phase 4.3 / quarantine and Challenge Workflow
    - Preserve provenance.
-   - Normal Packs exclude isolated guidance.
+   - Normal packs exclude isolated guidance.
    - Audit mode can include challenged/isolated items with warnings.
-5. Phase 4.4 / Memory Conflict Arbitration
+5. Phase 4.4 / memory Conflict Arbitration
    - Resolve conflicts into scoped proposals.
    - Preserve both evidence chains.
    - No silent overwrite.
 6. Phase 4 Gate / Active-Learning Authority Review
    - Full Python tests, console build/audit, diff hygiene, independent reviewer PASS.
-7. Phase 5.1 / Grid Metadata and Staleness
-   - Grid metadata/staleness/rebuild; Grid remains non-canonical.
+7. Phase 5.1 / grid Metadata and Staleness
+   - grid metadata/staleness/rebuild; grid remains non-canonical.
 8. Phase 5.3 / Backup and Restore
    - Prioritize portability/recovery before heavier vector scale work.
 9. Phase 5.4 / Tamper-Evident Ledger Hash Chains
    - Deterministic verification, historical tamper detection, adoption path.
 10. Phase 5.5 / Privacy and Sensitivity Scoping
-   - Default leakage prevention, Pack export policy, redaction projection.
+   - Default leakage prevention, pack export policy, redaction projection.
 11. Phase 5.2 / Disk-Backed Vector Adapter
    - Optional. Do only if dependency risk remains bounded; otherwise document deferral and close Phase 5 at durability checkpoint.
 12. Phase 5 Gate / Durability Checkpoint
@@ -88,10 +88,10 @@ Suggested lanes:
 
 - `swarm5`: focused implementation lane for 4.1 Sweep Proposal Engine tests and backend implementation.
 - `swarm10`: UI/API projection lane after backend fixture gate passes.
-- `swarm6`: independent reviewer/tester across backend, UI, and doctrine boundary.
+- `swarm6`: independent reviewer/tester across backend, UI, and rule boundary.
 - Parent/controller: mutating integration owner and final commit authority.
 
-If worktree isolation is not set up, use parent-session implementation plus ephemeral reviewers instead of parallel mutating persistent workers.
+If worktree quarantine is not set up, use parent-session implementation plus ephemeral reviewers instead of parallel mutating persistent workers.
 
 ## Closeout requirements per tranche
 

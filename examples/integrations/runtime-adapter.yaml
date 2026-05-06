@@ -4,8 +4,8 @@
 # adapter using a declarative YAML config. Every runtime (agent system,
 # CLI tool, monitor, pipeline) that produces files can use this pattern.
 #
-# ShyftR vocabulary: Pulses -> Packs -> Signals -> Proposals.
-# This config describes how a runtime sends Pulses to a ShyftR Cell.
+# ShyftR vocabulary: evidences -> packs -> feedbacks -> Proposals.
+# This config describes how a runtime sends evidences to a ShyftR cell.
 #
 # Runtime-agnostic: no hardcoded agent system, queue implementation,
 # worker framework, or product-specific paths.
@@ -26,9 +26,9 @@ identity_mapping:
   external_run_id: "execution_run_id"
   external_task_id: "task_id"
 
-# Input definitions describe where and how to discover Pulse evidence.
+# Input definitions describe where and how to discover evidence evidence.
 inputs:
-  # Single file: a specific closeout or outcome report.
+  # Single file: a specific closeout or feedback report.
   - kind: "file"
     path: "closeout.md"
     source_kind: "closeout"
@@ -40,10 +40,10 @@ inputs:
     path: "logs/*.log"
     source_kind: "log"
 
-  # JSONL file: structured outcome or event records with row-level refs.
+  # JSONL file: structured feedback or event records with row-level refs.
   - kind: "jsonl"
-    path: "outcomes.jsonl"
-    source_kind: "outcome"
+    path: "feedbacks.jsonl"
+    source_kind: "feedback"
     identity_mapping:
       external_run_id: "run_id"
       external_task_id: "task_ref"

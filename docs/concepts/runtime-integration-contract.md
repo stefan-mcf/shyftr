@@ -1,7 +1,7 @@
 # Runtime Integration Contract
 
 ShyftR is a runtime-agnostic memory-cell substrate. Any external agent runtime can
-attach a ShyftR Cell by implementing four integration flows. This document defines
+attach a ShyftR cell by implementing four integration flows. This document defines
 the contract: what each flow requires, what external runtimes own versus what ShyftR
 owns, the identity fields that link external state to ShyftR memory, and the safety
 regulator between proposing and applying.
@@ -9,38 +9,38 @@ regulator between proposing and applying.
 ## The four integration flows
 
 ```text
-External runtime -> Pulses          -> ShyftR Cell
-External runtime <- Packs         <- ShyftR Cell
-External runtime -> Signal         -> ShyftR Cell
-External runtime <- Proposals        <- ShyftR Cell
+External runtime -> evidences          -> ShyftR cell
+External runtime <- packs         <- ShyftR cell
+External runtime -> feedback         -> ShyftR cell
+External runtime <- Proposals        <- ShyftR cell
 ```
 
-### 1. Pulse ingest
+### 1. evidence ingest
 
 The external runtime sends evidence to ShyftR: task closeouts, tool logs, chat
 transcripts, review notes, verification output, or any other material that may
 contain durable lessons.
 
-Pulse ingest must include:
+evidence ingest must include:
 
-- **Pulse text or content** — the raw evidence
-- **Pulse kind** — one or more labels such as `closeout`, `log`, `note`,
+- **evidence text or content** — the raw evidence
+- **evidence kind** — one or more labels such as `closeout`, `log`, `note`,
   `transcript`, `review`, `artifact`, `error`
-- **Pulse kind map** — maps the external runtime's notion of a pulse kind to
-  ShyftR's pulse kind vocabulary; two basic kinds are `file` and `jsonl_row`
+- **evidence kind map** — maps the external runtime's notion of a evidence kind to
+  ShyftR's evidence kind vocabulary; two basic kinds are `file` and `jsonl_row`
 - **External references** — see [External identity fields](#external-identity-fields)
 
-ShyftR accepts the Pulse, stores it in an append-only ledger, and then extracts
-candidate Sparks. Pulses themselves do not become durable memory — only reviewed
-Sparks promoted to Charges do.
+ShyftR accepts the evidence, stores it in an append-only ledger, and then extracts
+candidate candidates. evidences themselves do not become durable memory — only reviewed
+candidates promoted to memories do.
 
-### 2. Pack request
+### 2. pack request
 
 Before beginning work, the external runtime asks ShyftR for applicable memory.
 
-A Pack request must include at minimum:
+A pack request must include at minimum:
 
-- **Cell identifier** — which ShyftR Cell to query
+- **cell identifier** — which ShyftR cell to query
 - **Query or task description** — natural language or structured description of
   the upcoming work
 - **External identity fields** — see below
@@ -49,66 +49,66 @@ Optional request fields:
 
 - **Task kind** — a label the runtime uses to classify work
 - **Tags** — additional filter labels
-- **Max items or tokens** — bound the Pack size
-- **Requested trust tiers** — for example, Rail only, Charges + Rail, or
-  include Sparks as background
+- **Max items or tokens** — bound the pack size
+- **Requested trust tiers** — for example, rule only, memories + rule, or
+  include candidates as background
 
-ShyftR returns a Pack: a bounded, trust-labeled memory bundle containing:
+ShyftR returns a pack: a bounded, trust-labeled memory bundle containing:
 
-- **Guidance items** — Charges, Rail rules, or Coils likely to help
+- **Guidance items** — memories, rule rules, or patterns likely to help
 - **Caution items** — failure signatures, anti-patterns, or expired rules that
   warn against repeating past mistakes
-- **Background items** — lower-confidence or candidate-level context (Sparks
+- **Background items** — lower-confidence or candidate-level context (candidates
   or unverified material)
 - **Conflict items** — if memory disagrees, both sides are shown
 - **Risk flags** — if the query touches a known high-risk or fragile domain
 
-Every Pack item includes:
+Every pack item includes:
 
 - A stable unique ID
-- A trust tier label (Pulse, Spark, Charge, Coil, Rail)
+- A trust tier label (evidence, candidate, memory, pattern, rule)
 - Confidence score
-- Memory kind (success_pattern, failure_signature, anti_pattern, etc.)
-- Provenance references back to the original Pulse
+- memory kind (success_pattern, failure_signature, anti_pattern, etc.)
+- Provenance references back to the original evidence
 
-### 3. Signal report
+### 3. feedback report
 
 After work completes, the external runtime tells ShyftR what happened.
 
-An Signal report must include at minimum:
+An feedback report must include at minimum:
 
-- **Pack ID** — which Pack was used
+- **pack ID** — which pack was used
 - **External identity fields** — see below
 - **Result** — one of: `success`, `failure`, `partial`, or `unknown`
 
 Optional report fields:
 
-- **Applied Charge IDs** — which retrieved memory items were actually used
-- **Useful Charge IDs** — which items actively helped
-- **Harmful Charge IDs** — which items misled or caused problems
-- **Ignored Charge IDs** — which items were retrieved but set aside
+- **Applied memory IDs** — which retrieved memory items were actually used
+- **Useful memory IDs** — which items actively helped
+- **Harmful memory IDs** — which items misled or caused problems
+- **Ignored memory IDs** — which items were retrieved but set aside
 - **Violated caution IDs** — if a caution was present and violated
 - **Missing memory notes** — what the runtime wished ShyftR had known
 - **Verification evidence** — output references or digests that prove the result
 - **Runtime metadata** — any additional runtime-specific context
 
-ShyftR stores the Signal in an append-only Signal ledger, then adjusts Charge
+ShyftR stores the feedback in an append-only feedback ledger, then adjusts memory
 confidence scores: rising for applied-and-successful items, falling for
 applied-and-failed or harmful items.
 
 ### 4. Proposal review and export
 
-ShyftR periodically generates proposals: suggestions for new Charges, Coils,
-Rail updates, deprecation candidates, or process improvements. Proposals
+ShyftR periodically generates proposals: suggestions for new memories, patterns,
+rule updates, deprecation candidates, or process improvements. Proposals
 are not automatically applied — they are exported for human or manager review.
 
 Proposals typically arise from:
 
-- Recurring Spark patterns that suggest a new Charge
-- Multiple related Charges that could be consolidated into an Coil
-- Cross-Cell resonance that suggests Rail promotion
-- Decay signals that suggest deprecation or supersession
-- Repeated Signal patterns that reveal a systemic gap
+- Recurring candidate patterns that suggest a new memory
+- Multiple related memories that could be consolidated into an pattern
+- Cross-cell resonance that suggests rule promotion
+- Decay feedbacks that suggest deprecation or supersession
+- Repeated feedback patterns that reveal a systemic gap
 
 The external runtime or its operator reviews proposals and decides whether to
 accept, reject, or defer each one. ShyftR mutates durable memory only after
@@ -130,8 +130,8 @@ A `RuntimeProposal` contains:
 | `target_external_scope` | Yes | Runtime scope within that system |
 | `target_external_refs` | No | Structured external references such as task, file, issue, or policy references |
 | `recommendation` | Yes | Human-readable advisory recommendation |
-| `evidence_charge_ids` | No | Charge IDs that support the proposal |
-| `evidence_pulse_ids` | No | Pulse IDs that support the proposal |
+| `evidence_memory_ids` | No | memory IDs that support the proposal |
+| `evidence_evidence_ids` | No | Evidence IDs that support the proposal |
 | `confidence` | Yes | Confidence score from `0.0` to `1.0` |
 | `review_status` | Yes | `pending`, `accepted`, `rejected`, or `deferred` |
 | `created_timestamp` | Yes | Timestamp for proposal creation |
@@ -164,13 +164,13 @@ The response includes:
 - `mutates_external_runtime: false`
 - a `proposals` array containing provenance-linked `RuntimeProposal` objects
 
-ShyftR may write an export file inside the Cell when an output path is supplied,
+ShyftR may write an export file inside the cell when an output path is supplied,
 but it must not edit external runtime policy files, queues, task state, or
 configuration as part of proposal export.
 
 ### Optional adapter plugins
 
-ShyftR core includes a built-in file/JSONL adapter for local Pulse ingest. Other
+ShyftR core includes a built-in file/JSONL adapter for local evidence ingest. Other
 runtime adapters can live in separate Python packages and advertise themselves
 through the `shyftr.adapters` entry point group.
 
@@ -191,8 +191,8 @@ The CLI command for discovery is:
 shyftr adapter list --json
 ```
 
-Discovery is introspection-only. Listing plugins must not ingest Pulses, mutate
-Cell ledgers, edit runtime policy, or require optional adapter dependencies to be
+Discovery is introspection-only. Listing plugins must not ingest evidences, mutate
+cell ledgers, edit runtime policy, or require optional adapter dependencies to be
 installed for ShyftR core imports to succeed.
 
 Third-party packages can register adapters with packaging metadata such as:
@@ -224,12 +224,12 @@ The external runtime owns all operational execution:
 
 ShyftR owns durable learning:
 
-- Pulse capture and append-only persistence
-- Spark extraction and provenance linking
-- Review-gated Charge promotion
-- Trust-labeled Pack assembly and retrieval
-- Signal recording and confidence evolution
-- Coil and Rail proposal generation
+- evidence capture and append-only persistence
+- candidate extraction and provenance linking
+- Review-gated memory promotion
+- Trust-labeled pack assembly and retrieval
+- feedback recording and confidence evolution
+- pattern and rule proposal generation
 - Audit, hygiene, decay, and recursive distillation
 
 ShyftR may advise a runtime but must not silently control it. All durable
@@ -237,7 +237,7 @@ memory mutations are review-gated.
 
 ## External identity fields
 
-Every Pulse, Pack request, and Signal report must carry stable external
+Every evidence, pack request, and feedback report must carry stable external
 identity fields so ShyftR can correlate memory across runs and systems.
 
 | Field | Required | Description |
@@ -255,9 +255,9 @@ deduplication. ShyftR must not treat them as durable lesson content.
 
 ### File ingest
 
-Ingesting the same file twice must produce exactly one Pulse record. Content
+Ingesting the same file twice must produce exactly one evidence record. Content
 hash is the deduplication key. If the file content changes, the new content
-produces a new Pulse; the old Pulse remains unchanged.
+produces a new evidence; the old evidence remains unchanged.
 
 ### JSONL ingest
 
@@ -276,13 +276,13 @@ already-ingested rows.
 For append-only external files, ShyftR maintains per-adapter sync state:
 
 - Adapter ID
-- Pulse path
+- evidence path
 - Last ingested byte offset
 - Last ingested line number
 - Last content hash
 - Last sync timestamp
 
-Sync state is stored alongside the Cell's configuration. File truncation or
+Sync state is stored alongside the cell's configuration. File truncation or
 rotation triggers a safety check that requires explicit reset or backfill before
 new ingestion proceeds.
 
@@ -292,7 +292,7 @@ new ingestion proceeds.
 ShyftR proposes. The runtime applies.
 ```
 
-- ShyftR generates proposals for new Charges, Coils, Rail updates, and
+- ShyftR generates proposals for new memories, patterns, rule updates, and
   deprecation candidates.
 - Proposals are exported for review — they are not automatically committed to
   durable memory.
@@ -302,7 +302,7 @@ ShyftR proposes. The runtime applies.
   policy, configuration, or operational state.
 - Active execution state is never durable memory. Operational facts such as
   "task X is in progress" or "worker Y holds branch Z" belong in the runtime's
-  own state management, not in ShyftR's Cells.
+  own state management, not in ShyftR's cells.
 
 This regulator holds even when ShyftR is embedded in the same process as a
 runtime. The separation is logical, not topological.
@@ -311,15 +311,15 @@ runtime. The separation is logical, not topological.
 
 This contract uses ShyftR's canonical terms for all durable memory concepts:
 
-- **Pulse** — raw evidence sent from a runtime
-- **Spark** — bounded candidate memory extracted from a Pulse
-- **Charge** — reviewed, promoted durable memory
-- **Coil** — recursively distilled pattern from multiple Charges
-- **Rail** — shared promoted rule
-- **Cell** — isolated, attachable memory namespace
-- **Grid** — retrieval indexes and acceleration layer
-- **Pack** — bounded memory bundle returned before work
-- **Signal** — learning signal returned after work
+- **evidence** — raw evidence sent from a runtime
+- **candidate** — bounded candidate memory extracted from a evidence
+- **memory** — reviewed, promoted durable memory
+- **pattern** — recursively distilled pattern from multiple memories
+- **rule** — shared promoted rule
+- **cell** — isolated, attachable memory namespace
+- **grid** — retrieval indexes and acceleration layer
+- **pack** — bounded memory bundle returned before work
+- **feedback** — learning feedback returned after work
 - **Proposal** — review-gated suggestion for memory mutation
 
 No runtime-specific product names, queue terminology, worker framework labels,

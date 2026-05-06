@@ -55,7 +55,7 @@ def test_remember_trusted_promotes_preference_with_required_metadata_and_search(
     assert sources[0]["metadata"]["pulse_channel"] == "cli"
     assert sources[0]["metadata"]["created_at"] == "2026-04-30T03:00:00Z"
     assert fragments[0]["source_id"] == result.pulse_id
-    assert reviews[0]["fragment_id"] == result.spark_id
+    assert reviews[0]["candidate_id"] == result.spark_id
     assert reviews[0]["review_status"] == "approved"
     assert reviews[0]["metadata"]["regulator_decision"]["trusted_direct_promotion"] is True
     assert promotions[0]["source_id"] == result.pulse_id

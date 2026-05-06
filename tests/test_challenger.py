@@ -145,7 +145,7 @@ class TestChallengerFinding:
         )
         d = f.to_dict()
         assert d["rank_score"] == 0.75
-        assert d["fragment_id"] == "frag-1"
+        assert d["candidate_id"] == "frag-1"
         assert d["signal_strength"] == 0.8
 
 

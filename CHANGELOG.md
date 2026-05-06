@@ -4,7 +4,7 @@
 
 ### Controlled-pilot MVP prep
 
-- Reworked public landing documentation around local-first, append-only Cell truth.
+- Reworked public landing documentation around local-first, append-only cell truth.
 - Added current implementation status and public-readiness audit ledgers.
 - Added deterministic local lifecycle and public readiness scripts.
 - Added API, console, development, contribution, and security documentation.

@@ -14,20 +14,20 @@ Source of truth:
 Execution rules:
 - Follow every tranche gate exactly before committing that tranche.
 - Use tranche-sized commits with the commit messages specified in the plan where possible.
-- Preserve ShyftR doctrine: Cell ledgers are canonical truth; Grid/API/UI/Sweep/Challenger are projections or delegated append-only writers only.
-- Treat active-learning outputs as review-gated proposals, audit Sparks, lifecycle events, or projections until explicit review applies authority.
+- Preserve ShyftR rule: cell ledgers are canonical truth; grid/API/UI/Sweep/Challenger are projections or delegated append-only writers only.
+- Treat active-learning outputs as review-gated proposals, audit candidates, lifecycle events, or projections until explicit review applies authority.
 - Deduplicate proposals against decision-folded open proposal projections, not raw proposal rows.
-- Do not silently mutate Charge confidence, lifecycle, retrieval affinity, Pack output, text, scope, or provenance.
-- Stop early only for failing tests that cannot be resolved, dependency/auth failure, unclear destructive migration risk, a violated Cell-ledger authority boundary, or a reviewer gate that returns blocking issues.
+- Do not silently mutate memory confidence, lifecycle, retrieval affinity, pack output, text, scope, or provenance.
+- Stop early only for failing tests that cannot be resolved, dependency/auth failure, unclear destructive migration risk, a violated cell-ledger authority boundary, or a reviewer gate that returns blocking issues.
 
 Required sequence:
 1. Tranche 4.1: Sweep Proposal Engine
 2. Tranche 4.1G: Proposal Review Regression Gate
 3. Tranche 4.2: Challenger Audit Loop
-4. Tranche 4.3: Isolation and Challenge Workflow
-5. Tranche 4.4: Memory Conflict Arbitration
+4. Tranche 4.3: quarantine and Challenge Workflow
+5. Tranche 4.4: memory Conflict Arbitration
 6. Phase 4 Gate: Active-Learning Authority Review
-7. Tranche 5.1: Grid Metadata and Staleness
+7. Tranche 5.1: grid Metadata and Staleness
 8. Tranche 5.3: Backup and Restore
 9. Tranche 5.4: Tamper-Evident Ledger Hash Chains
 10. Tranche 5.5: Privacy and Sensitivity Scoping

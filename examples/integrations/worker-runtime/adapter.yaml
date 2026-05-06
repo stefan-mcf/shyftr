@@ -9,13 +9,13 @@ identity_mapping:
   external_task_id: "external_task_id"
 inputs:
   - kind: "file"
-    path: "pulse-closeout.md"
+    path: "evidence-closeout.md"
     source_kind: "closeout"
     identity_mapping:
       external_task_id: "task_ref"
   - kind: "jsonl"
-    path: "signal-log.jsonl"
-    source_kind: "outcome"
+    path: "feedback-log.jsonl"
+    source_kind: "feedback"
     identity_mapping:
       external_run_id: "external_run_id"
       external_task_id: "external_task_id"
@@ -23,8 +23,8 @@ inputs:
     path: "task-request.json"
     source_kind: "task"
   - kind: "file"
-    path: "signal-report.json"
-    source_kind: "outcome"
+    path: "feedback-report.json"
+    source_kind: "feedback"
 ingest_options:
   deduplicate: true
   recursive: false

@@ -149,7 +149,7 @@ def main() -> int:
     if risky:
         fail(errors, "risky nonignored untracked files: " + ", ".join(risky[:10]))
 
-    for path in [ROOT / "examples" / "task.json", ROOT / "examples" / "integrations" / "task-request.json", ROOT / "examples" / "integrations" / "outcome-report.json"]:
+    for path in [ROOT / "examples" / "task.json", ROOT / "examples" / "integrations" / "task-request.json", ROOT / "examples" / "integrations" / "feedback-report.json"]:
         try:
             json.loads(path.read_text(encoding="utf-8"))
         except Exception as exc:

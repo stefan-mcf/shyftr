@@ -9,8 +9,8 @@ Core product promise:
 1. Capture evidence from agents, tools, docs, runtimes, and users.
 2. Convert evidence into reviewable memory candidates.
 3. Promote only reviewed, provenance-linked durable memory.
-4. Retrieve bounded, role-labelled Packs for agent tasks.
-5. Record Signal after use.
+4. Retrieve bounded, role-labelled packs for agent tasks.
+5. Record feedback after use.
 6. Learn from useful, harmful, ignored, missing, and over-retrieved memory.
 7. Maintain trust through audit, challenge, replay, and review gates.
 8. Expose the system through CLI, local HTTP API, and a minimal operator UI.
@@ -20,8 +20,8 @@ The MVP should not be "a vector store with notes". It should be:
 A local-first agent memory control plane with:
 - append-only ledger truth
 - review-gated memory
-- Pack generation
-- Signal reporting
+- pack generation
+- feedback reporting
 - memory health reporting
 - extensive observability for optimization and audit
 - minimal frontend inspection and review
@@ -30,7 +30,7 @@ Important source concepts:
 - [Runtime-neutral pivot concept review](../sources/2026-05-05-shyftr-runtime-neutral-pivot-concept-review.md)
 - [Compaction Intelligence Concept](../sources/2026-05-05-shyftr-compaction-intelligence-concept.md)
 
-The compaction intelligence concept is a future product direction, but it should influence the near-term architecture now. ShyftR should be able to provide continuity-oriented Packs before a runtime compacts context, then learn from Compaction Signals after resumed work. This reinforces the main Pack -> Signal learning loop and strengthens ShyftR's role as a replacement-grade memory substrate rather than a passive store.
+The compaction intelligence concept is a future product direction, but it should influence the near-term architecture now. ShyftR should be able to provide continuity-oriented packs before a runtime compacts context, then learn from Compaction feedbacks after resumed work. This reinforces the main pack -> feedback learning loop and strengthens ShyftR's role as a replacement-grade memory substrate rather than a passive store.
 
 ---
 
@@ -51,11 +51,11 @@ Produce a clean map of what is actually implemented versus what exists only in d
    - local HTTP routes
    - provider API
    - adapter API
-   - Pack/Loadout API
-   - Signal/Outcome API
+   - pack/pack API
+   - feedback/feedback API
    - Sweep
    - Challenger
-   - vector/Grid backends
+   - vector/grid backends
    - front end status
 4. Compare current implementation against:
    - main MVP plan
@@ -110,24 +110,24 @@ Make test status non-negotiable before any new work.
 Resolve the split between legacy implementation names and public vocabulary.
 
 Current code appears to use implementation names like:
-- Source / Fragment / Trace / Loadout / Outcome
+- Source / candidate / memory / pack / feedback
 
 Public vocabulary wants:
-- Pulse / Spark / Charge / Pack / Signal
+- evidence / candidate / memory / pack / feedback
 
 ### Tasks
 1. Define a formal compatibility matrix:
-   - Source = Pulse
-   - Fragment = Spark
-   - Trace = Charge
-   - Loadout = Pack
-   - Outcome = Signal
+   - Source = evidence
+   - candidate = candidate
+   - memory = memory
+   - pack = pack
+   - feedback = feedback
 2. Add `docs/concepts/vocabulary-compatibility.md`.
 3. Ensure all public docs use the power vocabulary.
 4. Ensure code can keep legacy names internally without confusing external APIs.
 5. API outputs should expose both where useful:
-   - `charge_id`
-   - `trace_id` as compatibility field
+   - `memory_id`
+   - `memory_id` as compatibility field
 6. Add tests that confirm backwards compatibility.
 
 ### Acceptance Criteria
@@ -141,15 +141,15 @@ Public vocabulary wants:
 ## Tranche 0.4: Canonical Ledger Path Lock
 
 ### Objective
-Stop ambiguity between `charges/approved.jsonl` and `traces/approved.jsonl`, and between `pulses/sparks` and `sources/fragments`.
+Stop ambiguity between `memories/approved.jsonl` and `memories/approved.jsonl`, and between `evidences/candidates` and `sources/candidates`.
 
 ### Tasks
 1. Decide canonical write paths for MVP:
    - Prefer public paths:
-     - `ledger/pulses.jsonl`
-     - `ledger/sparks.jsonl`
-     - `charges/approved.jsonl`
-     - `ledger/signals.jsonl`
+     - `ledger/evidences.jsonl`
+     - `ledger/candidates.jsonl`
+     - `memories/approved.jsonl`
+     - `ledger/feedbacks.jsonl`
    - Or formally keep internal legacy paths and expose projection aliases.
 2. Add a `ledger_paths.py` module with constants.
 3. Replace hardcoded string paths across the codebase.
@@ -224,7 +224,7 @@ Prevent future schema changes from breaking existing cells.
 
 ---
 
-## Tranche 0.7: Packaging, README, and Installation Repair
+## Tranche 0.7: packaging, README, and Installation Repair
 
 ### Objective
 Make the project installable and understandable.
@@ -269,7 +269,7 @@ Make the provider API the stable programmatic surface.
 3. `search`
 4. `profile`
 5. `pack`
-6. `record_signal`
+6. `record_feedback`
 7. `forget`
 8. `replace`
 9. `deprecate`
@@ -277,7 +277,7 @@ Make the provider API the stable programmatic surface.
 11. `import_snapshot`
 
 ### Tasks
-1. Add/complete `MemoryProvider`.
+1. Add/complete `memoryProvider`.
 2. Ensure every operation returns:
    - stable ID
    - status
@@ -294,28 +294,28 @@ Make the provider API the stable programmatic surface.
 
 ---
 
-## Tranche 1.2: Runtime Pack API Hardening
+## Tranche 1.2: Runtime pack API Hardening
 
 ### Objective
 Freeze the JSON contract used by external runtimes.
 
 ### Tasks
-1. Finalize `RuntimeLoadoutRequest`.
-2. Finalize `RuntimeLoadoutResponse`.
+1. Finalize `RuntimepackRequest`.
+2. Finalize `RuntimepackResponse`.
 3. Ensure response includes:
-   - pack/loadout ID
+   - pack/pack ID
    - selected IDs
    - guidance items
    - caution items
    - background items
    - conflict items
-   - score traces
+   - score memories
    - trust labels
    - provenance references
    - token estimate
 4. Add compatibility aliases:
-   - Pack = Loadout
-   - Charge = Trace
+   - pack = pack
+   - memory = memory
 5. Add JSON schema docs.
 
 ### Acceptance Criteria
@@ -325,13 +325,13 @@ Freeze the JSON contract used by external runtimes.
 
 ---
 
-## Tranche 1.3: Runtime Signal API Hardening
+## Tranche 1.3: Runtime feedback API Hardening
 
 ### Objective
 Make runtime feedback structured enough to drive learning.
 
 ### Tasks
-1. Finalize `RuntimeOutcomeReport`.
+1. Finalize `RuntimefeedbackReport`.
 2. Support:
    - success
    - failure
@@ -351,22 +351,22 @@ Make runtime feedback structured enough to drive learning.
    - task ID
    - runtime ID
    - actor/source identity
-5. Append Signal/Outcome records.
+5. Append feedback/feedback records.
 6. Generate missing-memory candidates from missing entries.
 
 ### Acceptance Criteria
-- Signal can be linked back to Pack retrieval logs.
+- feedback can be linked back to pack retrieval logs.
 - Useful/harmful/missing feedback is persisted.
 - Missing memory does not bypass review.
 
 ---
 
-## Tranche 1.4: Pack Compiler MVP
+## Tranche 1.4: pack Compiler MVP
 
 ### Objective
-Move Pack output from “retrieved list” to “agent-ready memory packet”.
+Move pack output from “retrieved list” to “agent-ready memory packet”.
 
-### Pack Sections
+### pack Sections
 1. Mission-relevant guidance
 2. Known failure signatures
 3. Caution / anti-patterns
@@ -376,8 +376,8 @@ Move Pack output from “retrieved list” to “agent-ready memory packet”.
 7. Suggested next check
 
 ### Tasks
-1. Add `PackCompiler`.
-2. Convert selected retrieval items into structured Pack sections.
+1. Add `packCompiler`.
+2. Convert selected retrieval items into structured pack sections.
 3. Keep provenance for every section.
 4. Enforce token budget.
 5. Add compiler modes:
@@ -388,20 +388,20 @@ Move Pack output from “retrieved list” to “agent-ready memory packet”.
 6. Add tests with fixed fixtures.
 
 ### Acceptance Criteria
-- Pack is directly consumable by an agent prompt.
+- pack is directly consumable by an agent prompt.
 - Guidance and caution are clearly separated.
 - Compiler never invents unbacked memory.
 - Output remains deterministic.
 
 ---
 
-## Tranche 1.5: Pack-Miss Learning MVP
+## Tranche 1.5: pack-Miss Learning MVP
 
 ### Objective
 Teach ShyftR when retrieved memory was not useful.
 
 ### Tasks
-1. Compare each Signal against its Pack.
+1. Compare each feedback against its pack.
 2. Derive miss categories:
    - not_relevant
    - not_actionable
@@ -410,10 +410,10 @@ Teach ShyftR when retrieved memory was not useful.
    - unknown
 3. Track over-retrieval separately from harmful memory.
 4. Add reports:
-   - most missed Charges
-   - high-confidence missed Charges
-   - over-retrieved Charges
-   - mixed-signal Charges
+   - most missed memories
+   - high-confidence missed memories
+   - over-retrieved memories
+   - mixed-feedback memories
 5. Ensure a single miss does not automatically reduce global confidence.
 
 ### Acceptance Criteria
@@ -426,7 +426,7 @@ Teach ShyftR when retrieved memory was not useful.
 ## Tranche 1.6: Confidence Events MVP
 
 ### Objective
-Turn Signal into append-only confidence evolution.
+Turn feedback into append-only confidence evolution.
 
 ### Tasks
 1. Add confidence event schema:
@@ -435,12 +435,12 @@ Turn Signal into append-only confidence evolution.
    - no_change
    - manual_review_required
 2. Record event source:
-   - signal
+   - feedback
    - sweep
    - audit
    - manual review
 3. Derive current confidence projection from event history.
-4. Do not rewrite original Charge confidence.
+4. Do not rewrite original memory confidence.
 5. Add tests for:
    - useful applied memory
    - harmful applied memory
@@ -449,8 +449,8 @@ Turn Signal into append-only confidence evolution.
 
 ### Acceptance Criteria
 - Confidence is replayable from ledgers.
-- Useful Signals can raise confidence.
-- Harmful Signals can lower confidence.
+- Useful feedbacks can raise confidence.
+- Harmful feedbacks can lower confidence.
 - Misses influence retrieval affinity before confidence.
 
 ---
@@ -476,7 +476,7 @@ Separate false-memory judgments from task-specific usefulness judgments.
 ### Acceptance Criteria
 - Repeated misses reduce retrieval affinity for similar queries.
 - Confidence remains separate from relevance.
-- Pack quality improves without destructive mutation.
+- pack quality improves without destructive mutation.
 
 ---
 
@@ -485,20 +485,20 @@ Separate false-memory judgments from task-specific usefulness judgments.
 ### Objective
 Make the existing local service a reliable backend for the MVP front end.
 
-The current server already exposes local endpoints for validate, ingest, pack, signal, proposals, and health while keeping the CLI as the primary interface and avoiding a second truth path :contentReference[oaicite:1]{index=1}.
+The current server already exposes local endpoints for validate, ingest, pack, feedback, proposals, and health while keeping the CLI as the primary interface and avoiding a second truth path :contentReference[oaicite:1]{index=1}.
 
 ### Tasks
 1. Add endpoints:
    - `GET /cells`
    - `GET /cell/{id}/status`
-   - `GET /cell/{id}/sparks`
-   - `POST /cell/{id}/spark/{id}/approve`
-   - `POST /cell/{id}/spark/{id}/reject`
-   - `GET /cell/{id}/charges`
+   - `GET /cell/{id}/candidates`
+   - `POST /cell/{id}/candidate/{id}/approve`
+   - `POST /cell/{id}/candidate/{id}/reject`
+   - `GET /cell/{id}/memories`
    - `GET /cell/{id}/hygiene`
    - `GET /cell/{id}/sweep`
    - `POST /cell/{id}/pack`
-   - `POST /cell/{id}/signal`
+   - `POST /cell/{id}/feedback`
 2. Add consistent error schema.
 3. Add request IDs.
 4. Add localhost-only default.
@@ -522,9 +522,9 @@ This tranche is the first explicit replacement-readiness gate. It should be comp
 
 ### Tasks
 1. Add a replacement-readiness test harness covering:
-   - remember / search / profile / pack / signal lifecycle;
+   - remember / search / profile / pack / feedback lifecycle;
    - import/export snapshot round trip;
-   - repeated Pack generation from the same Cell state;
+   - repeated pack generation from the same cell state;
    - missing-memory feedback;
    - harmful and contradicted memory feedback;
    - stale-memory exclusion;
@@ -534,46 +534,46 @@ This tranche is the first explicit replacement-readiness gate. It should be comp
    - task closeouts;
    - user/project preferences;
    - noisy operational state that must be rejected;
-   - repeated successful and failed Pack applications.
+   - repeated successful and failed pack applications.
 3. Add structured observability for optimization:
    - request ID;
    - cell ID;
    - runtime ID;
    - operation name;
-   - selected Charge IDs;
+   - selected memory IDs;
    - scoring components;
-   - Pack token estimate;
-   - Signal linkage;
+   - pack token estimate;
+   - feedback linkage;
    - confidence / affinity event IDs;
-   - warnings and Regulator decisions;
+   - warnings and regulator decisions;
    - latency and error class.
 4. Add CLI/API access to diagnostic logs and replay reports.
 5. Add regression tests for replacement-critical behavior:
    - no ledger write bypass;
-   - deterministic Pack compilation;
-   - provenance on every Pack section;
+   - deterministic pack compilation;
+   - provenance on every pack section;
    - review-gated promotion;
    - fallback/export path preserved;
    - no secret or operational-state promotion.
 6. Add a replacement-readiness report command, for example `shyftr readiness --replacement-pilot`, that returns pass/fail with blocking reasons.
 7. Document the first functional replacement runbook:
    - shadow import;
-   - advisory Pack comparison;
+   - advisory pack comparison;
    - bounded-domain primary mode;
    - fallback mode;
    - rollback/archive procedure.
 
 ### Acceptance Criteria
 - Full replacement-readiness test suite passes locally and in CI.
-- A replay fixture proves ShyftR can ingest exported managed-memory records, produce Packs, record Signals, and update confidence without losing provenance.
-- Diagnostic logs can explain why every Pack item was selected or excluded.
+- A replay fixture proves ShyftR can ingest exported managed-memory records, produce packs, record feedbacks, and update confidence without losing provenance.
+- Diagnostic logs can explain why every pack item was selected or excluded.
 - Replacement-readiness report clearly says whether ShyftR is safe for bounded-domain primary memory.
 - Existing memory backend remains available as fallback/archive during the first replacement pilot.
 - This tranche does not require the front end; CLI and local HTTP API are sufficient for the first replacement checkpoint.
 
 ---
 
-## Runtime Memory Integration Checkpoints
+## Runtime memory Integration Checkpoints
 
 These checkpoints define when ShyftR should begin attaching to a real target runtime and how strongly it should influence memory authority. They are deliberately progressive: observe first, advise second, replace only after validation. Named runtimes and legacy memory systems belong in adapter notes or source references; the main plan stays runtime-neutral.
 
@@ -582,8 +582,8 @@ These checkpoints define when ShyftR should begin attaching to a real target run
 Begin the earliest safe runtime integration after:
 
 - Tranche 1.1: Provider API Completion
-- Tranche 1.2: Runtime Pack API Hardening
-- Tranche 1.3: Runtime Signal API Hardening
+- Tranche 1.2: Runtime pack API Hardening
+- Tranche 1.3: Runtime feedback API Hardening
 
 At this point, ShyftR can sit beside a target runtime without controlling execution or memory authority.
 
@@ -594,21 +594,21 @@ Connect ShyftR to:
 - worker/actor role
 - task summary
 - completion closeouts
-- review outcomes
+- review feedbacks
 - success/failure labels
 
-Rules:
+rules:
 
 - Do not replace the existing memory backend yet.
 - Do not inject ShyftR output as authoritative memory yet.
-- Use this stage to answer: “Can ShyftR observe a real runtime and produce useful Packs without breaking anything?”
+- Use this stage to answer: “Can ShyftR observe a real runtime and produce useful packs without breaking anything?”
 
-### Checkpoint B: after Tranche 1.5 — advisory Pack injection
+### Checkpoint B: after Tranche 1.5 — advisory pack injection
 
 Begin advisory integration after:
 
-- Tranche 1.4: Pack Compiler MVP
-- Tranche 1.5: Pack-Miss Learning MVP
+- Tranche 1.4: pack Compiler MVP
+- Tranche 1.5: pack-Miss Learning MVP
 
 At this point, ShyftR becomes useful enough to feed bounded runtime domains, but it is still not the main memory provider.
 
@@ -619,12 +619,12 @@ Where to plug it in:
 - Avoid plugging directly into every low-level worker immediately.
 - Prefer a higher-context manager layer first because it has more context and fewer noisy task events.
 
-Rules:
+rules:
 
-- ShyftR Packs may be injected as advisory context.
+- ShyftR packs may be injected as advisory context.
 - Managers should label ShyftR material as advisory.
 - The existing memory backend remains primary during this checkpoint.
-- Pack misses and over-retrieval should be measured before expanding scope.
+- pack misses and over-retrieval should be measured before expanding scope.
 
 ### Checkpoint C: after Tranche 1.9 plus controlled replay — first managed-memory replacement checkpoint
 
@@ -640,8 +640,8 @@ Consider bounded-domain primary memory only after:
 
 At this point, ShyftR has:
 
-- stable Pack API
-- stable Signal API
+- stable pack API
+- stable feedback API
 - memory feedback loop
 - retrieval-affinity learning
 - confidence evolution
@@ -653,31 +653,31 @@ At this point, ShyftR has:
 
 Replacing a memory backend changes memory authority, not storage location alone.
 
-Rules:
+rules:
 
 - Start with bounded-domain memory, not runtime-wide memory authority.
 - Keep the existing memory backend as fallback/archive during the first bounded-domain replacement pass.
-- Require Signal reporting for every ShyftR-influenced runtime task.
-- Require diagnostic logs for every Pack, Signal, confidence event, and retrieval-affinity event.
+- Require feedback reporting for every ShyftR-influenced runtime task.
+- Require diagnostic logs for every pack, feedback, confidence event, and retrieval-affinity event.
 - Require review of harmful, contradicted, or repeatedly ignored memory before expanding authority.
 - Functional replacement can begin here without waiting for the Phase 2 front end, provided CLI/API readiness checks pass.
 
 ### Checkpoint D: after bounded-domain pilot success — runtime-wide memory authority
 
-Only after bounded-domain memory pilots show stable Pack quality, useful Signals, bounded operator burden, and recoverable failure modes should ShyftR become the primary durable memory provider for a whole runtime.
+Only after bounded-domain memory pilots show stable pack quality, useful feedbacks, bounded operator burden, and recoverable failure modes should ShyftR become the primary durable memory provider for a whole runtime.
 
 Replacement sequence:
 
 1. Stage A: existing backend primary, ShyftR shadow.
-2. Stage B: existing backend primary, ShyftR advisory Pack injected.
+2. Stage B: existing backend primary, ShyftR advisory pack injected.
 3. Stage C: ShyftR primary for bounded-domain memory, existing backend fallback.
 4. Stage D: ShyftR primary for runtime-wide memory, existing backend disabled or archive-only.
 
-Rules:
+rules:
 
 - Do not hard-swap immediately.
 - Preserve rollback by keeping existing backend export/archive available until ShyftR has passed replay and audit checks.
-- ShyftR must be able to explain which Charges influenced a Pack and which Signals updated them.
+- ShyftR must be able to explain which memories influenced a pack and which feedbacks updated them.
 - Runtime-wide memory replacement requires explicit operator approval after pilot metrics are reviewed.
 
 ---
@@ -689,8 +689,8 @@ ShyftR is ready to begin the first functional managed-memory replacement pilot w
 1. Phase 1 through Tranche 1.9 is complete.
 2. Full test suite and CI pass.
 3. Replacement-readiness replay passes.
-4. Pack and Signal APIs are stable enough for a bounded runtime domain.
-5. Diagnostic logs can explain Pack selection, exclusion, Signal linkage, confidence updates, and retrieval-affinity changes.
+4. pack and feedback APIs are stable enough for a bounded runtime domain.
+5. Diagnostic logs can explain pack selection, exclusion, feedback linkage, confidence updates, and retrieval-affinity changes.
 6. Existing backend export/archive remains available for rollback.
 7. Operator explicitly approves bounded-domain primary memory mode.
 
@@ -709,10 +709,10 @@ The front end should not be a full product workspace yet.
 It should be a local operator console with:
 - cell dashboard
 - ingestion view
-- Spark review queue
-- Charge explorer
-- Pack debugger
-- Signal viewer
+- candidate review queue
+- memory explorer
+- pack debugger
+- feedback viewer
 - hygiene/sweep reports
 - proposal review
 
@@ -738,11 +738,11 @@ Create a minimal local web UI.
 3. Add environment config:
    - `SHYFTR_API_URL=http://127.0.0.1:8014`
 4. Add simple navigation:
-   - Cells
+   - cells
    - Review
-   - Charges
-   - Packs
-   - Signal
+   - memories
+   - packs
+   - feedback
    - Reports
    - Settings
 5. Add test/build scripts.
@@ -755,20 +755,20 @@ Create a minimal local web UI.
 
 ---
 
-## Tranche 2.2: Cell Dashboard
+## Tranche 2.2: cell Dashboard
 
 ### Objective
-Give the user a live overview of a selected Cell.
+Give the user a live overview of a selected cell.
 
 ### Dashboard Cards
-1. Pulse count
-2. Spark count
+1. evidence count
+2. candidate count
 3. Pending review count
-4. Approved Charge count
-5. Signals recorded
+4. Approved memory count
+5. feedbacks recorded
 6. Open proposals
 7. Hygiene warnings
-8. Grid status
+8. grid status
 
 ### Tasks
 1. Add backend cell summary endpoint.
@@ -778,7 +778,7 @@ Give the user a live overview of a selected Cell.
 5. Add JSON inspect toggle.
 
 ### Acceptance Criteria
-- User can select a Cell and see memory health.
+- User can select a cell and see memory health.
 - Dashboard numbers match ledger counts.
 - JSON inspect helps debugging.
 
@@ -805,18 +805,18 @@ Allow local file/adapter ingestion through UI.
 - User can validate config.
 - User can dry-run before ingestion.
 - User can ingest from UI.
-- Ingested sources appear in Cell dashboard.
+- Ingested sources appear in cell dashboard.
 
 ---
 
-## Tranche 2.4: Spark Review Queue
+## Tranche 2.4: candidate Review Queue
 
 ### Objective
 Make review gates usable without CLI.
 
 ### UI Features
-1. Pending Sparks table
-2. Spark detail pane
+1. Pending candidates table
+2. candidate detail pane
 3. Source excerpt
 4. Tags/kind/confidence
 5. Boundary/regulator status
@@ -840,20 +840,20 @@ Make review gates usable without CLI.
    - tag
 
 ### Acceptance Criteria
-- User can approve/reject Sparks from UI.
+- User can approve/reject candidates from UI.
 - Every review writes append-only event.
-- UI does not mutate Spark rows directly.
+- UI does not mutate candidate rows directly.
 - Review queue is usable for real pilot work.
 
 ---
 
-## Tranche 2.5: Charge Explorer
+## Tranche 2.5: memory Explorer
 
 ### Objective
 Inspect durable memory.
 
 ### UI Features
-1. Charge table
+1. memory table
 2. Search
 3. Filter by:
    - kind
@@ -866,7 +866,7 @@ Inspect durable memory.
    - rationale
    - provenance
    - review history
-   - Signal history
+   - feedback history
    - confidence events
    - related misses
 5. Actions:
@@ -877,17 +877,17 @@ Inspect durable memory.
    - export JSON
 
 ### Acceptance Criteria
-- User can inspect why a Charge exists.
+- User can inspect why a memory exists.
 - Provenance chain is visible.
 - Lifecycle actions append events only.
 - Deprecated/forgotten/replaced state is clear.
 
 ---
 
-## Tranche 2.6: Pack Debugger
+## Tranche 2.6: pack Debugger
 
 ### Objective
-Let users understand why ShyftR retrieved a Pack.
+Let users understand why ShyftR retrieved a pack.
 
 ### UI Features
 1. Query input
@@ -902,28 +902,28 @@ Let users understand why ShyftR retrieved a Pack.
    - caution
    - background
    - conflict
-5. Score trace display
+5. Score memory display
 6. Suppressed items display
 7. Token budget display
-8. Copy Pack JSON
+8. Copy pack JSON
 9. Copy agent prompt version
 
 ### Acceptance Criteria
-- User can simulate Pack generation.
+- User can simulate pack generation.
 - Every selected item has score explanation.
 - Suppressed/caution items are visible.
-- Pack output can be copied into an agent.
+- pack output can be copied into an agent.
 
 ---
 
-## Tranche 2.7: Signal Console
+## Tranche 2.7: feedback Console
 
 ### Objective
-Record and inspect task outcomes.
+Record and inspect task feedbacks.
 
 ### UI Features
-1. Select Pack ID
-2. Select outcome:
+1. Select pack ID
+2. Select feedback:
    - success
    - failure
    - partial
@@ -937,12 +937,12 @@ Record and inspect task outcomes.
    - over-retrieved
 4. Add missing memory text.
 5. Add verification evidence.
-6. Submit Signal.
+6. Submit feedback.
 7. Show derived misses.
 
 ### Acceptance Criteria
-- User can record Signal from UI.
-- Signal links to Pack.
+- User can record feedback from UI.
+- feedback links to pack.
 - Derived miss report appears after submit.
 - Missing memory becomes candidate, not approved memory.
 
@@ -955,12 +955,12 @@ Make memory health operationally visible.
 
 ### UI Features
 1. Hygiene report summary
-2. Duplicate Charges
-3. Conflicting Charges
+2. Duplicate memories
+3. Conflicting memories
 4. Missing references
-5. Most missed Charges
-6. Over-retrieved Charges
-7. Mixed-signal Charges
+5. Most missed memories
+6. Over-retrieved memories
+7. Mixed-feedback memories
 8. Sweep dry-run proposals
 
 ### Acceptance Criteria
@@ -983,8 +983,8 @@ Review advisory proposals from Sweep/Challenger/runtime exports.
    - manual review
    - split candidate
    - supersession candidate
-   - isolation candidate
-3. Evidence view
+   - quarantine candidate
+3. evidence view
 4. Accept/reject/defer
 5. Rationale required
 
@@ -1003,12 +1003,12 @@ Make the product demonstrable.
 ### Demo Flow
 1. Start backend service.
 2. Open console.
-3. Create/select Cell.
+3. Create/select cell.
 4. Ingest demo evidence.
-5. Review Sparks.
-6. Promote Charge.
-7. Generate Pack.
-8. Record Signal.
+5. Review candidates.
+6. Promote memory.
+7. Generate pack.
+8. Record feedback.
 9. View hygiene/Sweep output.
 10. Export proposals.
 
@@ -1025,21 +1025,21 @@ MVP is complete when:
 
 1. Core test suite passes.
 2. CI passes.
-3. Cell layout and ledgers are stable.
+3. cell layout and ledgers are stable.
 4. Provider API supports full lifecycle.
 5. Local HTTP API supports front end.
 6. Front end supports:
    - dashboard
    - ingest
    - review queue
-   - Charge explorer
-   - Pack debugger
-   - Signal console
+   - memory explorer
+   - pack debugger
+   - feedback console
    - hygiene/sweep reports
 7. End-to-end demo works:
-   - Pulse -> Spark -> Review -> Charge -> Pack -> Signal -> Report
+   - evidence -> candidate -> Review -> memory -> pack -> feedback -> Report
 8. ShyftR can be attached to one real internal runtime.
-9. No memory write bypasses Regulator and append-only ledgers.
+9. No memory write bypasses regulator and append-only ledgers.
 10. Product is clearly labelled as controlled pilot, not broad production.
 11. Replacement-readiness logs and replay reports remain available for optimization beyond the first backend replacement milestone.
 
@@ -1059,18 +1059,18 @@ Attach ShyftR to one real or simulated target runtime through the runtime-neutra
 2. Ingest:
    - task closeouts
    - actor/worker summaries
-   - review outcomes
+   - review feedbacks
    - failure reports
    - proposal decisions
 3. Ensure operational state is rejected or isolated.
-4. Generate Packs for future tasks.
-5. Record Signal after task completion.
+4. Generate packs for future tasks.
+5. Record feedback after task completion.
 6. Keep named-runtime mapping in adapter config or source notes, not the core plan.
 
 ### Acceptance Criteria
-- The target runtime or pilot harness can request Pack before task.
-- The target runtime or pilot harness can report Signal after task.
-- ShyftR learns from real or replayable task outcomes.
+- The target runtime or pilot harness can request pack before task.
+- The target runtime or pilot harness can report feedback after task.
+- ShyftR learns from real or replayable task feedbacks.
 - Operational queue state does not become durable memory.
 
 ---
@@ -1081,10 +1081,10 @@ Attach ShyftR to one real or simulated target runtime through the runtime-neutra
 Measure whether ShyftR is actually useful.
 
 ### Metrics
-1. Pack application rate
-2. Useful Charge rate
-3. Harmful Charge rate
-4. Ignored Charge rate
+1. pack application rate
+2. Useful memory rate
+3. Harmful memory rate
+4. Ignored memory rate
 5. Over-retrieval rate
 6. Missing-memory rate
 7. Review approval rate
@@ -1106,7 +1106,7 @@ Measure review cost.
 
 ### Tasks
 1. Track:
-   - pending Sparks
+   - pending candidates
    - pending proposals
    - average review time
    - stale review items
@@ -1123,7 +1123,7 @@ Measure review cost.
 ## Tranche 3.4: Policy Tuning Pass
 
 ### Objective
-Tune Regulator rules based on pilot evidence.
+Tune regulator rules based on pilot evidence.
 
 ### Tasks
 1. Identify common false rejections.
@@ -1133,7 +1133,7 @@ Tune Regulator rules based on pilot evidence.
 5. Add import sensitivity fields.
 
 ### Acceptance Criteria
-- Regulator precision improves.
+- regulator precision improves.
 - Policy changes are regression-tested.
 - Operational state remains rejected.
 
@@ -1143,20 +1143,20 @@ Tune Regulator rules based on pilot evidence.
 
 Goal: make ShyftR visibly self-learning while preserving review-gated memory authority.
 
-## Execution Rule for `/goal`: Phase 4 to next major checkpoint
+## Execution rule for `/goal`: Phase 4 to next major checkpoint
 
 A `/goal` runner may proceed autonomously from Tranche 4.1 through the Phase 5 durability checkpoint if every tranche gate below passes.
 
-Stop at the **Phase 5 durability checkpoint** after Tranche 5.5 is committed, verified, and the repo is clean. Do not start Phase 6 without a new instruction because Phase 6 introduces multi-Cell intelligence and cross-boundary memory behavior.
+Stop at the **Phase 5 durability checkpoint** after Tranche 5.5 is committed, verified, and the repo is clean. Do not start Phase 6 without a new instruction because Phase 6 introduces multi-cell intelligence and cross-boundary memory behavior.
 
-Only stop earlier for: failing tests that cannot be resolved, dependency/auth failure, unclear destructive migration risk, a violated Cell-ledger authority boundary, or a reviewer gate that returns blocking issues.
+Only stop earlier for: failing tests that cannot be resolved, dependency/auth failure, unclear destructive migration risk, a violated cell-ledger authority boundary, or a reviewer gate that returns blocking issues.
 
 Global execution rules:
 
 - Use tranche-sized commits; do not bundle Phase 4.2+ work into the Tranche 4.1 commit.
-- Treat all active-learning outputs as append-only proposals, audit Sparks, or review events until explicit review applies authority.
+- Treat all active-learning outputs as append-only proposals, audit candidates, or review events until explicit review applies authority.
 - Deduplicate proposals against decision-folded open proposal projections, not raw proposal rows.
-- Preserve Cell ledgers as canonical truth; Grid/API/UI/Sweep/Challenger are projections or delegated append-only writers.
+- Preserve cell ledgers as canonical truth; grid/API/UI/Sweep/Challenger are projections or delegated append-only writers.
 - Run the stated gate before each tranche commit, then run the phase gate before crossing from Phase 4 to Phase 5.
 
 ## Tranche 4.1: Sweep Proposal Engine
@@ -1175,7 +1175,7 @@ Turn read-only Sweep reports into reviewable append-only proposals.
 
 ### Tasks
 1. Add a Sweep proposal generation path that reads existing Sweep/hygiene output and writes proposals to an append-only proposal ledger.
-2. Generate stable proposal identifiers from proposal type, target Charge/Spark, and evidence fingerprint.
+2. Generate stable proposal identifiers from proposal type, target memory/candidate, and evidence fingerprint.
 3. Fold latest `ledger/proposal_decisions.jsonl` decisions before determining whether a proposal is open.
 4. Deduplicate only against decision-folded open proposals.
 5. Add tests for all supported proposal types where practical.
@@ -1185,7 +1185,7 @@ Turn read-only Sweep reports into reviewable append-only proposals.
 - Accepted proposal no longer counts as open and can be re-proposed only if new evidence/fingerprint changes.
 - Rejected proposal no longer counts as open and can be re-proposed only if new evidence/fingerprint changes.
 - Deferred proposal remains reviewable and blocks duplicate open emission.
-- Proposal generation does not change Charge confidence, lifecycle status, retrieval affinity, or Pack output directly.
+- Proposal generation does not change memory confidence, lifecycle status, retrieval affinity, or pack output directly.
 - `python3 -m pytest tests/test_console_api.py tests/test_server.py -q` passes.
 - Focused Sweep/proposal tests pass.
 
@@ -1213,7 +1213,7 @@ Make proposal state safe enough for the rest of Phase 4.
 - Accept/reject/defer append decision events without rewriting proposal records.
 - Accepted/rejected proposals are absent from open proposal counts.
 - Deferred proposals remain visible as reviewable.
-- Proposal acceptance does not mutate `traces/approved.jsonl`, `charges/approved.jsonl`, confidence events, lifecycle events, or Grid files.
+- Proposal acceptance does not mutate `memories/approved.jsonl`, `memories/approved.jsonl`, confidence events, lifecycle events, or grid files.
 - Full Python suite passes: `python3 -m pytest -q`.
 - Console build passes: `cd apps/console && npm run build`.
 
@@ -1230,8 +1230,8 @@ Make proposal state safe enough for the rest of Phase 4.
 Add adversarial memory review.
 
 ### Tasks
-1. Rank high-impact Charges by confidence, Pack frequency, useful/harmful Signal history, and recency.
-2. Search local Cell evidence for counter-evidence.
+1. Rank high-impact memories by confidence, pack frequency, useful/harmful feedback history, and recency.
+2. Search local cell evidence for counter-evidence.
 3. Classify findings:
    - direct contradiction
    - supersession
@@ -1239,14 +1239,14 @@ Add adversarial memory review.
    - temporal update
    - environment-specific
    - ambiguous
-4. Emit audit Sparks or Challenger proposals for review.
+4. Emit audit candidates or Challenger proposals for review.
 5. Add UI/API review path only as projection plus append-only decisions.
 
 ### Gate before commit
-- Known contradiction fixture produces an audit Spark/proposal.
+- Known contradiction fixture produces an audit candidate/proposal.
 - Ambiguous evidence remains reviewable and does not demote memory.
 - Challenger emits no direct delete, demote, isolate, replace, or supersede mutation.
-- Audit Sparks/proposals preserve source Charge IDs and evidence provenance.
+- Audit candidates/proposals preserve source memory IDs and evidence provenance.
 - Existing proposal decision folding remains intact.
 - Focused Challenger tests pass.
 - `python3 -m pytest tests/test_console_api.py tests/test_server.py -q` passes.
@@ -1254,12 +1254,12 @@ Add adversarial memory review.
 ### Acceptance Criteria
 - Challenger catches known contradiction fixtures.
 - False positives are reviewable.
-- No Charge is automatically deleted or demoted.
+- No memory is automatically deleted or demoted.
 - Commit message: `feat: add challenger audit loop`.
 
 ---
 
-## Tranche 4.3: Isolation and Challenge Workflow
+## Tranche 4.3: quarantine and Challenge Workflow
 
 ### Objective
 Contain risky memory without destroying provenance.
@@ -1267,41 +1267,41 @@ Contain risky memory without destroying provenance.
 ### Tasks
 1. Add lifecycle events:
    - challenged
-   - isolation_candidate
+   - quarantine_candidate
    - isolated
    - restored
 2. Update retrieval:
    - challenged appears with warning
-   - isolation candidates excluded from normal guidance unless explicitly requested
-   - isolated guidance excluded from normal Packs
+   - quarantine candidates excluded from normal guidance unless explicitly requested
+   - isolated guidance excluded from normal packs
    - audit mode can include all with warnings
 3. Add UI controls that append lifecycle/review events through existing mutation paths.
-4. Add tests for normal Pack exclusion and audit-mode inclusion.
+4. Add tests for normal pack exclusion and audit-mode inclusion.
 
 ### Gate before commit
-- Challenged Charges still retain full provenance.
-- Isolation candidates and isolated Charges are excluded from normal guidance Packs.
+- Challenged memories still retain full provenance.
+- quarantine candidates and isolated memories are excluded from normal guidance packs.
 - Audit mode includes challenged/isolated items only with warning metadata.
 - Restored lifecycle event makes restored item eligible again according to policy.
-- No lifecycle path rewrites or deletes original Charge records.
+- No lifecycle path rewrites or deletes original memory records.
 - Focused retrieval/lifecycle tests pass.
 - Full Python suite passes: `python3 -m pytest -q`.
 
 ### Acceptance Criteria
 - Risky memory can be contained.
 - Containment is append-only.
-- Normal Packs do not include isolated guidance.
-- Commit message: `feat: add isolation challenge workflow`.
+- Normal packs do not include isolated guidance.
+- Commit message: `feat: add quarantine challenge workflow`.
 
 ---
 
-## Tranche 4.4: Memory Conflict Arbitration
+## Tranche 4.4: memory Conflict Arbitration
 
 ### Objective
-Move from “conflict detected” to “conflict resolved into scoped doctrine”.
+Move from “conflict detected” to “conflict resolved into scoped rule”.
 
 ### Tasks
-1. Detect conflicting Charges.
+1. Detect conflicting memories.
 2. Determine likely conflict cause:
    - context mismatch
    - temporal update
@@ -1319,8 +1319,8 @@ Move from “conflict detected” to “conflict resolved into scoped doctrine�
 - Conflict fixture produces actionable proposal(s) with both evidence chains attached.
 - Temporal update and scope-exception fixtures do not overwrite older memory silently.
 - Supersession proposal does not apply lifecycle changes until reviewed.
-- Split/combined-rule proposals preserve source Charge IDs.
-- No silent overwrite of Charge text, scope, confidence, or lifecycle state.
+- Split/combined-rule proposals preserve source memory IDs.
+- No silent overwrite of memory text, scope, confidence, or lifecycle state.
 - Focused conflict arbitration tests pass.
 - Console build passes if UI changed.
 
@@ -1346,11 +1346,11 @@ cd /Users/stefan/ShyftR && git diff --check
 ```
 
 ### Required review evidence
-- Sweep, Challenger, isolation, and conflict workflows are append-only or projection-only until review.
+- Sweep, Challenger, quarantine, and conflict workflows are append-only or projection-only until review.
 - Proposal counts and metrics fold latest decisions.
-- Normal Packs exclude isolated guidance.
+- Normal packs exclude isolated guidance.
 - Audit mode includes risky guidance only with warnings.
-- No new canonical store exists outside Cell ledgers.
+- No new canonical store exists outside cell ledgers.
 - Reviewer verdict: PASS required before Phase 5.
 
 ### Phase 4 closeout commit
@@ -1364,13 +1364,13 @@ Goal: make ShyftR trustworthy as a long-lived memory substrate.
 
 Recommended autonomous order: 5.1, 5.3, 5.4, 5.5, then 5.2 only if lightweight optional-vector dependency risk remains bounded. If 5.2 requires a heavy native dependency or unclear provider choice, stop after 5.5 and leave 5.2 as an explicit follow-up.
 
-## Tranche 5.1: Grid Metadata and Staleness
+## Tranche 5.1: grid Metadata and Staleness
 
 ### Objective
 Make indexes auditable and rebuildable.
 
 ### Tasks
-1. Store Grid metadata:
+1. Store grid metadata:
    - backend
    - embedding model
    - embedding version
@@ -1383,17 +1383,17 @@ Make indexes auditable and rebuildable.
 4. Add `grid rebuild`.
 
 ### Gate before commit
-- Grid metadata records ledger offsets/hashes sufficient to detect staleness.
+- grid metadata records ledger offsets/hashes sufficient to detect staleness.
 - `grid status` distinguishes fresh, stale, missing, and rebuild-required states.
-- `grid rebuild` can rebuild from Cell ledgers without treating Grid as truth.
-- Tampering with ledger content or offset makes Grid status stale/rebuild-required.
-- Focused Grid tests pass.
-- Existing Pack/retrieval tests pass.
+- `grid rebuild` can rebuild from cell ledgers without treating grid as truth.
+- Tampering with ledger content or offset makes grid status stale/rebuild-required.
+- Focused grid tests pass.
+- Existing pack/retrieval tests pass.
 
 ### Acceptance Criteria
 - User can see if retrieval index is stale.
 - Index can be rebuilt from ledgers.
-- Grid is never canonical truth.
+- grid is never canonical truth.
 - Commit message: `feat: add grid metadata and staleness`.
 
 ---
@@ -1414,7 +1414,7 @@ Implement one optional local backend first only if it does not make the default 
 ### Gate before commit
 - Default install and default tests do not require the optional vector backend.
 - Optional backend dependency is isolated behind an extra or feature flag.
-- Backend files live under Cell `grid/`.
+- Backend files live under cell `grid/`.
 - Rebuild path works from ledgers.
 - If optional dependency installation fails or requires system-specific native setup, stop and document 5.2 as deferred rather than blocking the Phase 5 durability checkpoint.
 - Default full Python suite passes without optional backend installed.
@@ -1423,7 +1423,7 @@ Implement one optional local backend first only if it does not make the default 
 ### Acceptance Criteria
 - Default install does not require heavy vector backend.
 - Optional backend passes tests when installed.
-- Backend files live under Cell `grid/`.
+- Backend files live under cell `grid/`.
 - Rebuild path works.
 - Commit message: `feat: add optional disk backed vector adapter`.
 
@@ -1432,7 +1432,7 @@ Implement one optional local backend first only if it does not make the default 
 ## Tranche 5.3: Backup and Restore
 
 ### Objective
-Make Cells portable and recoverable.
+Make cells portable and recoverable.
 
 ### Tasks
 1. Add `shyftr backup`.
@@ -1448,15 +1448,15 @@ Make Cells portable and recoverable.
 ### Gate before commit
 - Backup includes ledgers, manifest/config, schema/version metadata, and rebuild instructions for non-canonical indexes.
 - Restore into a new path validates successfully.
-- Restored Cell produces equivalent key counts and passes Cell validation.
-- Restore does not overwrite an existing Cell unless an explicit force flag exists and is tested.
+- Restored cell produces equivalent key counts and passes cell validation.
+- Restore does not overwrite an existing cell unless an explicit force flag exists and is tested.
 - Backup excludes transient caches/build artifacts unless explicitly documented.
 - Focused backup/restore tests pass.
 - Full Python suite passes: `python3 -m pytest -q`.
 
 ### Acceptance Criteria
-- Cell backup can be restored elsewhere.
-- Restored Cell passes validation.
+- cell backup can be restored elsewhere.
+- Restored cell passes validation.
 - Indexes can be rebuilt.
 - Commit message: `feat: add cell backup and restore`.
 
@@ -1479,7 +1479,7 @@ Add cryptographic trust to ledgers.
 - Appending valid rows advances the hash chain.
 - Modifying a historical row is detected.
 - Removing or reordering rows is detected.
-- Existing Cells can adopt hash-chain manifests through an explicit migration/adoption command or documented compatibility path.
+- Existing cells can adopt hash-chain manifests through an explicit migration/adoption command or documented compatibility path.
 - Verification does not mutate ledgers unless an explicit adoption command is invoked.
 - Focused ledger verification tests pass.
 - Backup/restore tests still pass.
@@ -1504,15 +1504,15 @@ Prevent memory leakage across users, projects, agents, or domains.
    - private
    - secret
    - restricted
-2. Add Cell access policies.
-3. Add Pack export policy.
+2. Add cell access policies.
+3. Add pack export policy.
 4. Add redaction projection.
 5. Add UI warnings.
 
 ### Gate before commit
-- Sensitive Charges are excluded from Packs unless runtime identity and export policy allow them.
+- Sensitive memories are excluded from packs unless runtime identity and export policy allow them.
 - Redaction projection hides sensitive content without destroying provenance.
-- Secrets/restricted memory cannot cross Cell/runtime scope in default policy.
+- Secrets/restricted memory cannot cross cell/runtime scope in default policy.
 - UI/API warnings appear for sensitive or restricted guidance.
 - Existing public/internal/private fixture coverage proves policy behavior.
 - No secure-delete behavior is introduced unless separately designed and gated.
@@ -1521,9 +1521,9 @@ Prevent memory leakage across users, projects, agents, or domains.
 - Console build/audit passes if UI changed.
 
 ### Acceptance Criteria
-- Sensitive Charges excluded by default where policy requires.
-- Pack generation respects runtime identity.
-- Redaction does not destroy audit trail unless explicit secure-delete mode is designed.
+- Sensitive memories excluded by default where policy requires.
+- pack generation respects runtime identity.
+- Redaction does not destroy audit trule unless explicit secure-delete mode is designed.
 - Commit message: `feat: add memory sensitivity scoping`.
 
 ---
@@ -1531,7 +1531,7 @@ Prevent memory leakage across users, projects, agents, or domains.
 ## Phase 5 Gate: Durability Checkpoint
 
 ### Objective
-Close the next major checkpoint before any Phase 6 multi-Cell intelligence work.
+Close the next major checkpoint before any Phase 6 multi-cell intelligence work.
 
 ### Required checks
 ```bash
@@ -1542,8 +1542,8 @@ cd /Users/stefan/ShyftR && git diff --check && git status --short --branch
 ```
 
 ### Required review evidence
-- Grid remains rebuildable/non-canonical.
-- Backup/restore round trip succeeds on a fixture Cell.
+- grid remains rebuildable/non-canonical.
+- Backup/restore round trip succeeds on a fixture cell.
 - Ledger verification detects tampering deterministically.
 - Sensitivity/export policy prevents default leakage across runtime/user/project scopes.
 - Optional disk-backed vector adapter is either complete and optional, or explicitly deferred with rationale.
@@ -1554,14 +1554,14 @@ Stop here and report the Phase 5 durability checkpoint status. Do not start Phas
 
 ---
 
-# Phase 6: Multi-Cell Intelligence
+# Phase 6: Multi-cell Intelligence
 
 Goal: move ShyftR from single-cell memory to a network of memory cells.
 
-## Tranche 6.1: Cell Registry
+## Tranche 6.1: cell Registry
 
 ### Objective
-Track multiple Cells and their relationships.
+Track multiple cells and their relationships.
 
 ### Tasks
 1. Add registry file.
@@ -1577,62 +1577,62 @@ Track multiple Cells and their relationships.
 4. API registry endpoints.
 
 ### Acceptance Criteria
-- Multiple Cells are discoverable.
+- Multiple cells are discoverable.
 - Cross-cell operations are explicit.
 - No accidental cross-cell leakage.
 
 ---
 
-## Tranche 6.2: Cross-Cell Resonance
+## Tranche 6.2: Cross-cell Resonance
 
 ### Objective
-Detect repeated patterns across Cells.
+Detect repeated patterns across cells.
 
 ### Tasks
-1. Compare high-confidence Charges across Cells.
+1. Compare high-confidence memories across cells.
 2. Compute resonance score:
    - recurrence
-   - Cell diversity
+   - cell diversity
    - confidence
-   - useful Signal
+   - useful feedback
    - recency
-3. Propose cross-cell Rails.
+3. Propose cross-cell rules.
 4. Require explicit review.
 
 ### Acceptance Criteria
-- Repeated local lessons can propose shared Rail.
-- Shared memory never mutates local Cells silently.
+- Repeated local lessons can propose shared rule.
+- Shared memory never mutates local cells silently.
 - Resonance has provenance.
 
 ---
 
-## Tranche 6.3: Rail Promotion Workflow
+## Tranche 6.3: rule Promotion Workflow
 
 ### Objective
-Create global/shared doctrine safely.
+Create global/shared rule safely.
 
 ### Tasks
-1. Add Rail proposal queue.
-2. Add Rail review UI.
-3. Add Rail promotion event.
-4. Add Pack retrieval from approved Rails.
+1. Add rule proposal queue.
+2. Add rule review UI.
+3. Add rule promotion event.
+4. Add pack retrieval from approved rules.
 5. Add scope constraints.
 
 ### Acceptance Criteria
-- Rails are reviewed, scoped, and provenance-linked.
+- rules are reviewed, scoped, and provenance-linked.
 - Global policy cannot be created from one weak source.
 
 ---
 
-## Tranche 6.4: Memory Federation Protocol
+## Tranche 6.4: memory Federation Protocol
 
 ### Objective
-Allow Cells to share memory without merging everything.
+Allow cells to share memory without merging everything.
 
 ### Tasks
 1. Define export format:
-   - approved Charges only
-   - Coils/Rails
+   - approved memories only
+   - patterns/rules
    - summary statistics
    - redacted provenance
 2. Define import format.
@@ -1644,7 +1644,7 @@ Allow Cells to share memory without merging everything.
 4. Add import review queue.
 
 ### Acceptance Criteria
-- Cell can import another Cell’s approved projection.
+- cell can import another cell’s approved projection.
 - Imported memory starts with a non-local trust label and requires review before local-truth treatment.
 - Federation is selective and auditable.
 
@@ -1675,12 +1675,12 @@ Replace single confidence floats with calibrated belief state.
 
 ### Acceptance Criteria
 - Confidence reflects uncertainty as well as score.
-- New Charges with little evidence show uncertainty.
-- Repeated useful Signal narrows uncertainty.
+- New memories with little evidence show uncertainty.
+- Repeated useful feedback narrows uncertainty.
 
 ---
 
-## Tranche 7.2: Causal Memory Graph
+## Tranche 7.2: Causal memory Graph
 
 ### Objective
 Represent why memory helped or failed.
@@ -1698,13 +1698,13 @@ Represent why memory helped or failed.
 
 ### Tasks
 1. Add graph edge ledger.
-2. Derive edges from Signal and review.
+2. Derive edges from feedback and review.
 3. Add graph explorer UI.
-4. Use graph in Pack compilation.
+4. Use graph in pack compilation.
 
 ### Acceptance Criteria
-- Memory can explain causal lineage.
-- Pack Compiler can use dependency and invalidation edges.
+- memory can explain causal lineage.
+- pack Compiler can use dependency and invalidation edges.
 - Graph is append-only/rebuildable.
 
 ---
@@ -1715,7 +1715,7 @@ Represent why memory helped or failed.
 Test retrieval and policy changes before applying them.
 
 ### Tasks
-1. Replay historical Pack requests under new weights/policies.
+1. Replay historical pack requests under new weights/policies.
 2. Compare:
    - selected IDs
    - missed IDs
@@ -1744,12 +1744,12 @@ Let runtimes select memory behaviour based on mission risk.
 3. exploratory
 4. risk_averse
 5. audit
-6. doctrine_only
+6. rule_only
 7. low_latency
 
 ### Tasks
 1. Define mode config.
-2. Add Pack request field.
+2. Add pack request field.
 3. Add scoring weights per mode.
 4. Add UI selector.
 5. Add tests.
@@ -1762,35 +1762,35 @@ Let runtimes select memory behaviour based on mission risk.
 
 ---
 
-## Tranche 7.5: Memory Reputation System
+## Tranche 7.5: memory Reputation System
 
 ### Objective
-Track reliability of memory sources, agents, reviewers, and Cells.
+Track reliability of memory sources, agents, reviewers, and cells.
 
 ### Reputation Targets
 1. source adapter
 2. runtime
 3. agent
 4. reviewer
-5. Cell
+5. cell
 6. imported memory source
 
 ### Metrics
 1. approval rate
 2. rejection rate
-3. useful Signal rate
-4. harmful Signal rate
+3. useful feedback rate
+4. harmful feedback rate
 5. contradiction rate
 6. stale memory rate
 
 ### Acceptance Criteria
-- Memory source quality is measurable.
+- memory source quality is measurable.
 - Reviewer reliability affects proposal priority.
 - Reputation never silently bypasses review gates.
 
 ---
 
-## Tranche 7.6: Self-Modifying Regulator Proposals
+## Tranche 7.6: Self-Modifying regulator Proposals
 
 ### Objective
 Let ShyftR propose improvements to its own memory policy.
@@ -1803,7 +1803,7 @@ Let ShyftR propose improvements to its own memory policy.
 5. Require human review.
 
 ### Acceptance Criteria
-- Regulator can propose policy updates.
+- regulator can propose policy updates.
 - Policy updates are never automatic.
 - Proposed rules include examples and counterexamples.
 
@@ -1819,8 +1819,8 @@ Turn ShyftR memory into evaluation tasks for agents.
    - repeated failures
    - missing memory
    - contradictions
-   - high-value Charges
-2. Generate expected Pack items.
+   - high-value memories
+2. Generate expected pack items.
 3. Generate expected agent behaviour.
 4. Export as test fixtures.
 
@@ -1913,7 +1913,7 @@ Use Tauri only after web console is stable.
 ### Tasks
 1. Tauri wrapper.
 2. Start/stop local ShyftR service.
-3. Select Cell directory.
+3. Select cell directory.
 4. Open console.
 5. Local logs.
 6. Bundle install docs.
@@ -1960,7 +1960,7 @@ Do not remove alpha status before Tranche 8.5 has run with external tester evide
 2. Three to five external technical testers complete clone/install/gate/demo and produce actionable feedback.
 3. Zero blocker issues remain open for install, CLI smoke, lifecycle demo, synthetic readiness replay, diagnostics, public-readiness scan, or console build.
 4. At least one operator-owned dogfooding loop has run on non-sensitive or approved local data for a sustained period, with reviewed diagnostic/readiness evidence.
-5. Backup/restore and ledger verification have been exercised on a fixture Cell and one operator-approved real local Cell.
+5. Backup/restore and ledger verification have been exercised on a fixture cell and one operator-approved real local cell.
 6. Public docs still avoid production/service overclaims and describe only implemented behavior.
 7. Private-core experiments required for advanced scoring/ranking/compaction are either explicitly not part of the beta boundary or have passed their private overlay gates.
 8. The release decision is recorded in a status update before public wording changes.
@@ -1977,9 +1977,9 @@ Complete Phase 1 through Tranche 1.9.
 
 ShyftR can:
 - run through CLI and local HTTP API
-- ingest exported managed-memory records into Cell ledgers
-- generate deterministic, provenance-linked Packs
-- record Signals and update confidence / retrieval affinity
+- ingest exported managed-memory records into cell ledgers
+- generate deterministic, provenance-linked packs
+- record feedbacks and update confidence / retrieval affinity
 - produce diagnostic logs and replay reports
 - pass a replacement-readiness gate for bounded-domain primary memory
 
@@ -1990,8 +1990,8 @@ ShyftR can:
 - run locally
 - ingest evidence
 - review memory
-- generate Packs
-- record Signal
+- generate packs
+- record feedback
 - inspect memory health
 - operate through a minimal front end
 
@@ -2001,7 +2001,7 @@ Complete through Phase 3.
 ShyftR can:
 - attach to one real runtime, pilot harness, or replayable integration loop
 - ingest real task outputs
-- improve Packs from Signal
+- improve packs from feedback
 - measure operator burden and memory usefulness
 
 ## Active Learning Release
@@ -2013,15 +2013,15 @@ ShyftR can:
 - isolate risky memory
 - arbitrate conflicts
 
-## Durable Memory Platform
+## Durable memory Platform
 Complete through Phase 5 and 6.
 
 ShyftR can:
 - scale retrieval
-- backup/restore Cells
+- backup/restore cells
 - verify ledgers
-- operate across multiple Cells
-- propose shared Rails
+- operate across multiple cells
+- propose shared rules
 
 ## Frontier Product
 Complete through Phase 7.
@@ -2044,25 +2044,25 @@ ShyftR becomes:
 4. Tranche 0.4 - Canonical Ledger Path Lock
 5. Tranche 0.5 - Atomic Append and File Locking
 6. Tranche 0.6 - Schema Versioning and Migration Guard
-7. Tranche 0.7 - Packaging, README, and Installation Repair
+7. Tranche 0.7 - packaging, README, and Installation Repair
 
 8. Tranche 1.1 - Provider API Completion
-9. Tranche 1.2 - Runtime Pack API Hardening
-10. Tranche 1.3 - Runtime Signal API Hardening
-11. Tranche 1.4 - Pack Compiler MVP
-12. Tranche 1.5 - Pack-Miss Learning MVP
+9. Tranche 1.2 - Runtime pack API Hardening
+10. Tranche 1.3 - Runtime feedback API Hardening
+11. Tranche 1.4 - pack Compiler MVP
+12. Tranche 1.5 - pack-Miss Learning MVP
 13. Tranche 1.6 - Confidence Events MVP
 14. Tranche 1.7 - Retrieval Affinity Events MVP
 15. Tranche 1.8 - Local HTTP Service Hardening
 16. Tranche 1.9 - Replacement Readiness, Observability, and Test Harness
 
 17. Tranche 2.1 - Front End Scaffold
-18. Tranche 2.2 - Cell Dashboard
+18. Tranche 2.2 - cell Dashboard
 19. Tranche 2.3 - Ingestion Console
-20. Tranche 2.4 - Spark Review Queue
-21. Tranche 2.5 - Charge Explorer
-22. Tranche 2.6 - Pack Debugger
-23. Tranche 2.7 - Signal Console
+20. Tranche 2.4 - candidate Review Queue
+21. Tranche 2.5 - memory Explorer
+22. Tranche 2.6 - pack Debugger
+23. Tranche 2.7 - feedback Console
 24. Tranche 2.8 - Hygiene and Sweep Reports UI
 25. Tranche 2.9 - Proposal Review UI
 26. Tranche 2.10 - MVP Demo Script and Frontend Walkthrough
@@ -2074,26 +2074,26 @@ ShyftR becomes:
 
 31. Tranche 4.1 - Sweep Proposal Engine
 32. Tranche 4.2 - Challenger Audit Loop
-33. Tranche 4.3 - Isolation and Challenge Workflow
-34. Tranche 4.4 - Memory Conflict Arbitration
+33. Tranche 4.3 - quarantine and Challenge Workflow
+34. Tranche 4.4 - memory Conflict Arbitration
 
-35. Tranche 5.1 - Grid Metadata and Staleness
+35. Tranche 5.1 - grid Metadata and Staleness
 36. Tranche 5.2 - Disk-Backed Vector Adapter
 37. Tranche 5.3 - Backup and Restore
 38. Tranche 5.4 - Tamper-Evident Ledger Hash Chains
 39. Tranche 5.5 - Privacy and Sensitivity Scoping
 
-40. Tranche 6.1 - Cell Registry
-41. Tranche 6.2 - Cross-Cell Resonance
-42. Tranche 6.3 - Rail Promotion Workflow
-43. Tranche 6.4 - Memory Federation Protocol
+40. Tranche 6.1 - cell Registry
+41. Tranche 6.2 - Cross-cell Resonance
+42. Tranche 6.3 - rule Promotion Workflow
+43. Tranche 6.4 - memory Federation Protocol
 
 44. Tranche 7.1 - Bayesian Confidence Model
-45. Tranche 7.2 - Causal Memory Graph
+45. Tranche 7.2 - Causal memory Graph
 46. Tranche 7.3 - Policy Simulation Sandbox
 47. Tranche 7.4 - Adaptive Retrieval Modes
-48. Tranche 7.5 - Memory Reputation System
-49. Tranche 7.6 - Self-Modifying Regulator Proposals
+48. Tranche 7.5 - memory Reputation System
+49. Tranche 7.6 - Self-Modifying regulator Proposals
 50. Tranche 7.7 - Synthetic Training and Test Data Generator
 
 51. Tranche 8.1 - Product Landing Docs

@@ -2,9 +2,9 @@
 
 > For Hermes: Use subagent-driven-development skill to implement this plan task-by-task.
 
-Goal: Build ShyftR, a general-purpose, file-backed, auditable memory-cell system that converts conversations, tasks, artifacts, tool runs, and pulseback loops into durable intelligence. ShyftR provides attachable recursive memory cells for AI agents across users, projects, teams, domains, applications, and integrations.
+Goal: Build ShyftR, a general-purpose, file-backed, auditable memory-cell system that converts conversations, tasks, artifacts, tool runs, and evidenceback loops into durable intelligence. ShyftR provides attachable recursive memory cells for AI agents across users, projects, teams, domains, applications, and integrations.
 
-Architecture: ShyftR uses isolated Cells with append-only JSONL ledgers as canonical truth, SQLite for metadata/querying, rebuildable vector indexes for semantic retrieval, manager-reviewed promotion gates, and recursive distillation jobs that propose playbook/policy updates. Vector stores are indexes only; durable operational and memory truth remains file-backed and replayable.
+Architecture: ShyftR uses isolated cells with append-only JSONL ledgers as canonical truth, SQLite for metadata/querying, rebuildable vector indexes for semantic retrieval, manager-reviewed promotion gates, and recursive distillation jobs that propose playbook/policy updates. Vector stores are indexes only; durable operational and memory truth remains file-backed and replayable.
 
 Tech Stack: Python 3.11+, Typer CLI, Pydantic models, JSONL ledgers, SQLite, sqlite-vec or LanceDB, BM25/sparse retrieval, sentence-transformers-compatible embedding adapters, pytest.
 
@@ -12,9 +12,9 @@ The three Rs: Recursive learning, Recall packs, and Retrieval infrastructure.
 
 ---
 
-## Phase 0: Repository, product regulator, and rail foundation
+## Phase 0: Repository, product regulator, and rule foundation
 
-### Task 0.0: Define the Cell product regulator
+### Task 0.0: Define the cell product regulator
 
 Objective: Ensure ShyftR is designed as a reusable memory-cell substrate for users, agents, projects, teams, domains, and applications.
 
@@ -24,16 +24,16 @@ Files:
 - Create: `docs/concepts/cells.md`
 
 Steps:
-1. Define `Cell` as the primary abstraction.
-2. Document that users, teams, agents, projects, domains, applications, and global rail can all be Cells.
-3. Define `core` or `personal` as the default user memory Cell.
-4. Explain that integration-specific scopes should be modeled as Cells through adapters or metadata.
-5. Commit: `docs: define ShyftR Cell abstraction`.
+1. Define `cell` as the primary abstraction.
+2. Document that users, teams, agents, projects, domains, applications, and global rule can all be cells.
+3. Define `core` or `personal` as the default user memory cell.
+4. Explain that integration-specific scopes should be modeled as cells through adapters or metadata.
+5. Commit: `docs: define ShyftR cell abstraction`.
 
 Acceptance criteria:
 - README describes ShyftR as a general-purpose memory-cell system.
-- Plan contains explicit support for user, project, team, agent, domain, and application Cells.
-- Cell abstraction is documented before integration-adapter tasks.
+- Plan contains explicit support for user, project, team, agent, domain, and application cells.
+- cell abstraction is documented before integration-adapter tasks.
 
 ### Task 0.1: Establish repository scaffold
 
@@ -56,23 +56,23 @@ Steps:
 Acceptance criteria:
 - Repository imports `shyftr`.
 - Tests run locally.
-- README contains architecture rail.
+- README contains architecture rule.
 
-### Task 0.2: Capture memory regulator rail
+### Task 0.2: Capture memory regulator rule
 
 Objective: Encode what may and may not become durable memory.
 
 Files:
-- Create: `docs/memory-regulator-rail.md`
+- Create: `docs/memory-regulator-rule.md`
 - Create: `src/shyftr/policy.py`
 - Test: `tests/test_memory_regulator_policy.py`
 
 Steps:
-1. Write rail doc with allowed and rejected memory examples.
+1. Write rule doc with allowed and rejected memory examples.
 2. Implement a simple operational-pollution detector with explicit patterns.
 3. Test rejection of queue state, worktree state, branch names, completion logs, and transient test-pass claims.
 4. Test acceptance of durable lessons and heuristics.
-5. Commit: `feat: add memory regulator rail`.
+5. Commit: `feat: add memory regulator rule`.
 
 Acceptance criteria:
 - Operational-state examples are rejected.
@@ -85,19 +85,19 @@ Acceptance criteria:
 Canonical lifecycle for implementation:
 
 ```text
-Spark -> Charge -> Coil -> Rail
+candidate -> memory -> pattern -> rule
 ```
 
-- Pulses are raw evidence.
-- Sparks are extracted candidate memory pieces.
-- Charges are reviewed durable memories.
-- Coils are recursive distillations from related Charges.
-- Rail proposals are shared promoted rules.
+- evidences are raw evidence.
+- candidates are extracted candidate memory pieces.
+- memories are reviewed durable memories.
+- patterns are recursive distillations from related memories.
+- rule proposals are shared promoted rules.
 
 
 ### Task 1.1: Define core schemas
 
-Objective: Add typed models for pulses, closeouts, Sparks, reviews, promotions, Charges, Coils, Rail proposals, and retrieval logs.
+Objective: Add typed models for evidences, closeouts, candidates, reviews, promotions, memories, patterns, rule proposals, and retrieval logs.
 
 Files:
 - Create: `src/shyftr/models.py`
@@ -105,16 +105,16 @@ Files:
 
 Steps:
 1. Define Pydantic models or dataclasses for:
-   - `MemoryEvent`
+   - `memoryEvent`
    - `CloseoutRecord`
-   - `MemorySpark`
+   - `memorycandidate`
    - `ReviewRecord`
    - `PromotionRecord`
-   - `Charge`
-   - `Coil`
-   - `RailProposal`
+   - `memory`
+   - `pattern`
+   - `ruleProposal`
    - `RetrievalLog`
-2. Include provenance fields: Pulse path, artifact hash, packet id, domain, timestamps.
+2. Include provenance fields: evidence path, artifact hash, packet id, domain, timestamps.
 3. Include memory lifecycle fields.
 4. Add serialization tests.
 5. Commit: `feat: define shyftr memory schemas`.
@@ -134,7 +134,7 @@ Files:
 Steps:
 1. Implement `append_jsonl(path, record)`.
 2. Implement `read_jsonl(path)`.
-3. Implement Spark dedupe by `pulse_artifact` plus `artifact_sha256`.
+3. Implement candidate dedupe by `evidence_artifact` plus `artifact_sha256`.
 4. Ensure writes create parent directories.
 5. Test append-only behavior.
 6. Test duplicate rejection where required.
@@ -143,11 +143,11 @@ Steps:
 Acceptance criteria:
 - Ledger records are newline-delimited JSON.
 - Existing records are never rewritten.
-- Deduplication prevents duplicate Spark ingestion from the same artifact hash.
+- Deduplication prevents duplicate candidate ingestion from the same artifact hash.
 
-### Task 1.3: Add memory Cell layout initializer
+### Task 1.3: Add memory cell layout initializer
 
-Objective: Create the standard Cell-local memory directory structure for users, agents, projects, teams, domains, applications, and global rail.
+Objective: Create the standard cell-local memory directory structure for users, agents, projects, teams, domains, applications, and global rule.
 
 Files:
 - Create: `src/shyftr/layout.py`
@@ -155,18 +155,18 @@ Files:
 
 Steps:
 1. Implement `init_cell_memory(root, cell_id, cell_type)`.
-2. Create `ledger/`, `charges/`, `coils/`, `rail/`, `grid/`, `summaries/`, `reports/`, and `config/`.
-3. Seed empty JSONL files where appropriate, including `ledger/pulses.jsonl`, `ledger/sparks.jsonl`, `charges/approved.jsonl`, `coils/proposed.jsonl`, and `rail/proposed.jsonl`.
-4. Test idempotent initialization for `core`, `personal`, `project`, `agent`, and `domain` Cell types.
-5. Commit: `feat: initialize Cell memory layout`.
+2. Create `ledger/`, `memories/`, `patterns/`, `rule/`, `grid/`, `summaries/`, `reports/`, and `config/`.
+3. Seed empty JSONL files where appropriate, including `ledger/evidences.jsonl`, `ledger/candidates.jsonl`, `memories/approved.jsonl`, `patterns/proposed.jsonl`, and `rule/proposed.jsonl`.
+4. Test idempotent initialization for `core`, `personal`, `project`, `agent`, and `domain` cell types.
+5. Commit: `feat: initialize cell memory layout`.
 
 Acceptance criteria:
 - Running initialization twice is safe.
-- Expected paths exist for generic Cell types.
+- Expected paths exist for generic cell types.
 
 ---
 
-## Phase 2: Spark extraction and review gate
+## Phase 2: candidate extraction and review gate
 
 ### Task 2.1: Parse closeout memory checklists
 
@@ -181,8 +181,8 @@ Files:
 
 Steps:
 1. Parse required fields:
-   - `memory_spark_status`
-   - `memory_spark_text`
+   - `memory_candidate_status`
+   - `memory_candidate_text`
    - `memory_regulator_check`
 2. Recover metadata from closeout headers where possible.
 3. Classify missing checklist as `skipped_missing_checklist`.
@@ -194,41 +194,41 @@ Acceptance criteria:
 - Parser is whitespace-tolerant.
 - Missing checklist does not become a fake “no lesson.”
 
-### Task 2.2: Implement Spark extraction
+### Task 2.2: Implement candidate extraction
 
-Objective: Convert parsed Pulses/closeouts into Spark ledger rows. A Spark is a bounded, typed, provenance-linked candidate memory piece awaiting review before trust.
+Objective: Convert parsed evidences/closeouts into candidate ledger rows. A candidate is a bounded, typed, provenance-linked candidate memory piece awaiting review before trust.
 
 Files:
 - Create: `src/shyftr/extract.py`
 - Test: `tests/test_extract.py`
 
 Steps:
-1. Hash the Pulse artifact.
+1. Hash the evidence artifact.
 2. Run regulator-policy checks.
-3. Emit Spark rows with status, reason, pulse excerpt, kind, tags, and confidence.
+3. Emit candidate rows with status, reason, evidence excerpt, kind, tags, and confidence.
 4. Reject operational-state pollution.
-5. Preserve Pulse artifact and hash.
-6. Commit: `feat: extract memory sparks from pulses`.
+5. Preserve evidence artifact and hash.
+6. Commit: `feat: extract memory candidates from evidences`.
 
 Acceptance criteria:
-- Spark extraction is deterministic.
+- candidate extraction is deterministic.
 - Operational pollution is rejected before promotion.
 
-### Task 2.3: Implement Spark review commands
+### Task 2.3: Implement candidate review commands
 
-Objective: Support approve/reject/split/merge review records without mutating Spark rows.
+Objective: Support approve/reject/split/merge review records without mutating candidate rows.
 
 Files:
 - Create: `src/shyftr/review.py`
 - Test: `tests/test_review.py`
 
 Steps:
-1. Implement `approve_spark(spark_id, notes, reviewer)`.
-2. Implement `reject_spark(spark_id, reason, notes, reviewer)`.
+1. Implement `approve_candidate(candidate_id, notes, reviewer)`.
+2. Implement `reject_candidate(candidate_id, reason, notes, reviewer)`.
 3. Append review rows to `reviews.jsonl`.
-4. Implement Spark history lookup.
+4. Implement candidate history lookup.
 5. Test append-only review behavior, including split/merge review rows.
-6. Commit: `feat: add spark review gate`.
+6. Commit: `feat: add candidate review gate`.
 
 Acceptance criteria:
 - Reviews are append-only.
@@ -236,31 +236,31 @@ Acceptance criteria:
 
 ---
 
-## Phase 3: Promotion into durable Charges
+## Phase 3: Promotion into durable memories
 
-### Task 3.1: Promote approved Sparks
+### Task 3.1: Promote approved candidates
 
-Objective: Convert reviewed Sparks into durable approved Charges.
+Objective: Convert reviewed candidates into durable approved memories.
 
 Files:
 - Create: `src/shyftr/promote.py`
 - Test: `tests/test_promote.py`
 
 Steps:
-1. Require latest Spark review to be approved.
+1. Require latest candidate review to be approved.
 2. Reject direct promotion from `new`.
-3. Convert Spark text into a durable `Charge`.
-4. Append to `charges/approved.jsonl`.
+3. Convert candidate text into a durable `memory`.
+4. Append to `memories/approved.jsonl`.
 5. Append promotion record to `ledger/promotions.jsonl`.
-6. Commit: `feat: promote reviewed sparks to charges`.
+6. Commit: `feat: promote reviewed candidates to memories`.
 
 Acceptance criteria:
-- Unapproved Sparks cannot be promoted.
-- Promotion preserves Pulse and Spark provenance.
+- Unapproved candidates cannot be promoted.
+- Promotion preserves evidence and candidate provenance.
 
 ### Task 3.2: Add memory lifecycle transitions
 
-Objective: Support deprecated, superseded, Isolationd, and audit-required statuses.
+Objective: Support deprecated, superseded, quarantined, and audit-required statuses.
 
 Files:
 - Create: `src/shyftr/lifecycle.py`
@@ -269,7 +269,7 @@ Files:
 Steps:
 1. Implement lifecycle transition records as append-only events.
 2. Support supersession links.
-3. Support Isolation with reason.
+3. Support quarantine with reason.
 4. Compute latest effective state from event history.
 5. Commit: `feat: add memory lifecycle state machine`.
 
@@ -283,7 +283,7 @@ Acceptance criteria:
 
 ### Task 4.1: Add sparse retrieval
 
-Objective: Implement basic keyword/BM25-style retrieval over approved Charges.
+Objective: Implement basic keyword/BM25-style retrieval over approved memories.
 
 Files:
 - Create: `src/shyftr/retrieval/sparse.py`
@@ -293,11 +293,11 @@ Steps:
 1. Tokenize approved memory statements and tags.
 2. Implement simple BM25 or use a small dependency.
 3. Return scored matches with memory ids.
-4. Exclude deprecated/Isolationd memories by default.
+4. Exclude deprecated/quarantined memories by default.
 5. Commit: `feat: add sparse memory retrieval`.
 
 Acceptance criteria:
-- Keyword queries find relevant approved Charges.
+- Keyword queries find relevant approved memories.
 - Deprecated memories are excluded unless explicitly requested.
 
 ### Task 4.2: Add embedding adapter interface
@@ -331,12 +331,12 @@ Steps:
 1. Define `VectorIndex` protocol.
 2. Implement a simple in-memory cosine index for tests.
 3. Add planned adapters for sqlite-vec or LanceDB.
-4. Support full rebuild from `charges/approved.jsonl`.
+4. Support full rebuild from `memories/approved.jsonl`.
 5. Commit: `feat: add rebuildable vector index abstraction`.
 
 Acceptance criteria:
-- Vector index can be rebuilt from file-backed Charge ledgers.
-- Canonical truth stays in the Charge ledger, not the vector index.
+- Vector index can be rebuilt from file-backed memory ledgers.
+- Canonical truth stays in the memory ledger, not the vector index.
 
 ### Task 4.4: Implement hybrid retrieval scoring
 
@@ -349,7 +349,7 @@ Files:
 Steps:
 1. Implement weighted scoring formula.
 2. Make weights configurable.
-3. Return chargeable score components.
+3. Return memoryable score components.
 4. Add tests for deprecation penalty and confidence boost.
 5. Commit: `feat: add hybrid memory retrieval scoring`.
 
@@ -359,7 +359,7 @@ Acceptance criteria:
 
 ---
 
-## Phase 5: Memory context bundles
+## Phase 5: memory context bundles
 
 ### Task 5.1: Build packet classification input schema
 
@@ -376,7 +376,7 @@ Steps:
 4. Commit: `feat: define packet memory input schema`.
 
 Acceptance criteria:
-- Packet summaries are validated before retrieval.
+- packet summaries are validated before retrieval.
 
 ### Task 5.2: Generate bounded memory bundles
 
@@ -387,7 +387,7 @@ Files:
 - Test: `tests/test_bundle.py`
 
 Steps:
-1. Retrieve approved Charges.
+1. Retrieve approved memories.
 2. Retrieve failure signatures.
 3. Retrieve relevant playbook sections.
 4. Include similar prior packet summaries only as summaries.
@@ -396,7 +396,7 @@ Steps:
 
 Acceptance criteria:
 - Bundles do not include raw operational state.
-- Bundles distinguish approved Charges from background summaries.
+- Bundles distinguish approved memories from background summaries.
 
 ### Task 5.3: Log retrieval usage
 
@@ -408,13 +408,13 @@ Files:
 
 Steps:
 1. Append retrieval logs to `retrieval_logs.jsonl`.
-2. Record packet id, query, retrieved memory ids, and score charges.
-3. Add later signal update events.
+2. Record packet id, query, retrieved memory ids, and score memories.
+3. Add later feedback update events.
 4. Compute usage counts and success/failure counts from logs.
-5. Commit: `feat: log memory retrieval usage and signal`.
+5. Commit: `feat: log memory retrieval usage and feedback`.
 
 Acceptance criteria:
-- Memory effectiveness can be evaluated from append-only logs.
+- memory effectiveness can be evaluated from append-only logs.
 
 ---
 
@@ -434,7 +434,7 @@ Steps:
 2. Add commands:
    - `init-domain`
    - `ingest`
-   - `sparks`
+   - `candidates`
    - `show`
    - `approve`
    - `reject`
@@ -458,15 +458,15 @@ Files:
 - Test: `tests/test_cli_ingest_review_promote.py`
 
 Steps:
-1. Implement `shyftr ingest --cell domain-development --Pulse path`.
-2. Implement `shyftr sparks --cell domain-development`.
-3. Implement `shyftr approve` and `shyftr reject` for Sparks.
-4. Implement `shyftr promote` from approved Spark to Charge.
+1. Implement `shyftr ingest --cell domain-development --evidence path`.
+2. Implement `shyftr candidates --cell domain-development`.
+3. Implement `shyftr approve` and `shyftr reject` for candidates.
+4. Implement `shyftr promote` from approved candidate to memory.
 5. Test a full closeout-to-memory flow.
 6. Commit: `feat: wire shyftr write-flow cli`.
 
 Acceptance criteria:
-- A Pulse can produce Sparks, and an approved Spark can become a durable Charge through CLI review gates.
+- A evidence can produce candidates, and an approved candidate can become a durable memory through CLI review gates.
 
 ### Task 6.3: Wire search and bundle CLI commands
 
@@ -479,11 +479,11 @@ Files:
 Steps:
 1. Implement `shyftr search`.
 2. Implement `shyftr bundle --packet packet.json`.
-3. Include score charges in verbose mode.
+3. Include score memories in verbose mode.
 4. Commit: `feat: wire shyftr retrieval cli`.
 
 Acceptance criteria:
-- Search returns relevant approved Charges.
+- Search returns relevant approved memories.
 - Bundle command emits bounded context.
 
 ---
@@ -492,22 +492,22 @@ Acceptance criteria:
 
 ### Task 7.1: Add hygiene report
 
-Objective: Report Cell memory health truthfully.
+Objective: Report cell memory health truthfully.
 
 Files:
 - Create: `src/shyftr/reports/hygiene.py`
 - Test: `tests/test_hygiene_report.py`
 
 Steps:
-1. Count canonical live-Pulse Sparks.
-2. Count missing-Pulse legacy rows.
-3. Count noncanonical-Pulse rows.
+1. Count canonical live-evidence candidates.
+2. Count missing-evidence legacy rows.
+3. Count noncanonical-evidence rows.
 4. Report latest status counts.
 5. Sample problematic rows.
 6. Commit: `feat: add memory hygiene report`.
 
 Acceptance criteria:
-- Hygiene distinguishes live canonical pulses from historical debt.
+- Hygiene distinguishes live canonical evidences from historical debt.
 
 ### Task 7.2: Add compliance hotspot report
 
@@ -536,9 +536,9 @@ Files:
 - Test: `tests/test_audit.py`
 
 Steps:
-1. Load existing Spark history.
+1. Load existing candidate history.
 2. Re-run extraction under current policy.
-3. Append audit row with Pulse ledger line and result.
+3. Append audit row with evidence ledger line and result.
 4. Add bulk audit with limit and status filters.
 5. Commit: `feat: add append-only audit reclassification`.
 
@@ -550,9 +550,9 @@ Acceptance criteria:
 
 ## Phase 8: Recursive distillation
 
-### Task 8.1: Cluster related Charges into Coil proposals
+### Task 8.1: Cluster related memories into pattern proposals
 
-Objective: Group approved Charges into Coil proposals for review.
+Objective: Group approved memories into pattern proposals for review.
 
 Files:
 - Create: `src/shyftr/distill/cluster.py`
@@ -560,9 +560,9 @@ Files:
 
 Steps:
 1. Cluster by embedding similarity and tags.
-2. Produce cluster summaries with Pulse memory ids.
-3. Identify duplicate Sparks.
-4. Commit: `feat: cluster approved Charges for distillation`.
+2. Produce cluster summaries with evidence memory ids.
+3. Identify duplicate candidates.
+4. Commit: `feat: cluster approved memories for distillation`.
 
 Acceptance criteria:
 - Similar memories are grouped with provenance.
@@ -585,7 +585,7 @@ Steps:
 Acceptance criteria:
 - Conflicts are review proposals only.
 
-### Task 8.3: Propose playbook updates from Coils
+### Task 8.3: Propose playbook updates from patterns
 
 Objective: Convert repeated validated lessons into domain playbook proposals.
 
@@ -596,16 +596,16 @@ Files:
 Steps:
 1. Identify validated repeated lessons.
 2. Generate proposed playbook sections.
-3. Preserve Pulse memory ids.
+3. Preserve evidence memory ids.
 4. Require manager approval before writing to `domain_playbook.md`.
 5. Commit: `feat: propose domain playbook updates`.
 
 Acceptance criteria:
 - Playbook updates are generated as proposals with provenance.
 
-### Task 8.4: Add cross-domain rail proposals
+### Task 8.4: Add cross-domain rule proposals
 
-Objective: Propose global integration rail only from approved domain-level patterns.
+Objective: Propose global integration rule only from approved domain-level patterns.
 
 Files:
 - Create: `src/shyftr/distill/cross_domain.py`
@@ -613,9 +613,9 @@ Files:
 
 Steps:
 1. Compare high-confidence lessons across domains.
-2. Identify generalized Rail proposals.
-3. Require explicit promotion to global rail.
-4. Commit: `feat: propose cross-domain memory rail`.
+2. Identify generalized rule proposals.
+3. Require explicit promotion to global rule.
+4. Commit: `feat: propose cross-domain memory rule`.
 
 Acceptance criteria:
 - Domain memory does not silently mutate global policy.
@@ -624,20 +624,20 @@ Acceptance criteria:
 
 ## Phase 9: Integration adapters
 
-### Task 9.1: Add generic pulse adapters
+### Task 9.1: Add generic evidence adapters
 
-Objective: Support non-integration memory Pulses such as direct notes, chat summaries, task closeouts, issue comments, and tool logs.
+Objective: Support non-integration memory evidences such as direct notes, chat summaries, task closeouts, issue comments, and tool logs.
 
 Files:
-- Create: `src/shyftr/adapters/pulses.py`
-- Test: `tests/test_pulse_adapters.py`
+- Create: `src/shyftr/adapters/evidences.py`
+- Test: `tests/test_evidence_adapters.py`
 
 Steps:
-1. Define a `MemoryPulseAdapter` protocol.
+1. Define a `memoryevidenceAdapter` protocol.
 2. Implement adapters for markdown note, chat summary JSON, task closeout markdown, and raw text.
-3. Normalize all Pulses into Spark extraction input.
-4. Preserve provenance and pulse hashes.
-5. Commit: `feat: add generic memory pulse adapters`.
+3. Normalize all evidences into candidate extraction input.
+4. Preserve provenance and evidence hashes.
+5. Commit: `feat: add generic memory evidence adapters`.
 
 Acceptance criteria:
 - Non-domain user memory can be ingested without integration-specific concepts.
@@ -658,11 +658,11 @@ Steps:
 5. Commit integration.
 
 Acceptance criteria:
-- Closeouts produce memory Spark ledger rows.
+- Closeouts produce memory candidate ledger rows.
 
 ### Task 9.3: Integrate retrieval bundles with generic clients
 
-Objective: Pulse bounded approved memory context into assistants, agents, project tools, and routing/execution decisions.
+Objective: evidence bounded approved memory context into assistants, agents, project tools, and routing/execution decisions.
 
 Files:
 - To be determined by target integration after runtime inspection.
@@ -676,7 +676,7 @@ Steps:
 6. Commit integration.
 
 Acceptance criteria:
-- Packet routing can consume approved domain memories.
+- packet routing can consume approved domain memories.
 - Retrieval logs record memory usage.
 
 ---
@@ -699,7 +699,7 @@ Steps:
 5. Commit: `feat: add memory effectiveness metrics`.
 
 Acceptance criteria:
-- Memory confidence can be updated from signal evidence.
+- memory confidence can be updated from feedback evidence.
 
 ### Task 10.2: Add decay scoring
 
@@ -730,7 +730,7 @@ Files:
 
 Steps:
 1. Add sample closeout with durable lesson.
-2. Ingest Pulse and extract Spark.
+2. Ingest evidence and extract candidate.
 3. Approve and promote it.
 4. Search and generate memory bundle.
 5. Document commands.
@@ -794,13 +794,13 @@ Acceptance criteria:
 
 The first usable MVP is complete at the end of Phase 6 if it supports:
 
-1. generic Cell memory layout initialization
+1. generic cell memory layout initialization
 2. closeout checklist parsing
-3. Spark extraction
+3. candidate extraction
 4. append-only review gate
-5. approved Spark-to-Charge promotion
+5. approved candidate-to-memory promotion
 6. sparse/vector-ready retrieval
-7. bounded memory bundle generation for generic Cells
+7. bounded memory bundle generation for generic cells
 8. CLI use for ingest, approve, promote, search, and bundle
 
 Phases 7-11 harden the system into a recursive, auditable, proof-of-work-ready memory-cell substrate.

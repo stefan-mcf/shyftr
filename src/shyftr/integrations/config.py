@@ -31,6 +31,7 @@ VALID_SOURCE_KINDS: Sequence[str] = (
     "message",
     "note",
     "review",
+    "feedback",
     "outcome",
     "task",
     "report",

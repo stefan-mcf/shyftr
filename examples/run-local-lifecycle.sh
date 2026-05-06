@@ -15,38 +15,38 @@ else
   SHYFTR=("$PYTHON_BIN" -m shyftr.cli)
 fi
 
-BASE="$(mktemp -d "${TMPDIR:-/tmp}/shyftr-example.XXXXXX")"
-CELL="$BASE/example-cell"
-PULSE="$ROOT_DIR/examples/pulse.md"
+BASE="$(mktemp -d "${TMPDIR:-/tmp}/shyftr-demo.XXXXXX")"
+CELL="$BASE/demo-cell"
+EVIDENCE="$ROOT_DIR/examples/evidence.md"
 BACKUP_DIR="$BASE/backups"
 mkdir -p "$BACKUP_DIR"
 
 json_get() {
   "$PYTHON_BIN" -c 'import json,sys; data=json.load(sys.stdin); key=sys.argv[1]; print(data[key])' "$1"
 }
-json_first_fragment() {
-  "$PYTHON_BIN" -c 'import json,sys; data=json.load(sys.stdin); print(data[0]["fragment_id"])'
+json_first_candidate() {
+  "$PYTHON_BIN" -c 'import json,sys; data=json.load(sys.stdin); print(data[0]["candidate_id"])'
 }
 
-echo "Creating temp Cell: $CELL"
-"${SHYFTR[@]}" init-cell "$CELL" --cell-id example-cell --cell-type domain >/tmp/shyftr-example-init.json
-SOURCE_ID=$("${SHYFTR[@]}" ingest "$CELL" "$PULSE" --kind lesson | json_get source_id)
-FRAGMENT_ID=$("${SHYFTR[@]}" spark "$CELL" "$SOURCE_ID" | json_first_fragment)
-"${SHYFTR[@]}" approve "$CELL" "$FRAGMENT_ID" --reviewer example-reviewer-script --rationale "Synthetic example Spark is bounded and useful." >/tmp/shyftr-example-review.json
-TRACE_ID=$("${SHYFTR[@]}" charge "$CELL" "$FRAGMENT_ID" --promoter example-promoter-script --statement "Scope-tagged Charges improve Pack relevance." --rationale "Promoted from synthetic example Pulse." | json_get trace_id)
-"${SHYFTR[@]}" search "$CELL" "Pack relevance" >/tmp/shyftr-example-search.json
-"${SHYFTR[@]}" profile "$CELL" >/tmp/shyftr-example-profile.json
-LOADOUT_ID=$("${SHYFTR[@]}" pack "$CELL" "Pack relevance" --task-id example-script-task --max-items 5 --query-tags domain:testing --include-fragments | json_get loadout_id)
-"${SHYFTR[@]}" signal "$CELL" "$LOADOUT_ID" success --applied "$TRACE_ID" --useful "$TRACE_ID" --verification '{"example":"local lifecycle"}' >/tmp/shyftr-example-signal.json
-"${SHYFTR[@]}" grid rebuild --cell "$CELL" --backend in-memory >/tmp/shyftr-example-grid.json
-"${SHYFTR[@]}" hygiene "$CELL" >/tmp/shyftr-example-hygiene.json
-"${SHYFTR[@]}" diagnostics "$CELL" --summary >/tmp/shyftr-example-diagnostics.json
-"${SHYFTR[@]}" readiness "$CELL" >/tmp/shyftr-example-readiness.json
-"${SHYFTR[@]}" verify-ledger --cell "$CELL" --adopt >/tmp/shyftr-example-ledger-adopt.json
-"${SHYFTR[@]}" verify-ledger --cell "$CELL" >/tmp/shyftr-example-ledger-verify.json
-"${SHYFTR[@]}" backup --cell "$CELL" --output "$BACKUP_DIR" >/tmp/shyftr-example-backup.json
+echo "Creating temp cell: $CELL"
+"${SHYFTR[@]}" init-cell "$CELL" --cell-id demo-cell --cell-type domain >/tmp/shyftr-demo-init.json
+EVIDENCE_ID=$("${SHYFTR[@]}" ingest "$CELL" "$EVIDENCE" --kind lesson | json_get evidence_id)
+FRAGMENT_ID=$("${SHYFTR[@]}" candidate "$CELL" "$EVIDENCE_ID" | json_first_candidate)
+"${SHYFTR[@]}" approve "$CELL" "$FRAGMENT_ID" --reviewer demo-script --rationale "Synthetic demo candidate is bounded and useful." >/tmp/shyftr-demo-review.json
+TRACE_ID=$("${SHYFTR[@]}" memory "$CELL" "$FRAGMENT_ID" --promoter demo-script --statement "Scope-tagged memories improve pack relevance." --rationale "Promoted from synthetic demo evidence." | json_get memory_id)
+"${SHYFTR[@]}" search "$CELL" "pack relevance" >/tmp/shyftr-demo-search.json
+"${SHYFTR[@]}" profile "$CELL" >/tmp/shyftr-demo-profile.json
+LOADOUT_ID=$("${SHYFTR[@]}" pack "$CELL" "pack relevance" --task-id demo-script-task --max-items 5 --query-tags domain:testing --include-candidates | json_get pack_id)
+"${SHYFTR[@]}" feedback "$CELL" "$LOADOUT_ID" success --applied "$TRACE_ID" --useful "$TRACE_ID" --verification '{"demo":"local lifecycle"}' >/tmp/shyftr-demo-feedback.json
+"${SHYFTR[@]}" grid rebuild --cell "$CELL" --backend in-memory >/tmp/shyftr-demo-grid.json
+"${SHYFTR[@]}" hygiene "$CELL" >/tmp/shyftr-demo-hygiene.json
+"${SHYFTR[@]}" diagnostics "$CELL" --summary >/tmp/shyftr-demo-diagnostics.json
+"${SHYFTR[@]}" readiness "$CELL" >/tmp/shyftr-demo-readiness.json
+"${SHYFTR[@]}" verify-ledger --cell "$CELL" --adopt >/tmp/shyftr-demo-ledger-adopt.json
+"${SHYFTR[@]}" verify-ledger --cell "$CELL" >/tmp/shyftr-demo-ledger-verify.json
+"${SHYFTR[@]}" backup --cell "$CELL" --output "$BACKUP_DIR" >/tmp/shyftr-demo-backup.json
 
 echo "ShyftR local lifecycle complete."
-echo "Cell path: $CELL"
-echo "Temp JSON outputs: /tmp/shyftr-example-*.json"
-echo "Remove example files with: rm -rf '$BASE' /tmp/shyftr-example-*.json"
+echo "cell path: $CELL"
+echo "Temp JSON outputs: /tmp/shyftr-demo-*.json"
+echo "Remove demo files with: rm -rf '$BASE' /tmp/shyftr-demo-*.json"

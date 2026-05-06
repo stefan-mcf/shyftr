@@ -36,15 +36,15 @@ def _cli(*args: str, cwd: str | None = None) -> subprocess.CompletedProcess:
 # ---------------------------------------------------------------------------
 
 
-def test_example_pulse_exists_and_parseable() -> None:
-    """examples/pulse.md exists and contains expected sections."""
-    path = REPO_ROOT / "examples" / "pulse.md"
+def test_example_evidence_exists_and_parseable() -> None:
+    """examples/evidence.md exists and contains expected sections."""
+    path = REPO_ROOT / "examples" / "evidence.md"
     assert path.is_file(), f"Missing: {path}"
     text = path.read_text(encoding="utf-8")
-    assert "Pulse ID:" in text
+    assert "Evidence ID:" in text
     assert "Kind:" in text
     assert "Durable Lesson" in text
-    assert "Pulse -> Spark" in text or "learning loop" in text
+    assert "evidence -> candidate" in text or "learning loop" in text
 
 
 def test_example_task_json_exists_and_parseable() -> None:
@@ -65,12 +65,12 @@ def test_example_doc_exists() -> None:
     text = path.read_text(encoding="utf-8")
     assert "shyftr init-cell" in text
     assert "shyftr ingest" in text
-    assert "shyftr spark" in text
+    assert "shyftr candidate" in text
     assert "shyftr approve" in text
-    assert "shyftr charge" in text
+    assert "shyftr memory" in text
     assert "shyftr search" in text
     assert "shyftr pack" in text
-    assert "shyftr signal" in text
+    assert "shyftr feedback" in text
 
 
 # ---------------------------------------------------------------------------
@@ -109,16 +109,16 @@ def test_example_lifecycle_via_cli(tmp_path: Path) -> None:
     result = _cli("ingest", cell, str(source_file), "--kind", "lesson")
     assert result.returncode == 0, f"ingest failed: {result.stderr}"
     ingest_data = json.loads(result.stdout)
-    assert ingest_data["source_id"].startswith("src-")
-    source_id: str = ingest_data["source_id"]
+    assert ingest_data["evidence_id"].startswith("src-")
+    source_id: str = ingest_data["evidence_id"]
 
     # 4. fragments
-    result = _cli("fragments", cell, source_id)
+    result = _cli("candidate", cell, source_id)
     assert result.returncode == 0, f"fragments failed: {result.stderr}"
     fragments = json.loads(result.stdout)
     assert isinstance(fragments, list)
     assert len(fragments) >= 1
-    fragment_id: str = fragments[0]["fragment_id"]
+    fragment_id: str = fragments[0]["candidate_id"]
 
     # 5. approve
     result = _cli(
@@ -138,8 +138,8 @@ def test_example_lifecycle_via_cli(tmp_path: Path) -> None:
     )
     assert result.returncode == 0, f"promote failed: {result.stderr}"
     trace_data = json.loads(result.stdout)
-    assert trace_data["trace_id"].startswith("trace-")
-    trace_id: str = trace_data["trace_id"]
+    assert trace_data["memory_id"].startswith("trace-")
+    trace_id: str = trace_data["memory_id"]
 
     # 7. search
     result = _cli("search", cell, "loadout")
@@ -156,8 +156,8 @@ def test_example_lifecycle_via_cli(tmp_path: Path) -> None:
     )
     assert result.returncode == 0, f"loadout failed: {result.stderr}"
     loadout_data = json.loads(result.stdout)
-    assert loadout_data["loadout_id"].startswith("lo-")
-    loadout_id: str = loadout_data["loadout_id"]
+    assert loadout_data["pack_id"].startswith("lo-")
+    loadout_id: str = loadout_data["pack_id"]
 
     # 9. outcome
     result = _cli(
@@ -167,7 +167,7 @@ def test_example_lifecycle_via_cli(tmp_path: Path) -> None:
     )
     assert result.returncode == 0, f"outcome failed: {result.stderr}"
     outcome_data = json.loads(result.stdout)
-    assert outcome_data["outcome_id"].startswith("oc-")
+    assert outcome_data["feedback_id"].startswith("oc-")
     assert outcome_data["verdict"] == "success"
 
     # 10. final hygiene check

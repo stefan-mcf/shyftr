@@ -4,26 +4,26 @@ Local-first, append-only memory control plane for AI agents.
 
 ## Current status
 
-ShyftR is a local-first alpha memory control plane for local Cells and operator-approved integrations where durable agent memory must stay inspectable, review-gated, and file-backed.
+ShyftR is a local-first alpha / controlled-pilot developer-preview MVP. It is designed for local cells, synthetic demos, and operator-approved pilots where durable agent memory must stay inspectable, review-gated, and file-backed.
 
 It is not a hosted SaaS product, not a multi-tenant production service, not production-hardened, and not a package release. Multi-cell federation and hosted platform operation remain deliberate non-goals for this repository.
 
 ## Why it exists
 
-Agent memory often becomes opaque profile state, ad hoc context, or a vector index without durable evidence. ShyftR gives an agent a local memory Cell whose ledger is the source of truth:
+Agent memory often becomes opaque profile state, ad hoc context, or a vector index without durable evidence. ShyftR gives an agent a local memory cell whose ledger is the source of truth:
 
-- Pulses capture raw experience as append-only evidence.
-- Sparks are extracted lessons awaiting review.
-- Charges are reviewed durable memory.
-- Packs supply bounded context to a runtime.
-- Signals report whether that context helped or harmed later work.
+- evidence captures raw experience in an append-only ledger.
+- candidates are extracted lessons awaiting review.
+- memories are reviewed durable memory.
+- packs supply bounded context to a runtime.
+- feedback reports whether that context helped or harmed future work.
 
 ## What works today
 
-- Local Cell creation and append-only ledgers.
-- Pulse ingestion, Spark extraction, review, and Charge promotion.
+- Local cell creation and append-only ledgers.
+- evidence ingestion, candidate extraction, review, and memory promotion.
 - Sparse, deterministic vector, and hybrid retrieval surfaces.
-- Pack generation and Signal recording.
+- pack generation and feedback recording.
 - Hygiene, readiness, diagnostics, audit, sweep, challenge, proposal, privacy, and backup/restore workflows.
 - Optional localhost FastAPI service and React console.
 - Runtime-neutral adapter examples and synthetic fixtures.
@@ -34,7 +34,7 @@ See `docs/status/current-implementation-status.md` for the evidence-backed capab
 
 - Hosted platform operation.
 - Multi-tenant production deployment.
-- Package publishing or release tags without a separate release decision.
+- package publishing or release tags without a separate release decision.
 - Distributed intelligence, federation, or network effects.
 - Automatic external runtime control beyond local adapter contracts.
 
@@ -74,18 +74,18 @@ Run the deterministic local lifecycle:
 bash examples/run-local-lifecycle.sh
 ```
 
-The script creates a temporary Cell, ingests `examples/pulse.md`, extracts and reviews a Spark, promotes a Charge, assembles a Pack, records a Signal, runs local diagnostics, verifies ledger heads, and creates a local backup.
+The script creates a temporary cell, ingests `examples/evidence.md`, extracts and reviews a candidate, promotes a memory, assembles a pack, records a feedback, runs local diagnostics, verifies ledger heads, and creates a local backup.
 
 Manual path:
 
 ```bash
-shyftr init-cell /tmp/shyftr-example-cell --cell-id example-cell
-shyftr ingest /tmp/shyftr-example-cell examples/pulse.md --kind lesson
-shyftr spark /tmp/shyftr-example-cell <source_id>
-shyftr approve /tmp/shyftr-example-cell <spark_id> --reviewer example-reviewer --rationale "Bounded synthetic lesson."
-shyftr charge /tmp/shyftr-example-cell <spark_id> --promoter example-promoter
-shyftr pack /tmp/shyftr-example-cell "Pack relevance" --task-id example-task
-shyftr signal /tmp/shyftr-example-cell <pack_id> success --useful <charge_id>
+shyftr init-cell /tmp/shyftr-demo-cell --cell-id demo-cell
+shyftr ingest /tmp/shyftr-demo-cell examples/evidence.md --kind lesson
+shyftr candidate /tmp/shyftr-demo-cell <source_id>
+shyftr approve /tmp/shyftr-demo-cell <candidate_id> --reviewer demo --rationale "Bounded synthetic lesson."
+shyftr memory /tmp/shyftr-demo-cell <candidate_id> --promoter demo
+shyftr pack /tmp/shyftr-demo-cell "pack relevance" --task-id demo-task
+shyftr feedback /tmp/shyftr-demo-cell <pack_id> success --useful <memory_id>
 ```
 
 ## Local service and console
@@ -110,13 +110,13 @@ See `docs/api.md` and `docs/console.md` for current endpoints, UI capabilities, 
 ## Safety model
 
 ```text
-Pulse -> Spark -> Charge -> Pack -> Signal
+evidence -> candidate -> memory -> pack -> feedback
           review gate       bounded use    feedback
 ```
 
-- Cell ledgers are canonical truth.
-- Grid/index/API/UI/profile artifacts are projections or append-only writers.
-- The Regulator boundary controls promotion, retrieval, sensitivity, and export decisions.
+- cell ledgers are canonical truth.
+- grid/index/API/UI/profile artifacts are projections or append-only writers.
+- The regulator boundary controls promotion, retrieval, sensitivity, and export decisions.
 - Backups and ledger-head verification make local state auditable.
 - Review and proposal flows are explicit; ShyftR does not silently rewrite durable memory.
 
@@ -126,18 +126,18 @@ Pulse -> Spark -> Charge -> Pack -> Signal
 External runtime or CLI
         |
         v
-   Pulse ingestion  ---> append-only Cell ledger
+   evidence ingestion  ---> append-only cell ledger
         |                         |
         v                         v
- Spark extraction --review--> Charge promotion
+ candidate extraction --review--> memory promotion
         |                         |
-        +-------- Grid / retrieval projections
+        +-------- grid / retrieval projections
                                   |
                                   v
-                           Pack supplied to agent
+                           pack supplied to agent
                                   |
                                   v
-                           Signal updates confidence
+                           feedback updates confidence
 ```
 
 ## Documentation
@@ -151,6 +151,7 @@ External runtime or CLI
 - `docs/api.md` — localhost service endpoints.
 - `docs/console.md` — React console setup and boundaries.
 - `docs/concepts/` — concept and architecture notes.
+- `docs/concepts/terminology-compatibility.md` — canonical terms and deprecated alias policy.
 - `examples/README.md` — synthetic examples and lifecycle script.
 
 Historical plans, sources, feeds, and runbooks remain under `docs/` as implementation notes. Treat them as historical or planning material unless a status document marks a capability current.

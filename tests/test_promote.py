@@ -53,7 +53,7 @@ def test_promote_approved_fragment_appends_trace_and_promotion_event(tmp_path):
     trace_records = [record for _, record in read_jsonl(cell_path / "traces" / "approved.jsonl")]
     assert trace_records == [trace.to_dict()]
     promotion_records = [record for _, record in read_jsonl(cell_path / "ledger" / "promotions.jsonl")]
-    assert promotion_records[0]["fragment_id"] == fragment.fragment_id
+    assert promotion_records[0]["candidate_id"] == fragment.fragment_id
     assert promotion_records[0]["trace_id"] == trace.trace_id
     assert promotion_records[0]["source_id"] == source.source_id
     assert promotion_records[0]["source_fragment_ids"] == [fragment.fragment_id]

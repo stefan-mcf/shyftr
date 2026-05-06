@@ -131,6 +131,7 @@ def _append_review_event(
     event = {
         "review_id": f"rev-{uuid4().hex}",
         "fragment_id": fragment_id,
+        "candidate_id": fragment_id,
         "review_action": review_action,
         "review_status": review_status,
         "reviewed_at": datetime.now(timezone.utc).isoformat(),

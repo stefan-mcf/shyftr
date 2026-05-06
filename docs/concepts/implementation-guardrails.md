@@ -1,6 +1,6 @@
-# ShyftR Implementation Guardrails
+# ShyftR Implementation Guardrules
 
-Status: implementation rail. Use this file as a guardrail before starting or reviewing any ShyftR tranche, especially the Universal Memory Substrate follow-up plan.
+Status: implementation rule. Use this file as a guardrule before starting or reviewing any ShyftR tranche, especially the Universal memory Substrate follow-up plan.
 
 Purpose: keep ShyftR ambitious without letting it become a bloated monolith. ShyftR may grow many adapters and projections, but the core must remain a small, stable, local-first memory-cell substrate.
 
@@ -15,17 +15,17 @@ ShyftR remains a memory substrate rather than a task runner, agent orchestrator,
 The canonical core is:
 
 ```text
-Spark -> Charge -> Coil -> Rail
+candidate -> memory -> pattern -> rule
 ```
 
 Supporting core concepts:
 
-- Cell
-- Regulator
-- Cell Ledger
-- Grid
-- Pack
-- Signal
+- cell
+- regulator
+- cell ledger
+- grid
+- pack
+- feedback
 - Proposal
 - append-only truth
 - provenance
@@ -42,12 +42,12 @@ Everything else must attach to this core as an adapter, projection, importer, ex
 ## Golden rule
 
 ```text
-Cell ledgers are truth.
-The Regulator controls admission, promotion, retrieval, and export.
-The Grid is acceleration.
-The Pack is application.
-Signal is learning.
-Charge confidence is evolution.
+cell ledgers are truth.
+The regulator controls admission, promotion, retrieval, and export.
+The grid is acceleration.
+The pack is application.
+feedback is learning.
+memory confidence is evolution.
 Markdown and dashboards are projections.
 External runtimes apply; ShyftR proposes.
 ```
@@ -63,16 +63,16 @@ Keep the core package focused on durable memory.
 Core package responsibilities:
 
 - models
-- Cell layout
+- cell layout
 - append-only ledgers
 - regulator policy
-- Pulse ingest primitives
-- Spark extraction primitives
+- evidence ingest primitives
+- candidate extraction primitives
 - review and promotion
-- retrieval and Pack assembly
-- Signal and confidence evolution
-- distillation into Coils and Rail proposals
-- mutation events such as supersession, deprecation, Isolation, and redaction projection
+- retrieval and pack assembly
+- feedback and confidence evolution
+- distillation into patterns and rule proposals
+- mutation events such as supersession, deprecation, quarantine, and redaction projection
 - profile projections
 - backup, restore, validation, and migration safety
 
@@ -91,7 +91,7 @@ Optional module responsibilities:
 
 If a feature captures, displays, imports, exports, syncs, or reviews memory, it should usually be an optional module.
 
-If a feature strengthens the lifecycle, provenance, Packs, Signal, confidence, Cell boundaries, or portability, it may belong near core.
+If a feature strengthens the lifecycle, provenance, packs, feedback, confidence, cell boundaries, or portability, it may belong near core.
 
 ---
 
@@ -110,7 +110,7 @@ shyftr/
   review.py
   promote.py
   pack.py
-  signal.py
+  feedback.py
   confidence.py
   mutations.py
   profile.py
@@ -131,7 +131,7 @@ shyftr/
     markdown, JSON, and future HTML projections
 
   documents/
-    document and research Pulse ingestion
+    document and research evidence ingestion
 
   workspace/
     review CLI, TUI, or UI helpers
@@ -140,7 +140,7 @@ shyftr/
     sparse, vector, hybrid, and backend adapters
 
   cells/
-    registry, routing, and policies shared between Cells
+    registry, routing, and policies shared between cells
 ```
 
 These boundaries are not rigid file mandates, but implementation should preserve the separation they express.
@@ -162,11 +162,11 @@ Do not make ShyftR own:
 - model/backend switching for execution
 - runtime policy mutation by default
 
-External runtimes own execution. ShyftR receives Pulses, returns Packs, records Signal, and exports Proposals.
+External runtimes own execution. ShyftR receives evidences, returns packs, records feedback, and exports Proposals.
 
 ### 2. Operational state must not become durable memory
 
-Reject or Isolation transient facts such as:
+Reject or quarantine transient facts such as:
 
 - task X is in progress
 - worker Y owns branch Z
@@ -176,7 +176,7 @@ Reject or Isolation transient facts such as:
 - artifact paths as standalone memory
 - completion logs as standalone memory
 
-Durable memory should capture lessons, preferences, constraints, failure signatures, recovery patterns, workflows, tool quirks, and reviewed Rail.
+Durable memory should capture lessons, preferences, constraints, failure signatures, recovery patterns, workflows, tool quirks, and reviewed rule.
 
 ### 3. Generated projections are not truth
 
@@ -185,13 +185,13 @@ Markdown exports, dashboards, profiles, summaries, reports, and indexes are rebu
 Correct direction:
 
 ```text
-Cell Ledger -> projection
+cell ledger -> projection
 ```
 
-Allowed pulse direction:
+Allowed evidence direction:
 
 ```text
-human-authored note -> Pulse -> Spark -> review -> Charge
+human-authored note -> evidence -> candidate -> review -> memory
 ```
 
 Dangerous direction:
@@ -223,8 +223,8 @@ Automation may discover, extract, cluster, score, propose, and export.
 
 Automation must not silently:
 
-- promote arbitrary durable Charges
-- promote shared Rails
+- promote arbitrary durable memories
+- promote shared rules
 - destructively deprecate memory
 - rewrite canonical ledgers
 - apply external runtime policy changes
@@ -235,15 +235,15 @@ Trusted direct memory paths are allowed only when explicit, auditable, configura
 
 ## Ambition without bloat
 
-The Universal Memory Substrate roadmap is allowed to be large because it describes an ecosystem around Cells, not a bloated core.
+The Universal memory Substrate roadmap is allowed to be large because it describes an ecosystem around cells, not a bloated core.
 
 Healthy ambition:
 
 - ShyftR replaces managed assistant memory as canonical durable memory.
-- ShyftR can ingest human-authored notes as Pulses.
+- ShyftR can ingest human-authored notes as evidences.
 - ShyftR can export human-readable markdown knowledge projections.
-- ShyftR can produce profiles, Packs, Signal, and proposals.
-- ShyftR can support many Cells and multi-Cell resonance.
+- ShyftR can produce profiles, packs, feedback, and proposals.
+- ShyftR can support many cells and multi-cell resonance.
 - ShyftR can become the durable knowledge substrate underneath human and agent tools.
 
 Unhealthy bloat:
@@ -261,10 +261,10 @@ Unhealthy bloat:
 
 Prefer this order when choosing what to build next:
 
-1. Memory provider replacement
+1. memory provider replacement
 2. Profile and mutation semantics
 3. Persistent retrieval
-4. Multi-Cell routing
+4. Multi-cell routing
 5. Migration/import safety
 6. Assistant and agent runtime integration
 7. Markdown ingest and export
@@ -280,10 +280,10 @@ Do not build a polished UI before the core provider, profile, mutation, retrieva
 
 Before accepting a tranche, ask:
 
-1. Does this preserve Cell ledgers as canonical truth?
+1. Does this preserve cell ledgers as canonical truth?
 2. Does this keep generated artifacts as projections?
 3. Does this avoid storing operational state as durable memory?
-4. Does this preserve provenance from Pulse to Charge or proposal?
+4. Does this preserve provenance from evidence to memory or proposal?
 5. Does this keep review gates meaningful?
 6. Does this avoid making optional adapters mandatory?
 7. Does this strengthen the core lifecycle or clearly live outside core?
@@ -302,7 +302,7 @@ If the answer to any of these is no, revise the design before implementation.
 Use this rule when deciding where a feature belongs:
 
 ```text
-Core: durable memory lifecycle, provenance, review, retrieval, Pack, Signal, confidence, Cell portability.
+Core: durable memory lifecycle, provenance, review, retrieval, pack, feedback, confidence, cell portability.
 Module: capture, display, import, export, sync, UI, runtime glue, optional backend.
 Projection: generated profile, summary, dashboard, markdown, report, index.
 External runtime: execution, queues, workers, live state, retries, operational policy application.
@@ -318,9 +318,9 @@ The desired end state is:
 
 ```text
 ShyftR owns canonical memory.
-Runtimes consume Packs and report Signal.
-Human tools create Pulses and display projections.
-Cell ledgers remain inspectable, local-first, and portable.
+Runtimes consume packs and report feedback.
+Human tools create evidences and display projections.
+cell ledgers remain inspectable, local-first, and portable.
 ```
 
 This regulator keeps ShyftR powerful without making it overfilled or overcomplicated.

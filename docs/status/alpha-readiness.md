@@ -50,7 +50,7 @@ If the gate fails, ShyftR is not alpha-ready on that machine. Capture the full t
 Use:
 
 - synthetic examples under `examples/`;
-- throwaway local Cells;
+- throwaway local cells;
 - non-sensitive notes intentionally created for testing;
 - operator-approved pilot data only after reviewing `SECURITY.md`.
 
@@ -66,7 +66,7 @@ Do not use:
 - Did install from clone work?
 - Did `scripts/alpha_gate.sh` finish with `ALPHA_GATE_READY`?
 - Which README or docs step was confusing?
-- Did the lifecycle example make the Pack -> Signal loop understandable?
+- Did the lifecycle demo make the pack -> feedback loop understandable?
 - Did terminology help or confuse you?
 - Did the local console build or run cleanly?
 - What would block you from trying a small local pilot?

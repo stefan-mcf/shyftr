@@ -1,11 +1,11 @@
 {
-  "task_id": "task-example-loadout-001",
+  "task_id": "task-example-pack-001",
   "query": "How should we handle authentication token refresh in CLI tools?",
-  "expected_trace_tags": ["lang:python", "domain:auth", "pattern:token-refresh"],
-  "max_traces": 5,
-  "description": "Assemble a Loadout with relevant authentication refresh patterns from the python-tooling Cell, then generate an Outcome that reports which Traces were useful.",
+  "expected_memory_tags": ["lang:python", "domain:auth", "pattern:token-refresh"],
+  "max_memories": 5,
+  "description": "Assemble a pack with relevant authentication refresh patterns from the python-tooling cell, then generate an feedback that reports which memories were useful.",
   "steps": [
-    "shyftr loadout ./my-cell \"How should we handle authentication token refresh in CLI tools?\" --task-id task-example-loadout-001 --query-tags lang:python,domain:auth",
-    "shyftr outcome ./my-cell <loadout_id> success --useful <trace_id_1>,<trace_id_2> --missing \"CLI-specific retry pattern\""
+    "shyftr pack ./my-cell \"How should we handle authentication token refresh in CLI tools?\" --task-id task-example-pack-001 --query-tags lang:python,domain:auth",
+    "shyftr feedback ./my-cell <pack_id> success --useful <memory_id_1>,<memory_id_2> --missing \"CLI-specific retry pattern\""
   ]
 }

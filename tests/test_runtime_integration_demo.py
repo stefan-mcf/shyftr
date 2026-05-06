@@ -52,7 +52,7 @@ def _first_source(cell: Path) -> Source:
 def _promote_demo_charge(cell: Path) -> str:
     source = _first_source(cell)
     fragments = extract_fragments(cell, source)
-    assert fragments, "closeout Pulse should extract at least one Spark/Fragment"
+    assert fragments, "closeout evidence should extract at least one candidate"
     fragment = fragments[0]
     approve_fragment(
         cell,
@@ -73,10 +73,10 @@ def _promote_demo_charge(cell: Path) -> str:
 def test_worker_runtime_fixture_files_are_present_and_runtime_neutral() -> None:
     expected = [
         FIXTURE_ROOT / "adapter.yaml",
-        FIXTURE_ROOT / "pulse-closeout.md",
-        FIXTURE_ROOT / "signal-log.jsonl",
+        FIXTURE_ROOT / "evidence-closeout.md",
+        FIXTURE_ROOT / "feedback-log.jsonl",
         FIXTURE_ROOT / "task-request.json",
-        FIXTURE_ROOT / "signal-report.json",
+        FIXTURE_ROOT / "feedback-report.json",
         DEMO_DOC,
     ]
     for path in expected:
@@ -84,9 +84,9 @@ def test_worker_runtime_fixture_files_are_present_and_runtime_neutral() -> None:
 
     joined = "\n".join(path.read_text(encoding="utf-8") for path in expected)
     assert "generic-worker-runtime" in joined
-    assert "Evidence: Successful Workflow" in joined
+    assert "evidence: Successful Workflow" in joined
     assert "Repeated Failure Signature" in joined
-    assert "Recovery Pattern" in joined
+    assert "recovery pattern" in joined
     assert "Caution / Anti-pattern" in joined
     assert "Antaeus" not in joined
 
@@ -112,7 +112,7 @@ def test_worker_runtime_demo_closes_loop_end_to_end(tmp_path: Path) -> None:
     assert trace_id in loadout_response.selected_ids
     assert loadout_response.total_items >= 1
 
-    report_data = json.loads((runtime_root / "signal-report.json").read_text(encoding="utf-8"))
+    report_data = json.loads((runtime_root / "feedback-report.json").read_text(encoding="utf-8"))
     report_data["cell_path_or_id"] = str(cell)
     report_data["loadout_id"] = loadout_response.loadout_id
     report_data["applied_trace_ids"] = [trace_id]
@@ -130,6 +130,6 @@ def test_demo_doc_mentions_contract_and_fixture_paths() -> None:
     assert "examples/integrations/worker-runtime/" in text
     assert "shyftr adapter validate" in text
     assert "shyftr adapter ingest" in text
-    assert "Pulse -> Spark -> Charge" in text
-    assert "Pack" in text
-    assert "Signal" in text
+    assert "evidence -> candidate -> memory" in text
+    assert "pack" in text
+    assert "feedback" in text

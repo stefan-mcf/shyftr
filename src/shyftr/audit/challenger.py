@@ -88,6 +88,7 @@ class ChallengerFinding:
             d["supporting_data"] = self.supporting_data
         if self.fragment_id:
             d["fragment_id"] = self.fragment_id
+            d["candidate_id"] = self.fragment_id
         if self.target_status:
             d["target_status"] = self.target_status
         if self.target_confidence is not None:

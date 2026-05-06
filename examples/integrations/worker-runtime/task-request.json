@@ -1,6 +1,6 @@
 {
   "cell_path_or_id": "worker-runtime-demo-cell",
-  "query": "Validate adapter config before syncing runtime report and signal logs",
+  "query": "Validate adapter config before syncing runtime report and feedback logs",
   "task_kind": "runtime-demo",
   "external_system": "generic-worker-runtime",
   "external_scope": "demo-worker",
@@ -8,6 +8,6 @@
   "tags": ["runtime-integration", "adapter", "sync"],
   "max_items": 5,
   "max_tokens": 1200,
-  "requested_trust_tiers": ["trace"],
-  "include_fragments": false
+  "requested_trust_tiers": ["memory"],
+  "include_candidates": false
 }

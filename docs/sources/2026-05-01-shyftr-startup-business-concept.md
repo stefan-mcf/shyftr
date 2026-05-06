@@ -15,13 +15,13 @@ The business should be structured around two complementary offerings:
 
 The platform encompasses all reusable infrastructure:
 
-- Core Memory Engine – append-only ledgers, cells, regulators, retrieval grids, packs and signals.
+- Core memory Engine – append-only ledgers, cells, regulators, retrieval grids, packs and feedbacks.
 
 This includes local storage libraries, optional hosted sync and rich APIs for interacting with memory.
 
 - SDK & APIs – developer tools to integrate ShyftR memory into third-party apps or agent
 
-runtimes. Functions include ingesting evidence, extracting candidates, promoting memory, generating packs, recording signals and managing cells.
+runtimes. Functions include ingesting evidence, extracting candidates, promoting memory, generating packs, recording feedbacks and managing cells.
 
 - Console & UI Toolkit – an operator console for reviewing memory, managing cells and
 
@@ -35,19 +35,19 @@ To demonstrate and prove the platform, ShyftR should release its own first-party
 
 dreams through multiple lenses. Powered by ShyftR cells for dreams and symbolism libraries.
 
-- DailyPulse – a life-log and personal knowledge journal that captures ideas, routines,
+- Dailyevidence – a life-log and personal knowledge journal that captures ideas, routines,
 
 conversations and reflections, building a personalised memory of the user’s habits and thinking style.
 
-- StudyCell – a study companion that tracks lessons learned, mistakes, exam patterns and
+- Studycell – a study companion that tracks lessons learned, mistakes, exam patterns and
 
 knowledge gaps, helping students build durable learning memory.
 
-- CreatorCell – a memory tool for creators and producers to organise reference material, mix
+- Creatorcell – a memory tool for creators and producers to organise reference material, mix
 
 decisions, drafts and creative inspirations.
 
-- AgentCell – a module that attaches ShyftR memory to agent orchestration systems like Antaeus/
+- Agentcell – a module that attaches ShyftR memory to agent orchestration systems like Antaeus/
 
 Hermes, providing persistent memory for tasks and projects. These flagship apps serve two purposes: they generate revenue and user traction, and they dogfood the ShyftR platform, ensuring it meets real product needs. Each app should carry its own brand (e.g. Dreamline powered by ShyftR) so that the platform’s identity remains broader than any single product.
 
@@ -77,7 +77,7 @@ the memory engine. This demonstrates value to consumers and provides real feedba
 
 Provide documentation, examples and starter templates.
 
-- Expand Flagship Portfolio – Add other first-party apps (e.g. DailyPulse, StudyCell) using the
+- Expand Flagship Portfolio – Add other first-party apps (e.g. Dailyevidence, Studycell) using the
 
 same infrastructure. Each new app reinforces the platform and brings in new users.
 
@@ -95,7 +95,7 @@ support and team features. Make the pricing clear and align value with usage.
 
 features must use encryption and allow users to keep their memories private unless they choose to share.
 
-- Review-Gated Learning – Memory promotion and policy changes should always require review
+- Review-Gated Learning – memory promotion and policy changes should always require review
 
 unless explicitly configured as trusted. This builds trust in the system and prevents contamination.
 
@@ -103,11 +103,11 @@ unless explicitly configured as trusted. This builds trust in the system and pre
 
 reasoning. Users and developers must understand why a piece of memory was selected or suppressed.
 
-- Pluggable Lenses & Patterns – Apps should expose different interpretive lenses (e.g. Jungian,
+- Pluggable Lenses & patterns – Apps should expose different interpretive lenses (e.g. Jungian,
 
 mythological, personal patterns) and allow users to select or add their own frameworks. ShyftR should support importing external knowledge bases.
 
-- Composable Cells – Memory should be modular. Users and apps can mount multiple cells (user
+- Composable cells – memory should be modular. Users and apps can mount multiple cells (user
 
 core, project, dream, study, etc.) and control how they interact.
 
@@ -121,7 +121,7 @@ resources thin. Focus on proving the platform with one or two strong application
 
 dream journal or a journaling product. Instead, give each app its own consumer brand (e.g. Dreamline by ShyftR) while positioning ShyftR as the technology layer.
 
-- Ethical & Clinical Boundaries – Memory apps, especially those dealing with dreams or personal
+- Ethical & Clinical Boundaries – memory apps, especially those dealing with dreams or personal
 
 reflections, must avoid making health or psychological claims. Frame interpretations as reflective suggestions, not diagnoses.
 
@@ -131,4 +131,4 @@ over their data, including export, deletion and sensitivity tagging.
 
 ## Next Steps
 
-Finalise the core architecture and naming (cells, pulses, sparks, charges, circuits, rails, packs, signals) and align the SDK around these primitives. Build a prototype of the first flagship app (e.g. Dreamline) using the ShyftR engine. Collect early feedback to refine capture flows, interpretation UX and memory promotion. Prepare a developer preview of the ShyftR API, including sample integrations with a simple agent runtime. Map out a roadmap for additional verticals (DailyPulse, StudyCell, CreatorCell, AgentCell) and identify the unique memory needs of each domain. Develop a pricing strategy that balances consumer accessibility with sustainable platform revenue. By separating the platform and its first-party products, ShyftR can evolve into a trusted memory layer for a wide range of applications while demonstrating its value through compelling, focused apps. This dual approach lays the foundation for both consumer traction and developer adoption.
+Finalise the core architecture and naming (cells, evidences, candidates, memories, circuits, rules, packs, feedbacks) and align the SDK around these primitives. Build a prototype of the first flagship app (e.g. Dreamline) using the ShyftR engine. Collect early feedback to refine capture flows, interpretation UX and memory promotion. Prepare a developer preview of the ShyftR API, including sample integrations with a simple agent runtime. Map out a roadmap for additional verticals (Dailyevidence, Studycell, Creatorcell, Agentcell) and identify the unique memory needs of each domain. Develop a pricing strategy that balances consumer accessibility with sustainable platform revenue. By separating the platform and its first-party products, ShyftR can evolve into a trusted memory layer for a wide range of applications while demonstrating its value through compelling, focused apps. This dual approach lays the foundation for both consumer traction and developer adoption.

@@ -31,7 +31,7 @@ below), the app asks which associations resonate most with the user. The feedbac
 
 An interpretation agent reads the raw dream entry and identifies notable symbols, characters, settings, emotions and themes.
 
-- These candidate symbols become Sparks in ShyftR – proposed memory items awaiting review or
+- These candidate symbols become candidates in ShyftR – proposed memory items awaiting review or
 
 confirmation. The agent also generates a concise summary of the dream for quick recall.
 
@@ -55,47 +55,47 @@ problem-solving.
 
 For each detected symbol, the app presents possible associations from selected lenses. It clearly labels the lens (e.g. “Jungian reading” or “Cognitive reading”) and emphasises that interpretations are speculative. The user can choose which lenses they care about and rate the relevance of each association.
 
-### 4. Personal Memory & Pattern Detection
+### 4. Personal memory & pattern Detection
 
 ShyftR cells organise dream data into a durable memory structure:
 
-- Pulse – the raw dream entry (text or voice transcription) stored verbatim in a pulses.jsonl
+- evidence – the raw dream entry (text or voice transcription) stored verbatim in a evidences.jsonl
 
 ledger.
 
-- Spark – each extracted symbol, emotion or theme recorded as a candidate memory with
+- candidate – each extracted symbol, emotion or theme recorded as a candidate memory with
 
 metadata (source dream, suggested lens, tags, initial confidence).
 
-- Charge – a Spark promoted to an approved recurring pattern after review or after multiple
+- memory – a candidate promoted to an approved recurring pattern after review or after multiple
 
 appearances. E.g. “Water often appears in dreams when the user feels overwhelmed.”
 
-- Circuit – a distilled pattern connecting several Charges into a more complex interpretation
+- Circuit – a distilled pattern connecting several memories into a more complex interpretation
 
 (optional in early versions).
 
-- Rail – a high-authority personal rule or interpretation guideline promoted from repeated circuits
+- rule – a high-authority personal rule or interpretation guideline promoted from repeated circuits
 
 (e.g. “Dreams about locked rooms often relate to avoided issues for this user”). This is advanced functionality.
 
-- Pack – when interpreting a new dream, ShyftR assembles a pack containing relevant Charges,
+- pack – when interpreting a new dream, ShyftR assembles a pack containing relevant memories,
 
-Circuits and Rails from the user’s dream memory and the selected symbolism library. The pack includes provenance and scoring information.
+Circuits and rules from the user’s dream memory and the selected symbolism library. The pack includes provenance and scoring information.
 
-- Signal – user feedback after reviewing an interpretation. Signals capture whether an association
+- feedback – user feedback after reviewing an interpretation. feedbacks capture whether an association
 
-or pattern was accurate, partially accurate, inaccurate, important or ignorable, and how the dream felt. Separate cells maintain different aspects of the memory to ensure isolation and modularity. For
+or pattern was accurate, partially accurate, inaccurate, important or ignorable, and how the dream felt. Separate cells maintain different aspects of the memory to ensure quarantine and modularity. For
 
 ```text
 example:
 ```
 
-user/core – stable preferences and writing style. dreams/raw – raw dream entries. dreams/patterns – recurring symbols and themes promoted to Charges. dreams/entities – recurring people, places and objects. symbolism/jungian, symbolism/psychodynamic, etc. – imported symbolism frameworks used for candidate interpretations. When a new dream is logged, the app uses a dream pack that retrieves: Similar past dreams. Relevant Charges (recurring patterns) from the user’s dream memory. Associated meanings from selected symbolism libraries. Prompts the user for feedback to refine the memory.
+user/core – stable preferences and writing style. dreams/raw – raw dream entries. dreams/patterns – recurring symbols and themes promoted to memories. dreams/entities – recurring people, places and objects. symbolism/jungian, symbolism/psychodynamic, etc. – imported symbolism frameworks used for candidate interpretations. When a new dream is logged, the app uses a dream pack that retrieves: Similar past dreams. Relevant memories (recurring patterns) from the user’s dream memory. Associated meanings from selected symbolism libraries. Prompts the user for feedback to refine the memory.
 
-### 5. Feedback Loop & Learning
+### 5. feedback Loop & Learning
 
-After each dream interpretation, the app invites feedback: Did the interpretation feel accurate, partly accurate or off? Which symbolic associations resonated or felt wrong? Did any part of the dream feel especially important? This feedback becomes Signal events that update confidence and retrieval affinity in ShyftR. Patterns that the user repeatedly finds irrelevant will be down-ranked; patterns that the user endorses will be reinforced. The app never overwrites original memory. Instead, ShyftR appends confidence and affinity events so that the memory evolution is auditable.
+After each dream interpretation, the app invites feedback: Did the interpretation feel accurate, partly accurate or off? Which symbolic associations resonated or felt wrong? Did any part of the dream feel especially important? This feedback becomes feedback events that update confidence and retrieval affinity in ShyftR. patterns that the user repeatedly finds irrelevant will be down-ranked; patterns that the user endorses will be reinforced. The app never overwrites original memory. Instead, ShyftR appends confidence and affinity events so that the memory evolution is auditable.
 
 ## MVP Scope
 
@@ -109,19 +109,19 @@ rating.
 
 - Symbol & Theme Extraction – a lightweight agent to identify candidate symbols and themes.
 
-- Personal Patterns – detect recurring symbols after they appear at least three times; promote
+- Personal patterns – detect recurring symbols after they appear at least three times; promote
 
-them to Charges with associated confidence.
+them to memories with associated confidence.
 
 - Interpretation Screen – display detected symbols, possible meanings from a limited set of
 
 lenses (e.g. Jungian and personal patterns) and ask the user which associations feel right.
 
-- Feedback Collection – allow the user to mark associations as useful or not and provide free-text
+- feedback Collection – allow the user to mark associations as useful or not and provide free-text
 
 notes.
 
-- Memory View – show a timeline of dream entries and a dashboard of recurring symbols and
+- memory View – show a timeline of dream entries and a dashboard of recurring symbols and
 
 patterns. Advanced features such as circuits, multiple cells, pattern dashboards, cross-lens comparisons, or night-specific analytics can follow after the MVP proves valuable.
 
@@ -138,11 +138,11 @@ mood_tags: list[string]
 sleep_quality: optional[string]
 lucidity: optional[bool]
 summary: optional[string]
-extracted_symbols: list[SymbolCandidate]
+extracted_symbols: list[Symbolcandidate]
 extracted_emotions: list[string]
 extracted_themes: list[string]
-user_feedback: optional[FeedbackRecord]
-SymbolCandidate:
+user_feedback: optional[feedbackRecord]
+Symbolcandidate:
 ```
 
 ```text
@@ -157,14 +157,14 @@ suggested_lenses: list[string]
 
 ```text
 status: pending | promoted | rejected
-FeedbackRecord:
+feedbackRecord:
 dream_id: UUID
 selected_associations: list[string]
 accurate: bool | partial | false
 notes: optional[string]
 ```
 
-Charge (ApprovedPattern):
+memory (Approvedpattern):
 
 ```text
 id: UUID
@@ -174,7 +174,7 @@ confidence: float
 tags: list[string]
 ```
 
-These structures become ledger entries in ShyftR, with DreamEntry as a pulse, SymbolCandidate as a spark and Charge as an approved charge.
+These structures become ledger entries in ShyftR, with DreamEntry as a evidence, Symbolcandidate as a candidate and memory as an approved memory.
 
 ## Privacy & Safety Considerations
 
@@ -186,7 +186,7 @@ device unless they choose to back up or sync via encrypted channels.
 
 truths. The app always labels which lens a meaning comes from and invites user judgement.
 
-- Sensitive content isolation – Dreams may include personal or traumatic content. Provide
+- Sensitive content quarantine – Dreams may include personal or traumatic content. Provide
 
 sensitivity filters and allow the user to mark entries as private or restrict export.
 
@@ -196,15 +196,15 @@ mental health advice. The app is a reflective tool, not a clinical resource.
 
 ## Implementation & ShyftR Integration Steps
 
-- Define Cells & Mounts – Create a root dreams/main cell for raw logs and patterns, separate
+- Define cells & Mounts – Create a root dreams/main cell for raw logs and patterns, separate
 
 symbolism/* cells for imported frameworks and a user/core cell for preferences. Set up mounts to attach these cells to the dream app runtime.
 
-- Ingestion Pipeline – Build a parser that takes user input and appends it as pulses in the
+- Ingestion Pipeline – Build a parser that takes user input and appends it as evidences in the
 
-dreams/main cell. Configure auto-extraction of symbols into sparks.jsonl.
+dreams/main cell. Configure auto-extraction of symbols into candidates.jsonl.
 
-- Symbolism Library Ingestion – Convert Jungian and other symbolism dictionaries into pulses
+- Symbolism Library Ingestion – Convert Jungian and other symbolism dictionaries into evidences
 
 within their respective symbolism cells. Each entry should include definitions, related symbols and caution notes.
 
@@ -212,11 +212,11 @@ within their respective symbolism cells. Each entry should include definitions, 
 
 occurrences (e.g. 3) but require manual review or explicit user confirmation before promoting more complex patterns.
 
-- Pack Compilation – Implement a DreamPackCompiler that retrieves personal patterns and
+- pack Compilation – Implement a DreampackCompiler that retrieves personal patterns and
 
 relevant symbolism associations to present interpretations. It should include reasons and allow the user to rate them.
 
-- Signal Recording – After the user reviews a dream interpretation, record feedback as signals.
+- feedback Recording – After the user reviews a dream interpretation, record feedback as feedbacks.
 
 Use confidence and retrieval affinity events to update pattern weights.
 
@@ -230,4 +230,4 @@ pattern analytics, symbolic mood mapping and integration with other life-log app
 
 ## Conclusion
 
-This concept positions the dream app as a personal symbolic memory journal powered by ShyftR. By leveraging ShyftR’s memory lifecycle – pulses, sparks, charges, circuits, rails, packs and signals – the app turns fleeting nocturnal experiences into a durable, evolving memory. It does not attempt to interpret dreams generically; instead, it builds an interpretation model unique to the user, based on their own patterns and chosen theoretical lenses. With privacy, review gates and clear labelling, the app offers a safe and meaningful way to explore the rich inner world of dreams. 6. 7. 8.
+This concept positions the dream app as a personal symbolic memory journal powered by ShyftR. By leveraging ShyftR’s memory lifecycle – evidences, candidates, memories, circuits, rules, packs and feedbacks – the app turns fleeting nocturnal experiences into a durable, evolving memory. It does not attempt to interpret dreams generically; instead, it builds an interpretation model unique to the user, based on their own patterns and chosen theoretical lenses. With privacy, review gates and clear labelling, the app offers a safe and meaningful way to explore the rich inner world of dreams. 6. 7. 8.

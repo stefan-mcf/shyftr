@@ -23,7 +23,7 @@ def test_approve_and_reject_fragment_append_review_events_without_mutating_fragm
     assert reviews == [approval, rejection]
     assert approval["review_status"] == "approved"
     assert rejection["review_status"] == "rejected"
-    assert rejection["fragment_id"] == fragment.fragment_id
+    assert rejection["candidate_id"] == fragment.fragment_id
     assert list(read_jsonl(cell_path / "ledger" / "fragments.jsonl")) == original_fragment_rows
     assert latest_review(cell_path, fragment.fragment_id)["review_status"] == "rejected"
 

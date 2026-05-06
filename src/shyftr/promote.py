@@ -62,9 +62,13 @@ def promote_fragment(
         {
             "promotion_id": f"promo-{uuid4().hex}",
             "fragment_id": fragment.fragment_id,
+            "candidate_id": fragment.fragment_id,
             "trace_id": trace.trace_id,
+            "memory_id": trace.trace_id,
             "source_id": fragment.source_id,
+            "evidence_id": fragment.source_id,
             "source_fragment_ids": [fragment.fragment_id],
+            "candidate_ids": [fragment.fragment_id],
             "promoted_at": datetime.now(timezone.utc).isoformat(),
             "promoter": promoter,
             "review_id": review.get("review_id"),

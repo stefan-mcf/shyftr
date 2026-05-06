@@ -1,15 +1,15 @@
-# ShyftR Cells, Mounts & Policies
+# ShyftR cells, Mounts & Policies
 
-> Source: `/Users/stefan/Desktop/ShyftR Cells, Mounts & Policies.pdf`
+> Source: `/Users/stefan/Desktop/ShyftR cells, Mounts & Policies.pdf`
 > Converted from PDF to Markdown for repository reference. Source PDF pages: 4.
 
-This document describes the design of ShyftR cells and the policy framework that governs how they ingest evidence, promote memory, retrieve context and learn from outcomes. It also introduces the concept of mounts, which attach cells to specific layers of a runtime or organisation.
+This document describes the design of ShyftR cells and the policy framework that governs how they ingest evidence, promote memory, retrieve context and learn from feedbacks. It also introduces the concept of mounts, which attach cells to specific layers of a runtime or organisation.
 
-## What Is a Cell?
+## What Is a cell?
 
-A cell is the fundamental unit of memory in ShyftR. Each cell encapsulates its own append-only ledgers (pulses.jsonl, sparks.jsonl, charges/approved.jsonl, signals.jsonl, etc.) and retrieval indexes under grid/. Cells are isolated by default: memory written to one cell is not automatically visible to another. You can create as many cells as needed to model different scopes:
+A cell is the fundamental unit of memory in ShyftR. Each cell encapsulates its own append-only ledgers (evidences.jsonl, candidates.jsonl, memories/approved.jsonl, feedbacks.jsonl, etc.) and retrieval indexes under grid/. cells are isolated by default: memory written to one cell is not automatically visible to another. You can create as many cells as needed to model different scopes:
 
-- Global rails cell – holds shared guardrails and high-authority rules applicable across domains.
+- Global rules cell – holds shared guardrules and high-authority rules applicable across domains.
 
 - User cell – captures a user’s preferences and recurring workflows.
 
@@ -45,21 +45,21 @@ retrieval_policy:
 mode: balanced
 max_items: 12
 include_cells:
-- global/rail
+- global/rule
 - user/stefan
 - project/conflux
 - sector/dev
 learning_policy:
 auto_ingest: true
-auto_extract_sparks: true
+auto_extract_candidates: true
 auto_promote: false
 promotion_policy:
 require_review: true
-signal_policy:
-require_outcome_report: true
+feedback_policy:
+require_feedback_report: true
 privacy_policy:
 allow_cross_cell_resonance: true
-allow_raw_pulse_export: false
+allow_raw_evidence_export: false
 ```
 
 Each field describes a different aspect of the mount:
@@ -72,19 +72,19 @@ documents, chat transcripts, etc.).
 
 balanced/exploratory), and which other cells to include.
 
-- learning_policy – Whether to automatically ingest pulses and extract sparks, and whether to
+- learning_policy – Whether to automatically ingest evidences and extract candidates, and whether to
 
-auto-promote certain kinds of sparks (e.g. explicit remember calls). By default auto_promote is false to require review.
+auto-promote certain kinds of candidates (e.g. explicit remember calls). By default auto_promote is false to require review.
 
-- promotion_policy – Specifies when a spark can be promoted to a charge. Even in trusted
+- promotion_policy – Specifies when a candidate can be promoted to a memory. Even in trusted
 
 modes, promotion events must be recorded in ledgers with provenance.
 
-- signal_policy – Defines whether an outcome report is mandatory after pack use and how signals
+- feedback_policy – Defines whether an feedback report is mandatory after pack use and how feedbacks
 
 affect confidence or affinity.
 
-- privacy_policy – Governs cross-cell sharing and raw pulse export. It determines whether a cell
+- privacy_policy – Governs cross-cell sharing and raw evidence export. It determines whether a cell
 
 can export its approved memory or allow resonance with other cells and whether raw evidence can leave the cell.
 
@@ -92,29 +92,29 @@ can export its approved memory or allow resonance with other cells and whether r
 
 By default a newly mounted cell should behave as follows:
 
-- Auto-Ingest Pulses – Listen to the configured adapters and append evidence to
+- Auto-Ingest evidences – Listen to the configured adapters and append evidence to
 
-pulses.jsonl.
+evidences.jsonl.
 
-- Auto-Extract Sparks – Run extraction routines to propose sparks from each pulse and append
+- Auto-Extract candidates – Run extraction routines to propose candidates from each evidence and append
 
-them to sparks.jsonl.
+them to candidates.jsonl.
 
-- Require Review for Promotion – Do not auto-promote sparks to charges unless explicitly
+- Require Review for Promotion – Do not auto-promote candidates to memories unless explicitly
 
 allowed (e.g. trusted remember calls). Review events must be recorded.
 
-- Serve Packs Automatically – When a pack is requested, select relevant charges from the cell
+- Serve packs Automatically – When a pack is requested, select relevant memories from the cell
 
 and any included cells according to the retrieval policy and compile them into a structured pack.
 
-- Record Signals – Require a signal after pack use, capturing applied, useful, harmful, ignored,
+- Record feedbacks – Require a feedback after pack use, capturing applied, useful, harmful, ignored,
 
-contradicted, over-retrieved and missing memory. Signals update confidence and retrieval affinity via event ledgers.
+contradicted, over-retrieved and missing memory. feedbacks update confidence and retrieval affinity via event ledgers.
 
 - Never Mutate the Past – All changes to memory must be append-only. Confidence and affinity
 
-updates are recorded as events rather than overwriting original charges.
+updates are recorded as events rather than overwriting original memories.
 
 ## Policies Explained
 
@@ -122,17 +122,17 @@ updates are recorded as events rather than overwriting original charges.
 
 The learning policy controls how far automated ingestion goes. There are three levels:
 
-- Passive learning – Pulses are ingested but no sparks are extracted. Use this for early
+- Passive learning – evidences are ingested but no candidates are extracted. Use this for early
 
 observation.
 
-- Candidate learning – Pulses and sparks are ingested, but promotion requires review. This is the
+- candidate learning – evidences and candidates are ingested, but promotion requires review. This is the
 
 safe default for new mounts.
 
 - Trusted learning – Certain inputs (explicit remember calls, verified runtime rules) bypass
 
-review and automatically become charges, provided the regulator allows it. Use sparingly.
+review and automatically become memories, provided the regulator allows it. Use sparingly.
 
 ### Retrieval Policy
 
@@ -146,27 +146,27 @@ confidence), Risk-Averse (amplify caution items), Audit (include challenged/isol
 
 budgets.
 
-- Include cells – Other cells whose charges may be retrieved. For example, a sector cell may
+- Include cells – Other cells whose memories may be retrieved. For example, a sector cell may
 
-include the global rails cell and the user cell.
+include the global rules cell and the user cell.
 
 ### Promotion Policy
 
-Promotion policies specify whether sparks can be auto-promoted and under what conditions. Even when auto-promotion is enabled, a review event should still be written to the ledger documenting the decision. Typical policies are:
+Promotion policies specify whether candidates can be auto-promoted and under what conditions. Even when auto-promotion is enabled, a review event should still be written to the ledger documenting the decision. Typical policies are:
 
-- Manual promotion only – All sparks require review.
+- Manual promotion only – All candidates require review.
 
-- Trusted path promotion – Sparks extracted from trusted input adapters may be promoted
+- Trusted path promotion – candidates extracted from trusted input adapters may be promoted
 
 automatically.
 
-- Kind-based promotion – Certain spark kinds (e.g. verification heuristics) may be auto-promoted
+- Kind-based promotion – Certain candidate kinds (e.g. verification heuristics) may be auto-promoted
 
 while others (e.g. cautionary guidance) must be reviewed.
 
-### Signal Policy
+### feedback Policy
 
-Signal policies govern what happens when a signal is recorded. For example, a policy might specify that confidence updates require multiple positive or negative signals before changing the belief, or that retrieval affinity decays more quickly on harmful misses. Signal policies can differ by cell to reflect domain-specific caution. 5. 6.
+feedback policies govern what happens when a feedback is recorded. For example, a policy might specify that confidence updates require multiple positive or negative feedbacks before changing the belief, or that retrieval affinity decays more quickly on harmful misses. feedback policies can differ by cell to reflect domain-specific caution. 5. 6.
 
 ### Privacy Policy
 
@@ -176,7 +176,7 @@ Privacy policies control what a cell can export or share. They may include:
 
 - Cross-cell resonance – Whether patterns from this cell can influence others.
 
-- Raw pulse export – Whether raw evidence can be shared across cells (often disallowed for
+- Raw evidence export – Whether raw evidence can be shared across cells (often disallowed for
 
 sensitive data).
 
@@ -184,9 +184,9 @@ sensitive data).
 
 ## Best Practices
 
-Create Separate Cells for Distinct Contexts – Avoid mixing project, user and sector knowledge in one cell. This keeps retrieval precise and minimises contamination.
+Create Separate cells for Distinct Contexts – Avoid mixing project, user and sector knowledge in one cell. This keeps retrieval precise and minimises contamination.
 
-- Prefer Candidate Learning First – Start with auto-ingest and spark extraction but require
+- Prefer candidate Learning First – Start with auto-ingest and candidate extraction but require
 
 review before promotion. Enable auto-promotion gradually for trusted data sources.
 
@@ -194,10 +194,10 @@ review before promotion. Enable auto-promotion gradually for trusted data source
 
 promotion policies. Overly strict policies will stall memory growth; overly permissive policies will pollute memory.
 
-- Treat Cells as Modules – Each cell should be attachable, detachable and migratable. Backups,
+- Treat cells as Modules – Each cell should be attachable, detachable and migratable. Backups,
 
 migrations and federation should operate at the cell level.
 
 ## Summary
 
-ShyftR cells encapsulate memory for a specific scope and become useful when attached to runtime layers via mounts. Mount configuration defines how the cell ingests pulses, extracts sparks, promotes charges, retrieves packs and learns from signals. Policies provide fine-grained control over automation and sharing. By following these guidelines, cells can be safely plugged into agent systems, automatically ingest evidence and learn over time without compromising trust or privacy.
+ShyftR cells encapsulate memory for a specific scope and become useful when attached to runtime layers via mounts. Mount configuration defines how the cell ingests evidences, extracts candidates, promotes memories, retrieves packs and learns from feedbacks. Policies provide fine-grained control over automation and sharing. By following these guidelines, cells can be safely plugged into agent systems, automatically ingest evidence and learn over time without compromising trust or privacy.

@@ -2,15 +2,15 @@
 
 Usage:
     shyftr init <cell_path> [--cell-id ID] [--cell-type TYPE]
-    shyftr ingest <cell_path> <source_file> --kind KIND
-    shyftr fragment <cell_path> <source_id>
-    shyftr review approve <cell_path> <fragment_id> --reviewer NAME --rationale TEXT
-    shyftr review reject <cell_path> <fragment_id> --reviewer NAME --rationale TEXT
-    shyftr promote <cell_path> <fragment_id> --promoter NAME
+    shyftr ingest <cell_path> <evidence_file> --kind KIND
+    shyftr candidate <cell_path> <evidence_id>
+    shyftr review approve <cell_path> <candidate_id> --reviewer NAME --rationale TEXT
+    shyftr review reject <cell_path> <candidate_id> --reviewer NAME --rationale TEXT
+    shyftr memory <cell_path> <candidate_id> --promoter NAME
     shyftr search <cell_path> <query>
     shyftr retrieve <cell_path> <query>
-    shyftr loadout <cell_path> <query> --task-id ID [options]
-    shyftr outcome <cell_path> <loadout_id> <result> [options]
+    shyftr pack <cell_path> <query> --task-id ID [options]
+    shyftr feedback <cell_path> <pack_id> <result> [options]
     shyftr hygiene <cell_path>
     shyftr counters <cell_path>
 """
@@ -68,17 +68,17 @@ def cmd_ingest(args: argparse.Namespace) -> None:
 
     source = ingest_source(
         cell_path=args.cell_path,
-        source_path=args.source_file,
+        source_path=args.evidence_file,
         kind=args.kind,
         metadata=json.loads(args.metadata) if args.metadata else None,
     )
-    _print_json(source.to_dict())
+    _print_json(_canonicalize_record(source.to_dict()))
 
 
 def _add_ingest(sub: argparse.ArgumentParser) -> None:
     sub.add_argument("cell_path", type=_cell_path, help="path to the Cell directory")
-    sub.add_argument("source_file", type=str, help="path to the source file to ingest")
-    sub.add_argument("--kind", type=str, required=True, help="kind label for the source")
+    sub.add_argument("evidence_file", type=str, help="path to the evidence file to ingest")
+    sub.add_argument("--kind", type=str, required=True, help="kind label for the evidence")
     sub.add_argument("--metadata", type=str, default=None, help="JSON metadata dict")
 
 
@@ -87,7 +87,7 @@ def _add_ingest(sub: argparse.ArgumentParser) -> None:
 # ---------------------------------------------------------------------------
 
 
-def cmd_fragment(args: argparse.Namespace) -> None:
+def cmd_candidate(args: argparse.Namespace) -> None:
     from shyftr.extract import extract_fragments
     from shyftr.ledger import read_jsonl
     from shyftr.models import Source
@@ -97,20 +97,20 @@ def cmd_fragment(args: argparse.Namespace) -> None:
     sources_ledger = cell / "ledger" / "sources.jsonl"
     source: Optional[Source] = None
     for _, record in read_jsonl(sources_ledger):
-        if record.get("source_id") == args.source_id:
+        if record.get("source_id") == args.evidence_id:
             source = Source.from_dict(record)
             break
 
     if source is None:
-        _fail(f"Source not found: {args.source_id}")
+        _fail(f"Evidence not found: {args.evidence_id}")
 
     fragments = extract_fragments(cell_path=args.cell_path, source=source)
-    _print_json([f.to_dict() for f in fragments])
+    _print_json([_canonicalize_record(f.to_dict()) for f in fragments])
 
 
-def _add_fragment(sub: argparse.ArgumentParser) -> None:
+def _add_candidate(sub: argparse.ArgumentParser) -> None:
     sub.add_argument("cell_path", type=_cell_path, help="path to the Cell directory")
-    sub.add_argument("source_id", type=str, help="source_id from ingest")
+    sub.add_argument("evidence_id", type=str, help="evidence_id from ingest")
 
 
 # ---------------------------------------------------------------------------
@@ -150,7 +150,7 @@ def _add_review_action(
     required_action: Optional[str] = None,
 ) -> None:
     parser.add_argument("cell_path", type=_cell_path, help="path to the Cell directory")
-    parser.add_argument("fragment_id", type=str, help="fragment_id to review")
+    parser.add_argument("fragment_id", type=str, help="candidate_id to review")
     parser.add_argument("--reviewer", type=str, required=True, help="reviewer identifier")
     parser.add_argument("--rationale", type=str, required=True, help="review rationale")
     parser.add_argument("--metadata", type=str, default=None, help="optional JSON metadata")
@@ -169,7 +169,7 @@ def _add_review(sub: argparse.ArgumentParser) -> None:
 # ---------------------------------------------------------------------------
 
 
-def cmd_promote(args: argparse.Namespace) -> None:
+def cmd_memory(args: argparse.Namespace) -> None:
     from shyftr.promote import promote_fragment
 
     trace = promote_fragment(
@@ -179,12 +179,12 @@ def cmd_promote(args: argparse.Namespace) -> None:
         statement=args.statement,
         rationale=args.rationale,
     )
-    _print_json(trace.to_dict())
+    _print_json(_canonicalize_record(trace.to_dict()))
 
 
-def _add_promote(sub: argparse.ArgumentParser) -> None:
+def _add_memory(sub: argparse.ArgumentParser) -> None:
     sub.add_argument("cell_path", type=_cell_path, help="path to the Cell directory")
-    sub.add_argument("fragment_id", type=str, help="fragment_id to promote")
+    sub.add_argument("fragment_id", type=str, help="candidate_id to promote")
     sub.add_argument("--promoter", type=str, required=True, help="promoter identifier")
     sub.add_argument("--statement", type=str, default=None, help="optional trace statement override")
     sub.add_argument("--rationale", type=str, default=None, help="optional trace rationale override")
@@ -278,7 +278,7 @@ def _add_profile(sub: argparse.ArgumentParser) -> None:
 # ---------------------------------------------------------------------------
 
 
-def cmd_loadout(args: argparse.Namespace) -> None:
+def cmd_pack(args: argparse.Namespace) -> None:
     from shyftr.loadout import LoadoutTaskInput, assemble_loadout
 
     if args.request_json:
@@ -309,10 +309,10 @@ def cmd_loadout(args: argparse.Namespace) -> None:
     )
 
     assembled = assemble_loadout(task)
-    _print_json(assembled.to_dict())
+    _print_json(_canonicalize_record(assembled.to_dict()))
 
 
-def _add_loadout(sub: argparse.ArgumentParser) -> None:
+def _add_pack(sub: argparse.ArgumentParser) -> None:
     sub.add_argument("cell_path", type=_cell_path, nargs="?", help="path to the Cell directory (optional with --request-json)")
     sub.add_argument("query", type=str, nargs="?", help="search query for memory assembly (optional with --request-json)")
     sub.add_argument("--request-json", type=str, default=None, help="path to a RuntimeLoadoutRequest JSON file")
@@ -320,7 +320,7 @@ def _add_loadout(sub: argparse.ArgumentParser) -> None:
     sub.add_argument("--task-id", type=str, default=None, help="task identifier (required for positional mode)")
     sub.add_argument("--max-items", type=int, default=20, help="max items (default: 20)")
     sub.add_argument("--max-tokens", type=int, default=4000, help="max tokens (default: 4000)")
-    sub.add_argument("--include-fragments", action="store_true", default=False, help="include fragment-tier items")
+    sub.add_argument("--include-candidates", "--include-fragments", dest="include_fragments", action="store_true", default=False, help="include candidate-tier items")
     sub.add_argument("--query-kind", type=str, default=None, help="expected kind for kind-match scoring")
     sub.add_argument("--query-tags", type=str, default=None, help="comma-separated expected tags for tag-match")
     sub.add_argument("--runtime-id", type=str, default="default", help="runtime identity for sensitivity policy checks")
@@ -334,7 +334,7 @@ def _add_loadout(sub: argparse.ArgumentParser) -> None:
 # ---------------------------------------------------------------------------
 
 
-def cmd_outcome(args: argparse.Namespace) -> None:
+def cmd_feedback(args: argparse.Namespace) -> None:
     if args.report_json:
         from shyftr.integrations.outcome_api import (
             RuntimeOutcomeReport,
@@ -362,10 +362,10 @@ def cmd_outcome(args: argparse.Namespace) -> None:
         missing_memory=args.missing.split(",") if args.missing else [],
         verification_evidence=json.loads(args.verification) if args.verification else None,
     )
-    _print_json(outcome.to_dict())
+    _print_json(_canonicalize_record(outcome.to_dict()))
 
 
-def _add_outcome(sub: argparse.ArgumentParser) -> None:
+def _add_feedback(sub: argparse.ArgumentParser) -> None:
     sub.add_argument("cell_path", type=_cell_path, nargs="?", help="path to the Cell directory (optional with --report-json)")
     sub.add_argument("loadout_id", type=str, nargs="?", help="loadout identifier (optional with --report-json)")
     sub.add_argument("result", type=str, nargs="?", help='verdict string (e.g. "success", "failure"; optional with --report-json)')
@@ -936,6 +936,36 @@ def _add_serve(sub: argparse.ArgumentParser) -> None:
 # ---------------------------------------------------------------------------
 
 
+def _canonicalize_record(record: Dict[str, Any]) -> Dict[str, Any]:
+    aliases = {
+        "source_id": "evidence_id",
+        "fragment_id": "candidate_id",
+        "trace_id": "memory_id",
+        "alloy_id": "pattern_id",
+        "doctrine_id": "rule_id",
+        "loadout_id": "pack_id",
+        "outcome_id": "feedback_id",
+        "source_fragment_ids": "candidate_ids",
+        "source_trace_ids": "memory_ids",
+        "source_alloy_ids": "pattern_ids",
+        "trace_ids": "memory_ids",
+        "alloy_ids": "pattern_ids",
+        "doctrine_ids": "rule_ids",
+        "boundary_status": "regulator_status",
+        "source_excerpt": "evidence_excerpt",
+        "ignored_charge_ids": "ignored_memory_ids",
+        "contradicted_charge_ids": "contradicted_memory_ids",
+        "over_retrieved_charge_ids": "over_retrieved_memory_ids",
+    }
+    out = dict(record)
+    for old_name, new_name in aliases.items():
+        if old_name in record and new_name not in out:
+            out[new_name] = record[old_name]
+        if old_name in out and new_name in out:
+            del out[old_name]
+    return out
+
+
 def _print_json(data: Any) -> None:
     json.dump(data, sys.stdout, sort_keys=True, indent=2, default=str)
     sys.stdout.write("\n")
@@ -952,21 +982,25 @@ def _resolve_subcommand(args: argparse.Namespace) -> None:
         "init-cell": cmd_init,
         "ingest": cmd_ingest,
         "feed": cmd_ingest,
-        "fragment": cmd_fragment,
-        "fragments": cmd_fragment,
-        "spark": cmd_fragment,
-        "sparks": cmd_fragment,
+        "candidate": cmd_candidate,
+        "candidates": cmd_candidate,
+        "fragment": cmd_candidate,
+        "fragments": cmd_candidate,
+        "spark": cmd_candidate,
+        "sparks": cmd_candidate,
         "approve": cmd_review_approve,
         "reject": cmd_review_reject,
-        "promote": cmd_promote,
-        "charge": cmd_promote,
+        "promote": cmd_memory,
+        "charge": cmd_memory,
+        "memory": cmd_memory,
         "search": _do_search,
         "retrieve": _do_search,
         "profile": cmd_profile,
-        "loadout": cmd_loadout,
-        "pack": cmd_loadout,
-        "outcome": cmd_outcome,
-        "signal": cmd_outcome,
+        "loadout": cmd_pack,
+        "pack": cmd_pack,
+        "outcome": cmd_feedback,
+        "signal": cmd_feedback,
+        "feedback": cmd_feedback,
         "proposals": cmd_proposals_export,
         "hygiene": cmd_hygiene,
         "counters": cmd_counters,
@@ -1048,24 +1082,28 @@ def build_parser() -> argparse.ArgumentParser:
 
     _add_init(sub.add_parser("init", help="Create a new ShyftR Cell layout"))
     _add_init(sub.add_parser("init-cell", help="Create a new ShyftR Cell layout"))
-    _add_ingest(sub.add_parser("ingest", help="Legacy alias: ingest a Pulse file into a Cell"))
-    _add_ingest(sub.add_parser("feed", help="Legacy alias: ingest a Pulse file into a Cell"))
-    _add_fragment(sub.add_parser("fragment", help="Legacy alias: extract Sparks from an ingested Pulse"))
-    _add_fragment(sub.add_parser("fragments", help="Legacy alias: extract Sparks from an ingested Pulse"))
-    _add_fragment(sub.add_parser("spark", help="Extract Sparks from an ingested Pulse"))
-    _add_fragment(sub.add_parser("sparks", help="Extract Sparks from an ingested Pulse"))
-    _add_review(sub.add_parser("review", help="Approve or reject a fragment"))
-    _add_review_action(sub.add_parser("approve", help="Approve a fragment"), required_action="approve")
-    _add_review_action(sub.add_parser("reject", help="Reject a fragment"), required_action="reject")
-    _add_promote(sub.add_parser("promote", help="Legacy alias: promote an approved Spark to a Charge"))
-    _add_promote(sub.add_parser("charge", help="Promote an approved Spark to a Charge"))
+    _add_ingest(sub.add_parser("ingest", help="Ingest an evidence file into a cell"))
+    _add_ingest(sub.add_parser("feed", help="Deprecated alias: ingest an evidence file into a cell"))
+    _add_candidate(sub.add_parser("candidate", help="Extract candidates from ingested evidence"))
+    _add_candidate(sub.add_parser("candidates", help="Extract candidates from ingested evidence"))
+    _add_candidate(sub.add_parser("fragment", help="Deprecated alias: extract candidates from evidence"))
+    _add_candidate(sub.add_parser("fragments", help="Deprecated alias: extract candidates from evidence"))
+    _add_candidate(sub.add_parser("spark", help="Deprecated alias: extract candidates from evidence"))
+    _add_candidate(sub.add_parser("sparks", help="Deprecated alias: extract candidates from evidence"))
+    _add_review(sub.add_parser("review", help="Approve or reject a candidate"))
+    _add_review_action(sub.add_parser("approve", help="Approve a candidate"), required_action="approve")
+    _add_review_action(sub.add_parser("reject", help="Reject a candidate"), required_action="reject")
+    _add_memory(sub.add_parser("promote", help="Deprecated alias: promote an approved candidate to memory"))
+    _add_memory(sub.add_parser("charge", help="Deprecated alias: promote an approved candidate to memory"))
+    _add_memory(sub.add_parser("memory", help="Promote an approved candidate to memory"))
     _add_search(sub.add_parser("search", help="Search approved traces via sparse FTS5 index"))
     _add_search(sub.add_parser("retrieve", help="Alias for the search command"))
     _add_profile(sub.add_parser("profile", help="Build rebuildable profile projection artifacts"))
-    _add_loadout(sub.add_parser("loadout", help="Legacy alias: assemble a bounded memory Pack"))
-    _add_loadout(sub.add_parser("pack", help="Assemble a bounded memory Pack"))
-    _add_outcome(sub.add_parser("outcome", help="Legacy alias: record Signal for a Pack"))
-    _add_outcome(sub.add_parser("signal", help="Record Signal for a Pack"))
+    _add_pack(sub.add_parser("loadout", help="Deprecated alias: assemble a bounded memory pack"))
+    _add_pack(sub.add_parser("pack", help="Assemble a bounded memory pack"))
+    _add_feedback(sub.add_parser("outcome", help="Deprecated alias: record feedback for a pack"))
+    _add_feedback(sub.add_parser("signal", help="Deprecated alias: record feedback for a pack"))
+    _add_feedback(sub.add_parser("feedback", help="Record feedback for a pack"))
     _add_proposals(sub.add_parser("proposals", help="Export advisory runtime proposals"))
     _add_hygiene(sub.add_parser("hygiene", help="Run a hygiene report on a Cell"))
     _add_counters(sub.add_parser("counters", help="Show trace usage counters"))

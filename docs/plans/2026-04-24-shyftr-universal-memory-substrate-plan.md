@@ -1,16 +1,16 @@
-# ShyftR Universal Memory Substrate Follow-up Plan
+# ShyftR Universal memory Substrate Follow-up Plan
 
 > For Hermes: implement this only after the current ShyftR main, runtime-integration, and active-learning plans are complete, verified, committed, and pushed. Use subagent-driven-development for implementation, and keep each tranche small, tested, and committed.
 
 Status: future follow-up implementation plan. This plan extends the current ShyftR roadmap after the existing MVP, runtime-integration, and active-learning plans.
 
-Guardrails: before implementing or reviewing any tranche in this plan, read `docs/concepts/implementation-guardrails.md`. The guardrails keep ShyftR as a thin memory-cell core with optional modules and projections rather than a bloated monolith.
+Guardrules: before implementing or reviewing any tranche in this plan, read `docs/concepts/implementation-guardrules.md`. The guardrules keep ShyftR as a thin memory-cell core with optional modules and projections rather than a bloated monolith.
 
 Goal: evolve ShyftR from an agent memory-cell engine into the canonical local-first memory and knowledge substrate for assistants, agents, projects, teams, personal knowledge, and long-running autonomous systems.
 
-Architecture: canonical truth remains append-only Cell ledgers. Managed memory services, assistant profile stores, vector-memory platforms, markdown vaults, note applications, dashboards, and generated knowledge views become adapters, Pulses, projections, or user interfaces. ShyftR Cells own durable memory, provenance, review gates, Packs, Signal, confidence, profile generation, knowledge projections, and portability.
+Architecture: canonical truth remains append-only cell ledgers. Managed memory services, assistant profile stores, vector-memory platforms, markdown vaults, note applications, dashboards, and generated knowledge views become adapters, evidences, projections, or user interfaces. ShyftR cells own durable memory, provenance, review gates, packs, feedback, confidence, profile generation, knowledge projections, and portability.
 
-Tech stack: Python 3.11+, dataclasses or Pydantic-compatible models, JSONL Cell ledgers, SQLite WAL, SQLite FTS5, sqlite-vec or equivalent local vector Grid, optional LanceDB/Qdrant adapters, Markdown import/export, pytest, CLI-first workflows, optional local service/UI later.
+Tech stack: Python 3.11+, dataclasses or Pydantic-compatible models, JSONL cell ledgers, SQLite WAL, SQLite FTS5, sqlite-vec or equivalent local vector grid, optional LanceDB/Qdrant adapters, Markdown import/export, pytest, CLI-first workflows, optional local service/UI later.
 
 ---
 
@@ -33,19 +33,19 @@ Main ShyftR implementation plan
 
 The earlier plans make this plan possible by delivering:
 
-- Pulse ingest
-- Spark extraction
-- review-gated Charge promotion
+- evidence ingest
+- candidate extraction
+- review-gated memory promotion
 - hybrid retrieval
-- Pack assembly
-- Signal recording
+- pack assembly
+- feedback recording
 - confidence evolution
 - runtime integration contracts
 - proposal export
 - negative-space retrieval
-- Pack misses
+- pack misses
 - Sweep and Challenger maintenance loops
-- disk-backed Grid scale path
+- disk-backed grid scale path
 
 This plan should not shortcut those foundations.
 
@@ -58,26 +58,26 @@ ShyftR should become the canonical durable memory layer underneath agent runtime
 The long-term model:
 
 ```text
-Human input, notes, documents, chats, tasks, tool runs, reviews, signal
-  -> Pulses
-  -> Sparks
-  -> Charges
-  -> Coils
-  -> Rail
-  -> Packs, profiles, summaries, projections, proposals
+Human input, notes, documents, chats, tasks, tool runs, reviews, feedback
+  -> evidences
+  -> candidates
+  -> memories
+  -> patterns
+  -> rule
+  -> packs, profiles, summaries, projections, proposals
 ```
 
 ShyftR owns truth. Other systems provide capture, display, retrieval acceleration, execution, or review surfaces.
 
-Canonical rail remains:
+Canonical rule remains:
 
 ```text
-Cell ledgers are truth.
-The Regulator controls admission, promotion, retrieval, and export.
-The Grid is acceleration.
-The Pack is application.
-Signal is learning.
-Charge confidence is evolution.
+cell ledgers are truth.
+The regulator controls admission, promotion, retrieval, and export.
+The grid is acceleration.
+The pack is application.
+feedback is learning.
+memory confidence is evolution.
 Markdown and dashboards are projections.
 External runtimes apply; ShyftR proposes.
 ```
@@ -95,11 +95,11 @@ ShyftR should replace hosted or managed assistant-memory/profile layers by provi
 - durable preference storage
 - semantic search
 - compact profile generation
-- scoped memory Cells
-- forget, replace, deprecate, supersede, Isolation, and sensitive-memory exclusion
-- pre-task Packs
-- post-task Signal
-- profile and Pack injection hooks for assistant runtimes
+- scoped memory cells
+- forget, replace, deprecate, supersede, quarantine, and sensitive-memory exclusion
+- pre-task packs
+- post-task feedback
+- profile and pack injection hooks for assistant runtimes
 - migration/import from existing memory exports
 - local backup, restore, and validation
 
@@ -109,30 +109,30 @@ ShyftR should subsume the durable/retrievable parts of markdown note workspaces 
 
 - markdown note ingest
 - frontmatter, tag, link, and backlink capture
-- document and research Pulse ingest
+- document and research evidence ingest
 - topic pages and project pages as projections
 - daily/weekly summaries as projections
 - review queues
 - decision records
-- Rail pages
+- rule pages
 - generated markdown export
 - optional native review/search/dashboard UI
 
-Markdown workspaces may remain useful as human-facing surfaces, but they should not be canonical truth once ShyftR owns the Cell ledgers.
+Markdown workspaces may remain useful as human-facing surfaces, but they should not be canonical truth once ShyftR owns the cell ledgers.
 
-### 3. Universal Cell substrate
+### 3. Universal cell substrate
 
 ShyftR should support durable memory across:
 
-- user/core Cells
-- personal Cells
-- project Cells
-- agent Cells
-- team Cells
-- domain/capability Cells
-- global Rail Cells
+- user/core cells
+- personal cells
+- project cells
+- agent cells
+- team cells
+- domain/capability cells
+- global rule cells
 
-Cross-Cell promotion remains explicit and review-gated.
+Cross-cell promotion remains explicit and review-gated.
 
 ---
 
@@ -158,7 +158,7 @@ Tasks:
    - `replace`
    - `deprecate`
    - `pack`
-   - `record_signal`
+   - `record_feedback`
    - `import_memory_export`
    - `export_memory_snapshot`
 3. Define the knowledge workspace contract:
@@ -173,7 +173,7 @@ Tasks:
 4. Map hosted memory provider capabilities to ShyftR-native equivalents using broad provider categories rather than product-specific names.
 5. Map markdown workspace capabilities to ShyftR-native equivalents using broad workspace categories rather than product-specific names.
 6. Reaffirm that generated profiles, summaries, dashboards, and markdown files are projections.
-7. Reaffirm that Cell ledgers are canonical truth.
+7. Reaffirm that cell ledgers are canonical truth.
 8. Run stale-term and weak-phrasing scans.
 9. Commit: `docs: define universal memory substrate scope`.
 
@@ -200,24 +200,24 @@ Files:
 
 Tasks:
 
-1. Define a `MemoryProvider` class or function set with:
-   - `remember(cell_path, statement, kind, pulse_context=None, metadata=None)`
+1. Define a `memoryProvider` class or function set with:
+   - `remember(cell_path, statement, kind, evidence_context=None, metadata=None)`
    - `search(cell_path, query, top_k=10, trust_tiers=None, kinds=None)`
    - `profile(cell_path, max_tokens=2000)`
-   - `forget(cell_path, charge_id, reason, actor)`
-   - `replace(cell_path, charge_id, new_statement, reason, actor)`
-   - `deprecate(cell_path, charge_id, reason, actor)`
+   - `forget(cell_path, memory_id, reason, actor)`
+   - `replace(cell_path, memory_id, new_statement, reason, actor)`
+   - `deprecate(cell_path, memory_id, reason, actor)`
 2. Add tests for direct explicit user preference memory.
 3. Add tests that operational-state pollution remains blocked.
-4. Add tests that every direct memory write preserves Pulse or policy-approved event provenance.
-5. Add tests that provider search returns trust labels and Charge IDs.
+4. Add tests that every direct memory write preserves evidence or policy-approved event provenance.
+5. Add tests that provider search returns trust labels and memory IDs.
 6. Keep the API ShyftR-native rather than imitating any specific managed provider.
 7. Commit: `feat: add ShyftR memory provider API`.
 
 Acceptance criteria:
 
 - An assistant runtime can write and search durable memory with simple ShyftR calls.
-- Direct writes still pass through the Regulator.
+- Direct writes still pass through the regulator.
 - Durable memories remain provenance-linked.
 - Operational state does not become durable memory.
 
@@ -237,12 +237,12 @@ Files:
 
 Tasks:
 
-1. Add a `trusted_pulse_kind` or equivalent policy for explicit user statements.
-2. Add a policy-approved path that can create a Pulse, Spark, review event, promotion event, and Charge in one operation when configured.
+1. Add a `trusted_evidence_kind` or equivalent policy for explicit user statements.
+2. Add a policy-approved path that can create a evidence, candidate, review event, promotion event, and memory in one operation when configured.
 3. Require metadata fields for trusted direct promotion:
    - actor
    - trust_reason
-   - pulse_channel
+   - evidence_channel
    - created_at
 4. Add tests for `kind=preference`, `kind=constraint`, `kind=workflow`, and `kind=tool_quirk`.
 5. Add tests that trusted direct promotion cannot bypass pollution checks.
@@ -251,7 +251,7 @@ Tasks:
 
 Acceptance criteria:
 
-- Explicit user preferences can become Charges without a burdensome manual flow.
+- Explicit user preferences can become memories without a burdensome manual flow.
 - Trusted promotion is auditable and configurable.
 - Untrusted or polluted material still requires review or rejection.
 
@@ -289,11 +289,11 @@ Tasks:
    - active constraints
 2. Implement `build_profile(cell_path, max_tokens=None)`.
 3. Implement deterministic ordering by kind, confidence, status, and stable ID.
-4. Exclude deprecated, superseded, Isolationd, and sensitive-excluded Charges by default.
-5. Include Pulse Charge IDs for every profile item.
+4. Exclude deprecated, superseded, quarantined, and sensitive-excluded memories by default.
+5. Include evidence memory IDs for every profile item.
 6. Add CLI command: `shyftr profile <cell_path> [--compact] [--max-tokens N]`.
 7. Test token-bounded compact output.
-8. Test conflict rendering when approved Charges disagree.
+8. Test conflict rendering when approved memories disagree.
 9. Commit: `feat: build compact profile projections`.
 
 Acceptance criteria:
@@ -305,9 +305,9 @@ Acceptance criteria:
 
 ---
 
-## Tranche UMS-4: Memory mutation and lifecycle semantics
+## Tranche UMS-4: memory mutation and lifecycle semantics
 
-Objective: implement forget, replace, supersede, deprecate, Isolation, conflict, and sensitive-memory handling.
+Objective: implement forget, replace, supersede, deprecate, quarantine, conflict, and sensitive-memory handling.
 
 Files:
 
@@ -322,20 +322,20 @@ New ledgers:
 - `ledger/status_events.jsonl`
 - `ledger/supersession_events.jsonl`
 - `ledger/deprecation_events.jsonl`
-- `ledger/Isolation_events.jsonl`
+- `ledger/quarantine_events.jsonl`
 - `ledger/conflict_events.jsonl`
 - `ledger/redaction_events.jsonl`
 
 Tasks:
 
-1. Add event models for status change, supersession, deprecation, Isolation, conflict, and redaction projection.
-2. Implement `forget_charge` as retrieval/profile exclusion through append-only status event.
-3. Implement `replace_charge` as new Charge plus supersession event.
-4. Implement `deprecate_charge` as a status event with reason and actor.
-5. Implement `Isolation_charge` as a status event that blocks Pack inclusion by default.
+1. Add event models for status change, supersession, deprecation, quarantine, conflict, and redaction projection.
+2. Implement `forget_memory` as retrieval/profile exclusion through append-only status event.
+3. Implement `replace_memory` as new memory plus supersession event.
+4. Implement `deprecate_memory` as a status event with reason and actor.
+5. Implement `quarantine_memory` as a status event that blocks pack inclusion by default.
 6. Implement conflict recording without silently picking a winner.
 7. Implement sensitive-memory projection exclusion.
-8. Update SQLite materialization to compute latest effective Charge state.
+8. Update SQLite materialization to compute latest effective memory state.
 9. Test append-only behavior.
 10. Commit: `feat: add memory lifecycle mutation events`.
 
@@ -343,12 +343,12 @@ Acceptance criteria:
 
 - User-facing forget prevents retrieval/profile inclusion.
 - Replacement preserves the old/new relationship.
-- Deprecation and Isolation are auditable.
+- Deprecation and quarantine are auditable.
 - Sensitive content can be excluded from projections without rewriting ledger history.
 
 ---
 
-## Tranche UMS-5: Persistent semantic Grid
+## Tranche UMS-5: Persistent semantic grid
 
 Objective: make semantic retrieval persistent, rebuildable, and competitive for personal and project memory.
 
@@ -376,20 +376,20 @@ Tasks:
    - `shyftr grid status <cell_path>`
    - `shyftr grid verify <cell_path>`
 9. Test that deleting indexes and rebuilding restores retrieval.
-10. Commit: `feat: add persistent semantic Grid`.
+10. Commit: `feat: add persistent semantic grid`.
 
 Acceptance criteria:
 
 - Vector indexes persist across process runs.
 - Sparse, vector, symbolic, confidence, and status filters can combine.
-- Indexes remain rebuildable from Cell ledgers.
+- Indexes remain rebuildable from cell ledgers.
 - Tests do not require network access.
 
 ---
 
-## Tranche UMS-6: Multi-Cell registry and routing
+## Tranche UMS-6: Multi-cell registry and routing
 
-Objective: support scoped memory across user, project, agent, team, domain, and Rail Cells.
+Objective: support scoped memory across user, project, agent, team, domain, and rule cells.
 
 Files:
 
@@ -402,7 +402,7 @@ Files:
 
 Tasks:
 
-1. Define a Cell registry format with:
+1. Define a cell registry format with:
    - cell_id
    - cell_path
    - cell_type
@@ -411,19 +411,19 @@ Tasks:
    - enabled retrieval roles
 2. Define routing policy for write targets.
 3. Define routing policy for read targets.
-4. Implement `select_write_cell(pulse_metadata, policy)`.
+4. Implement `select_write_cell(evidence_metadata, policy)`.
 5. Implement `select_read_cells(task_metadata, policy)`.
 6. Implement `cross_cell_pack(cell_paths, query, limits)`.
-7. Keep shared Rail promotion review-gated.
+7. Keep shared rule promotion review-gated.
 8. Test that project memory does not pollute core memory by default.
-9. Test that a task can query core + project + domain Cells.
-10. Commit: `feat: add multi-Cell registry and routing`.
+9. Test that a task can query core + project + domain cells.
+10. Commit: `feat: add multi-cell registry and routing`.
 
 Acceptance criteria:
 
-- Assistant runtimes can request memory from the right Cells.
-- Durable writes land in the correct Cell.
-- Cross-Cell memory flow is policy-controlled.
+- Assistant runtimes can request memory from the right cells.
+- Durable writes land in the correct cell.
+- Cross-cell memory flow is policy-controlled.
 
 ---
 
@@ -441,9 +441,9 @@ Files:
 Tasks:
 
 1. Define a generic JSON/JSONL memory export schema.
-2. Implement parser for records with statement, metadata, created_at, updated_at, and Pulse labels.
-3. Convert imported records into Pulses with `kind=memory_export` or configured kind.
-4. Classify likely Charge kind:
+2. Implement parser for records with statement, metadata, created_at, updated_at, and evidence labels.
+3. Convert imported records into evidences with `kind=memory_export` or configured kind.
+4. Classify likely memory kind:
    - preference
    - constraint
    - workflow
@@ -451,7 +451,7 @@ Tasks:
    - project_convention
    - architecture_preference
    - unknown
-5. Detect duplicates against existing Charges.
+5. Detect duplicates against existing memories.
 6. Run operational-state regulator checks.
 7. Produce an import review report before promotion.
 8. Add CLI command: `shyftr import memory-export <cell_path> <export_file> [--review-only]`.
@@ -462,7 +462,7 @@ Acceptance criteria:
 
 - Existing durable memory can be migrated into ShyftR.
 - Imports preserve provenance.
-- Operational or stale records are blocked, Isolationd, or sent to review.
+- Operational or stale records are blocked, quarantined, or sent to review.
 - No blind bulk import bypasses review policy.
 
 ---
@@ -488,16 +488,16 @@ Tasks:
 
 1. Define runtime hooks:
    - pre-turn profile injection
-   - pre-task Pack injection
+   - pre-task pack injection
    - durable memory write
    - semantic memory search
-   - post-task Signal report
+   - post-task feedback report
 2. Implement a local Python integration adapter.
 3. Implement config for mode selection.
 4. In `shadow` mode, write to ShyftR while preserving existing provider reads.
 5. In `primary_with_fallback` mode, read ShyftR first and fallback on miss/error.
 6. In `primary_only` mode, use ShyftR exclusively.
-7. Record Signal for useful, harmful, ignored, and missing memory when runtime pulseback is available.
+7. Record feedback for useful, harmful, ignored, and missing memory when runtime evidenceback is available.
 8. Test all three modes with fake provider fixtures.
 9. Commit: `feat: add assistant runtime memory modes`.
 
@@ -521,18 +521,18 @@ Files:
 
 Tasks:
 
-1. Define pre-task Pack request helpers.
-2. Define worker/task Pulse capture helpers.
-3. Define Signal report helpers for success, failure, partial, and unknown results.
+1. Define pre-task pack request helpers.
+2. Define worker/task evidence capture helpers.
+3. Define feedback report helpers for success, failure, partial, and unknown results.
 4. Define proposal export helpers.
 5. Ensure external queue/task state remains metadata only.
 6. Ensure runtime operational state does not become durable lesson content.
-7. Test Pulse -> Pack -> Signal -> proposal flow with fake task records.
+7. Test evidence -> pack -> feedback -> proposal flow with fake task records.
 8. Commit: `feat: add agent runtime memory loop helpers`.
 
 Acceptance criteria:
 
-- Autonomous runtimes can consume Packs and report Signal.
+- Autonomous runtimes can consume packs and report feedback.
 - Repeated successes/failures supply ShyftR learning.
 - ShyftR advises the runtime but does not mutate runtime operations directly.
 
@@ -540,7 +540,7 @@ Acceptance criteria:
 
 ## Tranche UMS-10: Markdown note ingest
 
-Objective: ingest human-authored markdown notes as Pulses.
+Objective: ingest human-authored markdown notes as evidences.
 
 Files:
 
@@ -552,7 +552,7 @@ Files:
 
 Tasks:
 
-1. Parse markdown files as Pulses.
+1. Parse markdown files as evidences.
 2. Capture frontmatter metadata.
 3. Capture tags.
 4. Capture wikilinks and markdown links.
@@ -564,13 +564,13 @@ Tasks:
    - `shyftr notes sync <cell_path> <config_file>`
    - `shyftr notes status <cell_path>`
 9. Test idempotent re-ingest.
-10. Commit: `feat: ingest markdown notes as Pulses`.
+10. Commit: `feat: ingest markdown notes as evidences`.
 
 Acceptance criteria:
 
-- Human-authored notes can enter ShyftR without becoming durable Charges automatically.
+- Human-authored notes can enter ShyftR without becoming durable memories automatically.
 - Links and tags are preserved as metadata.
-- Incremental sync avoids duplicate Pulses.
+- Incremental sync avoids duplicate evidences.
 
 ---
 
@@ -592,7 +592,7 @@ Generated views:
 - daily summaries
 - weekly summaries
 - decision records
-- Rail pages
+- rule pages
 - open review queues
 - conflict reports
 - stale memory reports
@@ -601,13 +601,13 @@ Generated views:
 Tasks:
 
 1. Implement markdown export config.
-2. Generate topic pages from tags and Charge kinds.
-3. Generate project pages from Cell metadata.
-4. Generate Rail pages from approved Rail ledgers.
-5. Generate review queue pages from pending Sparks and proposals.
-6. Include provenance links back to Charge, Pulse, and Spark IDs.
+2. Generate topic pages from tags and memory kinds.
+3. Generate project pages from cell metadata.
+4. Generate rule pages from approved rule ledgers.
+5. Generate review queue pages from pending candidates and proposals.
+6. Include provenance links back to memory, evidence, and candidate IDs.
 7. Protect generated directories with a marker file.
-8. Treat edits to generated files as new Pulses only when explicitly configured.
+8. Treat edits to generated files as new evidences only when explicitly configured.
 9. Add CLI command: `shyftr export markdown <cell_path> <target_dir>`.
 10. Test deterministic export output.
 11. Commit: `feat: export markdown knowledge projections`.
@@ -633,11 +633,11 @@ Files:
 
 Tasks:
 
-1. Add list helpers for pending Sparks.
+1. Add list helpers for pending candidates.
 2. Add list helpers for proposal queues.
 3. Add review helpers for approve, reject, defer, split, merge, supersede, and deprecate.
 4. Add conflict review helpers.
-5. Add Rail proposal review helpers.
+5. Add rule proposal review helpers.
 6. Add CLI commands under `shyftr workspace`.
 7. Keep all review actions append-only.
 8. Test common review flows.
@@ -665,21 +665,21 @@ Files:
 
 Tasks:
 
-1. Ingest plain text and markdown documents as document Pulses.
+1. Ingest plain text and markdown documents as document evidences.
 2. Define optional PDF/OCR adapter hooks without making them required dependencies.
 3. Extract title, author, date, citation-like metadata, and section structure where available.
-4. Extract quote/excerpt Sparks with pulse offsets.
-5. Extract claim Sparks with provenance.
-6. Build literature/research Packs from reviewed Charges.
+4. Extract quote/excerpt candidates with evidence offsets.
+5. Extract claim candidates with provenance.
+6. Build literature/research packs from reviewed memories.
 7. Generate contradiction and support reports.
 8. Test citation/provenance preservation.
 9. Commit: `feat: add research document knowledge layer`.
 
 Acceptance criteria:
 
-- Documents become Pulses with strong provenance.
-- Claims and quotes can become reviewable Sparks.
-- Research summaries can cite Pulse and Spark provenance.
+- Documents become evidences with strong provenance.
+- Claims and quotes can become reviewable candidates.
+- Research summaries can cite evidence and candidate provenance.
 
 ---
 
@@ -700,9 +700,9 @@ Tasks:
 2. Add weekly memory review report.
 3. Add stale preference audit.
 4. Add contradiction audit.
-5. Add low-use high-confidence Charge audit.
+5. Add low-use high-confidence memory audit.
 6. Add repeated-miss report.
-7. Add Rail candidate report.
+7. Add rule candidate report.
 8. Add CLI command: `shyftr maintenance personal <cell_path>`.
 9. Test generated reports are proposal-only.
 10. Commit: `feat: add personal knowledge maintenance reports`.
@@ -729,9 +729,9 @@ Files:
 
 Modes:
 
-1. Workspace as Pulse:
+1. Workspace as evidence:
    - human writes notes externally
-   - ShyftR ingests notes as Pulses
+   - ShyftR ingests notes as evidences
 2. Workspace as Projection:
    - ShyftR exports generated markdown views
    - external tools display them
@@ -741,10 +741,10 @@ Modes:
 Tasks:
 
 1. Document the three modes.
-2. Implement sync config for Pulse mode.
+2. Implement sync config for evidence mode.
 3. Implement export config for Projection mode.
-4. Detect generated-file edits and require explicit ingest as new Pulses.
-5. Test Pulse mode and Projection mode do not conflict.
+4. Detect generated-file edits and require explicit ingest as new evidences.
+5. Test evidence mode and Projection mode do not conflict.
 6. Commit: `feat: define markdown workspace interoperability`.
 
 Acceptance criteria:
@@ -769,7 +769,7 @@ Files:
 
 Tasks:
 
-1. Implement Cell snapshot export.
+1. Implement cell snapshot export.
 2. Generate hash manifests for ledgers and projections.
 3. Exclude rebuildable indexes by default or mark them as rebuildable.
 4. Implement restore validation.
@@ -781,11 +781,11 @@ Tasks:
    - `shyftr restore <snapshot> <target>`
    - `shyftr backup verify <snapshot>`
 9. Test backup, restore, index rebuild, and manifest validation.
-10. Commit: `feat: add Cell backup and restore`.
+10. Commit: `feat: add cell backup and restore`.
 
 Acceptance criteria:
 
-- A Cell can be backed up, restored, and verified.
+- A cell can be backed up, restored, and verified.
 - Restored indexes can be rebuilt from ledgers.
 - No canonical memory depends on a hosted service.
 
@@ -810,7 +810,7 @@ Tasks:
 3. Add corruption detection reports.
 4. Add migration registry and dry-run support.
 5. Add concurrency-safe append tests.
-6. Add large Cell benchmark fixtures.
+6. Add large cell benchmark fixtures.
 7. Add token budget regression tests.
 8. Add privacy/security policy docs.
 9. Add failure recovery docs.
@@ -820,7 +820,7 @@ Acceptance criteria:
 
 - ShyftR has a recovery path after interrupted writes.
 - Schema changes are migratable and testable.
-- Large Cells remain queryable.
+- Large cells remain queryable.
 - The project has enough operational safety to retire previous memory providers.
 
 ---
@@ -833,9 +833,9 @@ Use this sequence when moving an assistant runtime from an existing memory provi
 
 - Existing provider remains active.
 - ShyftR receives duplicate durable memory writes.
-- ShyftR builds profiles and Packs in parallel.
+- ShyftR builds profiles and packs in parallel.
 - Compare search/profile quality.
-- Record missing-memory Signal.
+- Record missing-memory feedback.
 
 Exit criteria:
 
@@ -847,7 +847,7 @@ Exit criteria:
 
 - Runtime reads ShyftR first.
 - Existing provider is used only when ShyftR misses or errors.
-- ShyftR receives Signal for useful, harmful, ignored, and missing memory.
+- ShyftR receives feedback for useful, harmful, ignored, and missing memory.
 - Existing provider writes are frozen or mirrored only for backup.
 
 Exit criteria:
@@ -860,12 +860,12 @@ Exit criteria:
 
 - Runtime uses ShyftR for durable memory.
 - Existing provider is archived as cold export.
-- ShyftR handles remember, search, profile, forget, replace, Pack, and Signal flows.
+- ShyftR handles remember, search, profile, forget, replace, pack, and feedback flows.
 
 Exit criteria:
 
 - No active runtime dependency on the previous memory provider.
-- Cell backup/restore is verified.
+- cell backup/restore is verified.
 - Profile and search quality meet or exceed the previous provider for routine use.
 
 ---
@@ -874,17 +874,17 @@ Exit criteria:
 
 Use this sequence when moving durable knowledge workflows into ShyftR.
 
-### Phase 1: Markdown workspace as Pulse
+### Phase 1: Markdown workspace as evidence
 
 - Human-authored notes remain in the external workspace.
-- ShyftR ingests notes as Pulses.
-- Review gates decide which note-derived Sparks become Charges.
+- ShyftR ingests notes as evidences.
+- Review gates decide which note-derived candidates become memories.
 
 ### Phase 2: Markdown workspace as Projection
 
 - ShyftR exports generated knowledge views.
 - External workspace displays generated markdown.
-- Edits to generated files are controlled and optionally re-ingested as new Pulses.
+- Edits to generated files are controlled and optionally re-ingested as new evidences.
 
 ### Phase 3: ShyftR-native workspace
 
@@ -901,13 +901,13 @@ Previous assistant-memory providers can be retired when ShyftR has:
 - trusted explicit memory writes
 - semantic and sparse search
 - compact profile projection
-- scoped multi-Cell routing
-- forget, replace, supersede, deprecate, Isolation, and sensitive exclusion
+- scoped multi-cell routing
+- forget, replace, supersede, deprecate, quarantine, and sensitive exclusion
 - assistant runtime integration in `primary_only` mode
 - migration/import from existing memory exports
 - backup and restore verification
 - index rebuild verification
-- enough Signal data to validate retrieval quality
+- enough feedback data to validate retrieval quality
 
 At that point, ShyftR is the canonical durable memory substrate.
 
@@ -918,7 +918,7 @@ At that point, ShyftR is the canonical durable memory substrate.
 External markdown workspaces can become optional when ShyftR has:
 
 - markdown note ingest
-- document/research Pulse ingest
+- document/research evidence ingest
 - generated topic and project pages
 - daily and weekly summaries
 - review workspace commands or UI
@@ -938,7 +938,7 @@ At that point, external markdown tools remain useful surfaces, but ShyftR owns d
 - No direct runtime operation mutation by ShyftR.
 - No generated markdown as canonical truth.
 - No product-specific lock-in.
-- No bulk import that bypasses Regulator review policy.
+- No bulk import that bypasses regulator review policy.
 
 ---
 
@@ -948,7 +948,7 @@ Run from `/Users/stefan/shyftr-lab`:
 
 ```bash
 python3 -m pytest -q
-# Run the stale-term and weak-phrasing scans defined in the ShyftR project rail.
+# Run the stale-term and weak-phrasing scans defined in the ShyftR project rule.
 git status --short
 ```
 
@@ -967,16 +967,16 @@ When this plan is complete, ShyftR should be able to operate as:
 - the assistant runtime's primary durable memory provider
 - the canonical profile and preference store
 - the project and domain memory substrate
-- the Pulse/Pack/Signal learning loop for autonomous runtimes
+- the evidence/pack/feedback learning loop for autonomous runtimes
 - the canonical substrate for human-authored knowledge
 - the generator of portable markdown knowledge workspaces
-- the backup, restore, audit, and validation authority for memory Cells
+- the backup, restore, audit, and validation authority for memory cells
 
 The desired end state:
 
 ```text
 ShyftR owns canonical memory.
-Runtimes consume Packs and report Signal.
-Human tools create Pulses and display projections.
-Cell ledgers remain inspectable, local-first, and portable.
+Runtimes consume packs and report feedback.
+Human tools create evidences and display projections.
+cell ledgers remain inspectable, local-first, and portable.
 ```

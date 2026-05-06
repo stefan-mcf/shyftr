@@ -30,11 +30,11 @@ A ShyftR-assisted compaction loop could evolve this into:
 
 ```text
 large context
--> extract Pulses and Sparks
--> compare against existing Charges, Coils, and Rails
--> assemble a compaction-oriented Pack
+-> extract evidences and candidates
+-> compare against existing memories, patterns, and rules
+-> assemble a compaction-oriented pack
 -> compact with provenance and confidence
--> observe future Signal
+-> observe future feedback
 -> improve future compactions
 ```
 
@@ -57,22 +57,22 @@ These are memory governance problems, not only token-reduction problems.
 
 ## ShyftR mapping
 
-ShyftR's existing doctrine maps naturally onto compaction intelligence:
+ShyftR's existing rule maps naturally onto compaction intelligence:
 
-- **Pulse**: raw pre-compaction context, such as session transcript, task closeout, tool run, issue, document, or runtime log.
-- **Spark**: candidate memory extracted from the context before compaction.
-- **Charge**: reviewed durable memory that should survive future compactions and retrieval events.
-- **Coil**: repeated pattern distilled from multiple compactions, sessions, or related Charges.
-- **Rail**: high-confidence rule or policy that should strongly influence future compaction and Pack construction.
-- **Grid**: rebuildable retrieval/index layer used to find relevant memory before compaction.
-- **Pack**: bounded memory bundle supplied to the runtime, agent, or compactor.
-- **Signal**: feedback record showing whether the compacted context helped, missed key facts, preserved stale assumptions, or caused confusion.
-- **Regulator**: review and policy boundary that prevents promotion of junk, secrets, transient state, unsafe details, and stale assumptions.
+- **evidence**: raw pre-compaction context, such as session transcript, task closeout, tool run, issue, document, or runtime log.
+- **candidate**: candidate memory extracted from the context before compaction.
+- **memory**: reviewed durable memory that should survive future compactions and retrieval events.
+- **pattern**: repeated pattern distilled from multiple compactions, sessions, or related memories.
+- **rule**: high-confidence rule or policy that should strongly influence future compaction and pack construction.
+- **grid**: rebuildable retrieval/index layer used to find relevant memory before compaction.
+- **pack**: bounded memory bundle supplied to the runtime, agent, or compactor.
+- **feedback**: feedback record showing whether the compacted context helped, missed key facts, preserved stale assumptions, or caused confusion.
+- **regulator**: review and policy boundary that prevents promotion of junk, secrets, transient state, unsafe details, and stale assumptions.
 
 This turns compaction into a learning loop:
 
 ```text
-Pulse -> Spark -> Charge -> Pack -> compaction -> resumed work -> Signal -> confidence update
+evidence -> candidate -> memory -> pack -> compaction -> resumed work -> feedback -> confidence update
 ```
 
 ## Product boundary
@@ -81,24 +81,24 @@ The recommended boundary is:
 
 ```text
 Runtime compactor = performs mechanical compression.
-ShyftR = selects durable memory, provides provenance, manages confidence, and learns from compaction outcomes.
+ShyftR = selects durable memory, provides provenance, manages confidence, and learns from compaction feedbacks.
 ```
 
-ShyftR should not initially position itself as the compactor itself. Mechanical compression can remain owned by the attached runtime or model. ShyftR's stronger role is to make that compaction memory-aware, provenance-aware, review-aware, and outcome-aware.
+ShyftR should not initially position itself as the compactor itself. Mechanical compression can remain owned by the attached runtime or model. ShyftR's stronger role is to make that compaction memory-aware, provenance-aware, review-aware, and feedback-aware.
 
 This preserves ShyftR's runtime-neutral positioning. Any runtime with context pressure could ask ShyftR what should survive before the runtime performs its own compression.
 
-## Proposed module: Continuity Pack
+## Proposed module: Continuity pack
 
-A compelling product primitive is the **Continuity Pack**.
+A compelling product primitive is the **Continuity pack**.
 
-A Continuity Pack is a bounded memory/context bundle created specifically for compaction and session continuation. Before a runtime compacts context, it asks ShyftR:
+A Continuity pack is a bounded memory/context bundle created specifically for compaction and session continuation. Before a runtime compacts context, it asks ShyftR:
 
 ```text
 Given this context and task state, what must survive compression?
 ```
 
-ShyftR returns a structured Pack that may include:
+ShyftR returns a structured pack that may include:
 
 - active goal and user intent;
 - current task state;
@@ -107,30 +107,30 @@ ShyftR returns a structured Pack that may include:
 - relevant user preferences;
 - relevant project or repository facts;
 - recent failures, fixes, and verification evidence;
-- durable Charges touched during the session;
-- newly proposed Sparks from the session;
-- Coils or Rails that should shape the next step;
+- durable memories touched during the session;
+- newly proposed candidates from the session;
+- patterns or rules that should shape the next step;
 - items explicitly marked ephemeral or unsafe to preserve;
-- provenance links back to the original Pulses.
+- provenance links back to the original evidences.
 
-The runtime compactor then uses the Continuity Pack as the skeleton for its compressed context.
+The runtime compactor then uses the Continuity pack as the skeleton for its compressed context.
 
 Potential adjacent terms:
 
-- Compaction Pack
-- Survival Pack
-- Context Regulator
-- Compression Signal
-- Resume Pack
-- Session Coil
+- Compaction pack
+- Survival pack
+- Context regulator
+- Compression feedback
+- Resume pack
+- Session pattern
 
-Among these, **Continuity Pack** is the strongest concept because the core value is preserving continuity across context loss.
+Among these, **Continuity pack** is the strongest concept because the core value is preserving continuity across context loss.
 
-## Proposed module: Compaction Signal
+## Proposed module: Compaction feedback
 
-A **Compaction Signal** records whether a compacted context worked after the session resumed.
+A **Compaction feedback** records whether a compacted context worked after the session resumed.
 
-Example Signal dimensions:
+Example feedback dimensions:
 
 - `missed_important_fact`: an important fact was lost during compaction.
 - `preserved_stale_fact`: the compacted context carried forward outdated or contradicted information.
@@ -140,14 +140,14 @@ Example Signal dimensions:
 - `saved_time`: preserved context reduced rediscovery or repeated work.
 - `caused_bad_action`: compacted memory caused an incorrect action or recommendation.
 
-Signals would update ShyftR's memory state:
+feedbacks would update ShyftR's memory state:
 
-- useful Charges gain confidence;
-- harmful or stale Charges decay;
-- repeated misses become new Sparks;
-- repeated compaction failures become Coils;
-- high-confidence repeated patterns may propose Rails;
-- unsafe or contradicted memory can be isolated by the Regulator.
+- useful memories gain confidence;
+- harmful or stale memories decay;
+- repeated misses become new candidates;
+- repeated compaction failures become patterns;
+- high-confidence repeated patterns may propose rules;
+- unsafe or contradicted memory can be isolated by the regulator.
 
 ## Why this is differentiated
 
@@ -167,7 +167,7 @@ ShyftR can supply those missing properties.
 This makes the product claim more precise:
 
 ```text
-Compaction should be memory-aware, provenance-aware, and outcome-aware.
+Compaction should be memory-aware, provenance-aware, and feedback-aware.
 ```
 
 ## Runtime-neutral applicability
@@ -187,11 +187,11 @@ This direction fits the post-Antaeus runtime-neutral ShyftR strategy. ShyftR doe
 The common interface is simple:
 
 ```text
-Runtime sends Pulses.
-Runtime requests a Continuity Pack before compaction.
+Runtime sends evidences.
+Runtime requests a Continuity pack before compaction.
 Runtime performs compression.
-Runtime reports a Compaction Signal after resumed work.
-ShyftR updates Charge confidence, proposes Sparks, and improves future Packs.
+Runtime reports a Compaction feedback after resumed work.
+ShyftR updates memory confidence, proposes candidates, and improves future packs.
 ```
 
 ## Implementation implications
@@ -200,16 +200,16 @@ This concept can be developed incrementally without changing ShyftR's core archi
 
 Possible implementation path:
 
-1. Define a `continuity_pack` profile type that ranks Charges, Sparks, Coils, Rails, and active session facts for compaction survival.
-2. Add a compaction-oriented Pack schema with sections for active intent, current state, durable memory, open decisions, risks, and ephemeral exclusions.
-3. Capture session closeouts as Pulses.
-4. Extract Sparks from closeouts before compaction.
-5. Add a Compaction Signal schema to record continuation quality.
-6. Use Signal data to update confidence, decay stale memory, and identify repeated compaction misses.
+1. Define a `continuity_pack` profile type that ranks memories, candidates, patterns, rules, and active session facts for compaction survival.
+2. Add a compaction-oriented pack schema with sections for active intent, current state, durable memory, open decisions, risks, and ephemeral exclusions.
+3. Capture session closeouts as evidences.
+4. Extract candidates from closeouts before compaction.
+5. Add a Compaction feedback schema to record continuation quality.
+6. Use feedback data to update confidence, decay stale memory, and identify repeated compaction misses.
 7. Add tests around survival ranking, stale-memory exclusion, and missed-memory feedback.
 8. Later, expose the flow through a runtime adapter or pilot harness.
 
-The first proof does not require ShyftR to own summarization. A pilot can use deterministic or model-assisted Pack construction, then let the attached runtime perform the actual compaction.
+The first proof does not require ShyftR to own summarization. A pilot can use deterministic or model-assisted pack construction, then let the attached runtime perform the actual compaction.
 
 ## Strategic significance
 
@@ -223,28 +223,28 @@ Compactors decide what survives context loss. ShyftR can make that decision insp
 
 This is a strong future module because it uses ShyftR's core primitives exactly as intended:
 
-- Cell ledger as truth;
-- Grid for retrieval;
-- Pack for application;
-- Signal for learning;
-- Regulator for trust;
-- Sparks, Charges, Coils, and Rails for recursive improvement.
+- cell ledger as truth;
+- grid for retrieval;
+- pack for application;
+- feedback for learning;
+- regulator for trust;
+- candidates, memories, patterns, and rules for recursive improvement.
 
 ## Working conclusion
 
-ShyftR has a credible and differentiated place in the future of compaction. The opportunity is not to compete with every runtime's internal summarizer. The stronger opportunity is to become the memory substrate that informs compaction, preserves continuity, and learns from compaction outcomes.
+ShyftR has a credible and differentiated place in the future of compaction. The opportunity is not to compete with every runtime's internal summarizer. The stronger opportunity is to become the memory substrate that informs compaction, preserves continuity, and learns from compaction feedbacks.
 
 A future ShyftR compaction flow can be summarized as:
 
 ```text
-Session Pulse
--> Spark extraction
--> Regulator review
--> Continuity Pack
+Session evidence
+-> candidate extraction
+-> regulator review
+-> Continuity pack
 -> runtime compaction
 -> resumed agent work
--> Compaction Signal
--> Charge confidence update
+-> Compaction feedback
+-> memory confidence update
 ```
 
 This should be preserved as a serious future product concept for ShyftR.

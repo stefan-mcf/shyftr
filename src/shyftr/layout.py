@@ -9,15 +9,21 @@ PathLike = Union[str, Path]
 
 CELL_DIRECTORIES = (
     "ledger",
-    "charges",
-    "coils",
-    "rails",
+    "ledger/memories",
+    "ledger/patterns",
+    "ledger/rules",
+    "memories",
+    "patterns",
+    "rules",
     "grid",
     "summaries",
     "reports",
     "config",
-    # Legacy compatibility directories. Existing code and old Cells may still
-    # refer to these while the public vocabulary migrates to the power theme.
+    # Legacy compatibility directories. Existing cells may still refer to these
+    # while public vocabulary uses evidence/candidate/memory/pattern/rule.
+    "charges",
+    "coils",
+    "rails",
     "traces",
     "alloys",
     "doctrine",
@@ -25,34 +31,44 @@ CELL_DIRECTORIES = (
 )
 
 SEEDED_JSONL_FILES = (
-    # Preferred power-theme ledgers.
-    "ledger/pulses.jsonl",
-    "ledger/sparks.jsonl",
+    # Preferred plain-language ledgers.
+    "ledger/evidence.jsonl",
+    "ledger/candidates.jsonl",
     "ledger/reviews.jsonl",
     "ledger/promotions.jsonl",
     "ledger/retrieval_logs.jsonl",
-    "ledger/signals.jsonl",
-    # Active-learning ledgers (Sweep / Challenger passes).
+    "ledger/feedback.jsonl",
     "ledger/confidence_events.jsonl",
     "ledger/retrieval_affinity_events.jsonl",
-    "ledger/audit_sparks.jsonl",
+    "ledger/audit_candidates.jsonl",
     "ledger/audit_reviews.jsonl",
-    # Append-only lifecycle ledgers for user-facing memory mutation semantics.
     "ledger/status_events.jsonl",
     "ledger/supersession_events.jsonl",
     "ledger/deprecation_events.jsonl",
-    "ledger/isolation_events.jsonl",
+    "ledger/quarantine_events.jsonl",
     "ledger/conflict_events.jsonl",
     "ledger/redaction_events.jsonl",
     "ledger/proposal_decisions.jsonl",
     "ledger/access_policy_events.jsonl",
+    "ledger/memories/approved.jsonl",
+    "ledger/memories/decayed.jsonl",
+    "ledger/patterns/proposed.jsonl",
+    "ledger/patterns/approved.jsonl",
+    "ledger/rules/proposed.jsonl",
+    "ledger/rules/approved.jsonl",
+    "ledger/packs.jsonl",
+    # Legacy compatibility ledgers used by existing cells and APIs.
+    "ledger/pulses.jsonl",
+    "ledger/sparks.jsonl",
+    "ledger/signals.jsonl",
+    "ledger/audit_sparks.jsonl",
+    "ledger/isolation_events.jsonl",
     "charges/approved.jsonl",
     "charges/decayed.jsonl",
     "coils/proposed.jsonl",
     "coils/approved.jsonl",
     "rails/proposed.jsonl",
     "rails/approved.jsonl",
-    # Legacy compatibility ledgers used by the current Python API.
     "ledger/sources.jsonl",
     "ledger/fragments.jsonl",
     "ledger/outcomes.jsonl",

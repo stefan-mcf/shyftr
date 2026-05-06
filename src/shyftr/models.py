@@ -14,6 +14,7 @@ class SerializableModel:
     _required_fields: ClassVar[Sequence[str]] = ()
     _non_empty_fields: ClassVar[Sequence[str]] = ()
     _bounded_fields: ClassVar[Sequence[str]] = ()
+    _field_aliases: ClassVar[Dict[str, str]] = {}
 
     def __post_init__(self) -> None:
         _validate_required(self, self._required_fields)
@@ -36,19 +37,25 @@ class SerializableModel:
         if not isinstance(payload, dict):
             raise ValueError(f"{cls.__name__}.from_dict requires a mapping payload")
 
-        missing = [field_name for field_name in cls._required_fields if field_name not in payload]
+        canonical_payload = dict(payload)
+        for old_name, new_name in cls._field_aliases.items():
+            if old_name in canonical_payload and new_name not in canonical_payload:
+                canonical_payload[new_name] = canonical_payload.pop(old_name)
+
+        missing = [field_name for field_name in cls._required_fields if field_name not in canonical_payload]
         if missing:
             raise ValueError(f"Missing required field(s): {', '.join(missing)}")
 
         allowed = {field.name for field in fields(cls)}
-        unknown = sorted(set(payload) - allowed)
+        allowed.update(cls._field_aliases)
+        unknown = sorted(set(canonical_payload) - allowed)
         if unknown:
             raise ValueError(f"Unknown field(s): {', '.join(unknown)}")
 
         values = {}
         for field in fields(cls):
-            if field.name in payload:
-                values[field.name] = payload[field.name]
+            if field.name in canonical_payload:
+                values[field.name] = canonical_payload[field.name]
             elif field.default is not MISSING or field.default_factory is not MISSING:  # type: ignore[attr-defined]
                 continue
             else:
@@ -98,6 +105,228 @@ def _validate_non_negative_counters(instance: Any) -> None:
 
 
 @dataclass(frozen=True)
+class Evidence(SerializableModel):
+    evidence_id: str
+    cell_id: str
+    kind: str
+    sha256: str
+    captured_at: str
+    uri: Optional[str] = None
+    metadata: Optional[Dict[str, Any]] = None
+
+    _required_fields: ClassVar[Sequence[str]] = (
+        "evidence_id",
+        "cell_id",
+        "kind",
+        "sha256",
+        "captured_at",
+    )
+    _field_aliases: ClassVar[Dict[str, str]] = {"source_id": "evidence_id"}
+
+
+@dataclass(frozen=True)
+class Candidate(SerializableModel):
+    candidate_id: str
+    evidence_id: str
+    cell_id: str
+    kind: str
+    text: str
+    evidence_excerpt: Optional[str] = None
+    regulator_status: str = "pending"
+    review_status: str = "pending"
+    confidence: Optional[float] = None
+    tags: List[str] = field(default_factory=list)
+
+    _required_fields: ClassVar[Sequence[str]] = (
+        "candidate_id",
+        "evidence_id",
+        "cell_id",
+        "text",
+    )
+    _bounded_fields: ClassVar[Sequence[str]] = ("confidence",)
+    _field_aliases: ClassVar[Dict[str, str]] = {
+        "fragment_id": "candidate_id",
+        "source_id": "evidence_id",
+        "source_excerpt": "evidence_excerpt",
+        "boundary_status": "regulator_status",
+    }
+
+
+MEMORY_KINDS = (
+    "success_pattern",
+    "failure_signature",
+    "anti_pattern",
+    "recovery_pattern",
+    "verification_heuristic",
+    "routing_heuristic",
+    "tool_quirk",
+    "escalation_rule",
+    "preference",
+    "constraint",
+    "workflow",
+    # Runtime value kept for compatibility until rule-candidate lifecycle
+    # handling is migrated end-to-end.
+    "rail_candidate",
+    "supersession",
+    "scope_exception",
+    "audit_finding",
+)
+
+MEMORY_STATUSES = (
+    "proposed",
+    "approved",
+    "challenged",
+    # Runtime values kept for compatibility until quarantine lifecycle
+    # handling is migrated end-to-end.
+    "isolation_candidate",
+    "isolated",
+    "superseded",
+    "deprecated",
+)
+
+
+@dataclass(frozen=True)
+class Memory(SerializableModel):
+    memory_id: str
+    cell_id: str
+    statement: str
+    candidate_ids: List[str]
+    kind: Optional[str] = None
+    rationale: Optional[str] = None
+    status: str = "proposed"
+    confidence: Optional[float] = None
+    tags: List[str] = field(default_factory=list)
+    use_count: int = 0
+    success_count: int = 0
+    failure_count: int = 0
+
+    _required_fields: ClassVar[Sequence[str]] = (
+        "memory_id",
+        "cell_id",
+        "statement",
+        "candidate_ids",
+    )
+    _non_empty_fields: ClassVar[Sequence[str]] = ("candidate_ids",)
+    _bounded_fields: ClassVar[Sequence[str]] = ("confidence",)
+    _field_aliases: ClassVar[Dict[str, str]] = {
+        "trace_id": "memory_id",
+        "source_fragment_ids": "candidate_ids",
+    }
+
+
+@dataclass(frozen=True)
+class Pattern(SerializableModel):
+    pattern_id: str
+    cell_id: str
+    theme: str
+    summary: str
+    memory_ids: List[str]
+    proposal_status: str = "proposed"
+    confidence: Optional[float] = None
+
+    _required_fields: ClassVar[Sequence[str]] = (
+        "pattern_id",
+        "cell_id",
+        "theme",
+        "summary",
+        "memory_ids",
+    )
+    _non_empty_fields: ClassVar[Sequence[str]] = ("memory_ids",)
+    _bounded_fields: ClassVar[Sequence[str]] = ("confidence",)
+    _field_aliases: ClassVar[Dict[str, str]] = {
+        "alloy_id": "pattern_id",
+        "source_trace_ids": "memory_ids",
+    }
+
+
+@dataclass(frozen=True)
+class RuleProposal(SerializableModel):
+    rule_id: str
+    pattern_ids: List[str]
+    scope: str
+    statement: str
+    review_status: str = "pending"
+
+    _required_fields: ClassVar[Sequence[str]] = (
+        "rule_id",
+        "pattern_ids",
+        "scope",
+        "statement",
+        "review_status",
+    )
+    _non_empty_fields: ClassVar[Sequence[str]] = ("pattern_ids",)
+    _field_aliases: ClassVar[Dict[str, str]] = {
+        "doctrine_id": "rule_id",
+        "source_alloy_ids": "pattern_ids",
+    }
+
+
+@dataclass(frozen=True)
+class Pack(SerializableModel):
+    pack_id: str
+    cell_id: str
+    memory_ids: List[str]
+    pattern_ids: List[str]
+    rule_ids: List[str]
+    trust_label: str
+    generated_at: str
+    metadata: Optional[Dict[str, Any]] = None
+
+    _required_fields: ClassVar[Sequence[str]] = (
+        "pack_id",
+        "cell_id",
+        "memory_ids",
+        "pattern_ids",
+        "rule_ids",
+        "trust_label",
+        "generated_at",
+    )
+    _field_aliases: ClassVar[Dict[str, str]] = {
+        "loadout_id": "pack_id",
+        "trace_ids": "memory_ids",
+        "alloy_ids": "pattern_ids",
+        "doctrine_ids": "rule_ids",
+    }
+
+
+@dataclass(frozen=True)
+class Feedback(SerializableModel):
+    feedback_id: str
+    cell_id: str
+    pack_id: str
+    task_id: str
+    verdict: str
+    memory_ids: List[str] = field(default_factory=list)
+    ignored_memory_ids: List[str] = field(default_factory=list)
+    ignored_caution_ids: List[str] = field(default_factory=list)
+    contradicted_memory_ids: List[str] = field(default_factory=list)
+    over_retrieved_memory_ids: List[str] = field(default_factory=list)
+    pack_misses: List[str] = field(default_factory=list)
+    pack_miss_details: List[Dict[str, Any]] = field(default_factory=list)
+    score: Optional[float] = None
+    observed_at: Optional[str] = None
+    metadata: Optional[Dict[str, Any]] = None
+
+    _required_fields: ClassVar[Sequence[str]] = (
+        "feedback_id",
+        "cell_id",
+        "pack_id",
+        "task_id",
+        "verdict",
+    )
+    _bounded_fields: ClassVar[Sequence[str]] = ("score",)
+    _field_aliases: ClassVar[Dict[str, str]] = {
+        "outcome_id": "feedback_id",
+        "loadout_id": "pack_id",
+        "trace_ids": "memory_ids",
+        "ignored_charge_ids": "ignored_memory_ids",
+        "contradicted_charge_ids": "contradicted_memory_ids",
+        "over_retrieved_charge_ids": "over_retrieved_memory_ids",
+    }
+
+
+# Legacy compatibility models keep old constructor fields for existing imports and ledgers.
+@dataclass(frozen=True)
 class Source(SerializableModel):
     source_id: str
     cell_id: str
@@ -136,35 +365,6 @@ class Fragment(SerializableModel):
         "text",
     )
     _bounded_fields: ClassVar[Sequence[str]] = ("confidence",)
-
-
-TRACE_KINDS = (
-    "success_pattern",
-    "failure_signature",
-    "anti_pattern",
-    "recovery_pattern",
-    "verification_heuristic",
-    "routing_heuristic",
-    "tool_quirk",
-    "escalation_rule",
-    "preference",
-    "constraint",
-    "workflow",
-    "rail_candidate",
-    "supersession",
-    "scope_exception",
-    "audit_finding",
-)
-
-TRACE_STATUSES = (
-    "proposed",
-    "approved",
-    "challenged",
-    "isolation_candidate",
-    "isolated",
-    "superseded",
-    "deprecated",
-)
 
 
 @dataclass(frozen=True)
@@ -281,11 +481,14 @@ class Outcome(SerializableModel):
     _bounded_fields: ClassVar[Sequence[str]] = ("score",)
 
 
-# Power-theme public aliases. The current Python API keeps legacy field names for compatibility.
-Feed = Source
-Spark = Fragment
-Charge = Trace
-Coil = Alloy
-RailProposal = DoctrineProposal
-Pack = Loadout
-Signal = Outcome
+# Deprecated public aliases retained for compatibility with the former power theme.
+Pulse = Evidence
+Spark = Candidate
+Charge = Memory
+Coil = Pattern
+RailProposal = RuleProposal
+Signal = Feedback
+
+# Deprecated implementation aliases retained for existing imports and cells.
+TRACE_KINDS = MEMORY_KINDS
+TRACE_STATUSES = MEMORY_STATUSES

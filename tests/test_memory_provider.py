@@ -47,7 +47,7 @@ def test_remember_promotes_explicit_preference_with_provenance(tmp_path):
     assert sources[0]["metadata"]["provider_api"] == "remember"
     assert sources[0]["metadata"]["pulse_context"] == {"channel": "cli", "actor": "user"}
     assert fragments[0]["source_id"] == result.pulse_id
-    assert reviews[0]["fragment_id"] == result.spark_id
+    assert reviews[0]["candidate_id"] == result.spark_id
     assert reviews[0]["review_status"] == "approved"
     assert reviews[0]["metadata"]["regulator_decision"]["trusted_direct_promotion"] is True
     assert reviews[0]["metadata"]["regulator_decision"]["review_required"] is False
