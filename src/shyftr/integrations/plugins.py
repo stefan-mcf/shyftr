@@ -23,6 +23,8 @@ class AdapterPluginMeta:
     name: str
     version: str
     supported_input_kinds: Sequence[str]
+    capabilities: Sequence[str] = ("discover", "read", "metadata")
+    adapter_sdk_version: str = CONFIG_SCHEMA_VERSION
     config_schema_version: str = CONFIG_SCHEMA_VERSION
     description: str = ""
     entry_point_group: str = ADAPTER_ENTRY_POINT_GROUP
@@ -37,12 +39,15 @@ class AdapterPluginMeta:
         if not self.config_schema_version:
             raise ValueError("config_schema_version is required")
         object.__setattr__(self, "supported_input_kinds", tuple(str(v) for v in self.supported_input_kinds))
+        object.__setattr__(self, "capabilities", tuple(str(v) for v in self.capabilities))
 
     def to_dict(self) -> dict[str, Any]:
         payload: dict[str, Any] = {
             "name": self.name,
             "version": self.version,
             "supported_input_kinds": list(self.supported_input_kinds),
+            "capabilities": list(self.capabilities),
+            "adapter_sdk_version": self.adapter_sdk_version,
             "config_schema_version": self.config_schema_version,
             "description": self.description,
             "entry_point_group": self.entry_point_group,
@@ -64,6 +69,8 @@ def builtin_file_adapter() -> AdapterPluginMeta:
         version="0.0.0",
         description="Built-in file, glob, JSONL, and directory-tree Pulse adapter.",
         supported_input_kinds=("file", "glob", "jsonl", "directory"),
+        capabilities=("discover", "read", "metadata", "dry_run", "idempotent"),
+        adapter_sdk_version=CONFIG_SCHEMA_VERSION,
         config_schema_version=CONFIG_SCHEMA_VERSION,
         entry_point_group="builtin",
         adapter_class="shyftr.integrations.file_adapter.FileSourceAdapter",

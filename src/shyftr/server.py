@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -69,7 +70,7 @@ def _get_app() -> Any:
         app = FastAPI(
             title="ShyftR Local Service",
             description="Optional local HTTP service for runtime integration",
-            version="0.1.0",
+            version="1.0.0-alpha",
         )
         app.add_middleware(
             CORSMiddleware,
@@ -84,6 +85,17 @@ def _get_app() -> Any:
             allow_headers=["*"],
         )
         _register_routes(app)
+        _register_v1_aliases(app)
+
+        @app.middleware("http")
+        async def api_version_headers(request: Request, call_next: Any) -> Any:
+            response = await call_next(request)
+            response.headers.setdefault("X-ShyftR-API-Version", "v1")
+            if _is_unversioned_public_path(request.url.path):
+                response.headers.setdefault("Deprecation", "true")
+                response.headers.setdefault("Link", '</v1>; rel="successor-version"')
+            return response
+
         _app_instance = app
     return _app_instance
 
@@ -94,6 +106,20 @@ def _get_app() -> Any:
 
 
 def _register_routes(app: FastAPI) -> None:
+    @app.get("/v1")
+    @app.get("/v1/")
+    async def api_versions() -> Dict[str, Any]:
+        return {
+            "status": "ok",
+            "api_versions": ["v1"],
+            "latest": "v1",
+            "api_version": "v1",
+            "schema_version": "1.0.0",
+            "posture": "local-first alpha",
+            "deprecated": [],
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+        }
+
     @app.get("/health")
     async def health() -> Dict[str, Any]:
         return {"status": "ok", "service": "shyftr-local-http"}
@@ -276,9 +302,10 @@ def _register_routes(app: FastAPI) -> None:
 
     # -- Signal report ------------------------------------------------------
 
+    @app.post("/feedback")
     @app.post("/signal")
     async def report_signal(request: Request) -> JSONResponse:
-        """Report a Signal / Outcome.
+        """Report feedback from a runtime pack use.
 
         Expects JSON body conforming to RuntimeOutcomeReport schema.
         Delegates to shyftr.integrations.outcome_api.process_runtime_outcome_report.
@@ -512,6 +539,7 @@ def _register_routes(app: FastAPI) -> None:
         except Exception as exc:
             return JSONResponse(status_code=400, content={"status": "error", "message": str(exc)})
 
+    @app.post("/cell/{cell_id}/feedback")
     @app.post("/cell/{cell_id}/signal")
     async def cell_signal(cell_id: str, request: Request, root: str = ".") -> JSONResponse:
         body = await _parse_body(request)
@@ -645,6 +673,43 @@ def _register_routes(app: FastAPI) -> None:
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
+
+def _is_unversioned_public_path(path: str) -> bool:
+    if path.startswith("/v1"):
+        return False
+    if path in {"/docs", "/redoc", "/openapi.json", "/favicon.ico"}:
+        return False
+    return not path.startswith(("/docs/", "/redoc/"))
+
+
+def _register_v1_aliases(app: FastAPI) -> None:
+    """Expose the local HTTP API under /v1 while preserving old alpha aliases."""
+    try:
+        from fastapi.routing import APIRoute
+    except Exception:  # pragma: no cover - optional FastAPI internals
+        return
+
+    existing_paths = {getattr(route, "path", "") for route in app.routes}
+    for route in list(app.routes):
+        if not isinstance(route, APIRoute):
+            continue
+        if route.path.startswith("/v1") or route.path in {"/openapi.json"}:
+            continue
+        versioned_path = f"/v1{route.path}"
+        if versioned_path in existing_paths:
+            continue
+        app.add_api_route(
+            versioned_path,
+            route.endpoint,
+            methods=list(route.methods or []),
+            name=f"v1_{route.name}",
+            response_class=route.response_class,
+            status_code=route.status_code,
+            tags=["v1"],
+            include_in_schema=True,
+        )
+        existing_paths.add(versioned_path)
 
 
 async def _parse_body(request: Request) -> Dict[str, Any]:

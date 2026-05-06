@@ -28,18 +28,18 @@ Current status:
 | Phase 6 distributed multi-cell intelligence | implemented for local controlled pilots | registry, resonance, rule review, federation export/import, console/API surfaces, and demo tests | keep explicit-scope and review-gate regressions green; do not extend into Phase 7 from the Phase 6 plan |
 | Phase 7 private-core-adjacent differentiators | implemented as public-safe foundations | `docs/status/phase-7-public-private-split.md`, focused Phase 7 tests, CLI/API/console surfaces | keep private-core algorithms and real data out of public `main` |
 | Phase 7.8 regulated autonomous memory evolution | implemented as public-safe foundation | `src/shyftr/evolution.py`, CLI/API/console surfaces, synthetic tests, and `docs/status/phase-7.8-public-private-split.md` | stop before Phase 8 productization unless explicitly approved |
-| Phase 8 productization | not started in this run | Phase 8 remains after the regulated autonomous memory evolution planning gate or explicit continuation | do not begin Phase 8 from this planning update |
+| Phase 8 productization | implemented locally to external evidence gate | adapter SDK/template/harness, `/v1` API aliases and OpenAPI contract, tester issue form, desktop shell start gate, and `docs/status/phase-8-productization-closeout.md` | stop at external tester evidence; do not begin Checkpoint E, Checkpoint F, or stable-release wording |
 
 ## Current larger-run start point
 
 Start from:
 
-- regulated autonomous memory evolution is implemented as a public-safe, review-gated foundation before Phase 8.
-- stop before Phase 8 unless the operator explicitly approves beginning productization.
+- regulated autonomous memory evolution is implemented as a public-safe, review-gated foundation.
+- Phase 8 productization has local proof surfaces implemented through the external evidence gate.
+- stop at external tester evidence unless the operator explicitly approves a later checkpoint after evidence review.
 
 Do not start from:
 
-- Phase 8 productization;
 - Checkpoint E alpha-exit;
 - Checkpoint F stable-release language cleanup.
 

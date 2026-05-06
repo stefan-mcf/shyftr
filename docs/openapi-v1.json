@@ -1,0 +1,1845 @@
+{
+  "components": {
+    "schemas": {
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "Optional local HTTP service for runtime integration",
+    "title": "ShyftR Local Service",
+    "version": "1.0.0-alpha",
+    "x-shyftr-api-version": "v1"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/v1": {
+      "get": {
+        "operationId": "api_versions_v1_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Api Versions V1 Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Api Versions"
+      }
+    },
+    "/v1/": {
+      "get": {
+        "operationId": "api_versions_v1__get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Api Versions V1  Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Api Versions"
+      }
+    },
+    "/v1/cell/{cell_id}/feedback": {
+      "post": {
+        "operationId": "v1_cell_feedback_v1_cell__cell_id__feedback_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cell_id",
+            "required": true,
+            "schema": {
+              "title": "Cell Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "root",
+            "required": false,
+            "schema": {
+              "default": ".",
+              "title": "Root",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Cell feedback",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/cell/{cell_id}/hygiene": {
+      "get": {
+        "operationId": "v1_cell_hygiene_v1_cell__cell_id__hygiene_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cell_id",
+            "required": true,
+            "schema": {
+              "title": "Cell Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "root",
+            "required": false,
+            "schema": {
+              "default": ".",
+              "title": "Root",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response V1 Cell Hygiene V1 Cell  Cell Id  Hygiene Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Cell Hygiene",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/cell/{cell_id}/memories": {
+      "get": {
+        "operationId": "v1_cell_memories_v1_cell__cell_id__memories_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cell_id",
+            "required": true,
+            "schema": {
+              "title": "Cell Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "root",
+            "required": false,
+            "schema": {
+              "default": ".",
+              "title": "Root",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "query",
+            "required": false,
+            "schema": {
+              "default": "",
+              "title": "Query",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "kind",
+            "required": false,
+            "schema": {
+              "default": "",
+              "title": "Kind",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "default": "",
+              "title": "Status",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tag",
+            "required": false,
+            "schema": {
+              "default": "",
+              "title": "Tag",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response V1 Cell Memories V1 Cell  Cell Id  Memories Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Cell Memories",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/cell/{cell_id}/metrics": {
+      "get": {
+        "operationId": "v1_cell_metrics_v1_cell__cell_id__metrics_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cell_id",
+            "required": true,
+            "schema": {
+              "title": "Cell Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "root",
+            "required": false,
+            "schema": {
+              "default": ".",
+              "title": "Root",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response V1 Cell Metrics V1 Cell  Cell Id  Metrics Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Cell Metrics",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/cell/{cell_id}/metrics.csv": {
+      "get": {
+        "operationId": "v1_cell_metrics_csv_v1_cell__cell_id__metrics_csv_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cell_id",
+            "required": true,
+            "schema": {
+              "title": "Cell Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "root",
+            "required": false,
+            "schema": {
+              "default": ".",
+              "title": "Root",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Cell Metrics Csv",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/cell/{cell_id}/operator-burden": {
+      "get": {
+        "operationId": "v1_cell_operator_burden_v1_cell__cell_id__operator_burden_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cell_id",
+            "required": true,
+            "schema": {
+              "title": "Cell Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "root",
+            "required": false,
+            "schema": {
+              "default": ".",
+              "title": "Root",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response V1 Cell Operator Burden V1 Cell  Cell Id  Operator Burden Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Cell Operator Burden",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/cell/{cell_id}/pack": {
+      "post": {
+        "operationId": "v1_cell_pack_v1_cell__cell_id__pack_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cell_id",
+            "required": true,
+            "schema": {
+              "title": "Cell Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "root",
+            "required": false,
+            "schema": {
+              "default": ".",
+              "title": "Root",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Cell Pack",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/cell/{cell_id}/policy-tuning": {
+      "get": {
+        "operationId": "v1_cell_policy_tuning_v1_cell__cell_id__policy_tuning_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cell_id",
+            "required": true,
+            "schema": {
+              "title": "Cell Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "root",
+            "required": false,
+            "schema": {
+              "default": ".",
+              "title": "Root",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response V1 Cell Policy Tuning V1 Cell  Cell Id  Policy Tuning Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Cell Policy Tuning",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/cell/{cell_id}/proposals": {
+      "get": {
+        "operationId": "v1_cell_proposals_v1_cell__cell_id__proposals_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cell_id",
+            "required": true,
+            "schema": {
+              "title": "Cell Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "root",
+            "required": false,
+            "schema": {
+              "default": ".",
+              "title": "Root",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response V1 Cell Proposals V1 Cell  Cell Id  Proposals Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Cell Proposals",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/cell/{cell_id}/proposals/{proposal_id}/decision": {
+      "post": {
+        "operationId": "v1_proposal_decision_v1_cell__cell_id__proposals__proposal_id__decision_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cell_id",
+            "required": true,
+            "schema": {
+              "title": "Cell Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "proposal_id",
+            "required": true,
+            "schema": {
+              "title": "Proposal Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "root",
+            "required": false,
+            "schema": {
+              "default": ".",
+              "title": "Root",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Proposal Decision",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/cell/{cell_id}/status": {
+      "get": {
+        "operationId": "v1_cell_status_v1_cell__cell_id__status_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cell_id",
+            "required": true,
+            "schema": {
+              "title": "Cell Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "root",
+            "required": false,
+            "schema": {
+              "default": ".",
+              "title": "Root",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response V1 Cell Status V1 Cell  Cell Id  Status Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Cell Status",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/cell/{cell_id}/summary": {
+      "get": {
+        "operationId": "v1_cell_dashboard_summary_v1_cell__cell_id__summary_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cell_id",
+            "required": true,
+            "schema": {
+              "title": "Cell Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "root",
+            "required": false,
+            "schema": {
+              "default": ".",
+              "title": "Root",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response V1 Cell Dashboard Summary V1 Cell  Cell Id  Summary Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Cell Dashboard Summary",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/cell/{cell_id}/sweep": {
+      "get": {
+        "operationId": "v1_cell_sweep_v1_cell__cell_id__sweep_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cell_id",
+            "required": true,
+            "schema": {
+              "title": "Cell Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "root",
+            "required": false,
+            "schema": {
+              "default": ".",
+              "title": "Root",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response V1 Cell Sweep V1 Cell  Cell Id  Sweep Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Cell Sweep",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/cells": {
+      "get": {
+        "operationId": "v1_list_cells_v1_cells_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "root",
+            "required": false,
+            "schema": {
+              "default": ".",
+              "title": "Root",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response V1 List Cells V1 Cells Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 List Cells",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/cells/register": {
+      "post": {
+        "operationId": "v1_register_cell_route_v1_cells_register_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "V1 Register Cell Route",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/cells/{cell_id}": {
+      "get": {
+        "operationId": "v1_registered_cell_detail_v1_cells__cell_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cell_id",
+            "required": true,
+            "schema": {
+              "title": "Cell Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "registry",
+            "required": true,
+            "schema": {
+              "title": "Registry",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response V1 Registered Cell Detail V1 Cells  Cell Id  Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Registered Cell Detail",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/cells/{cell_id}/export": {
+      "post": {
+        "operationId": "v1_export_cell_route_v1_cells__cell_id__export_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cell_id",
+            "required": true,
+            "schema": {
+              "title": "Cell Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "root",
+            "required": false,
+            "schema": {
+              "default": ".",
+              "title": "Root",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Export Cell Route",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/cells/{cell_id}/import": {
+      "post": {
+        "operationId": "v1_import_cell_route_v1_cells__cell_id__import_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cell_id",
+            "required": true,
+            "schema": {
+              "title": "Cell Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "root",
+            "required": false,
+            "schema": {
+              "default": ".",
+              "title": "Root",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Import Cell Route",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/diagnostics": {
+      "get": {
+        "operationId": "v1_diagnostics_v1_diagnostics_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "cell_path",
+            "required": true,
+            "schema": {
+              "title": "Cell Path",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "operation",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Operation"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response V1 Diagnostics V1 Diagnostics Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Diagnostics",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/evolution": {
+      "get": {
+        "operationId": "v1_evolution_list_v1_evolution_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "cell_path",
+            "required": true,
+            "schema": {
+              "title": "Cell Path",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "include_reviewed",
+            "required": false,
+            "schema": {
+              "default": true,
+              "title": "Include Reviewed",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response V1 Evolution List V1 Evolution Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Evolution List",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/evolution/scan": {
+      "post": {
+        "operationId": "v1_evolution_scan_v1_evolution_scan_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "V1 Evolution Scan",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/evolution/{proposal_id}/review": {
+      "post": {
+        "operationId": "v1_evolution_review_v1_evolution__proposal_id__review_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "proposal_id",
+            "required": true,
+            "schema": {
+              "title": "Proposal Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Evolution Review",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/evolution/{proposal_id}/simulate": {
+      "post": {
+        "operationId": "v1_evolution_simulate_v1_evolution__proposal_id__simulate_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "proposal_id",
+            "required": true,
+            "schema": {
+              "title": "Proposal Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Evolution Simulate",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/feedback": {
+      "post": {
+        "description": "Report feedback from a runtime pack use.\n\nExpects JSON body conforming to RuntimefeedbackReport schema.\nDelegates to shyftr.integrations.feedback_api.process_runtime_feedback_report.",
+        "operationId": "v1_report_feedback_v1_feedback_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "V1 Report feedback",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/frontier": {
+      "get": {
+        "description": "Read-only frontier review surfaces for a local Cell.",
+        "operationId": "v1_frontier_v1_frontier_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "cell_path",
+            "required": true,
+            "schema": {
+              "title": "Cell Path",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Frontier",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/health": {
+      "get": {
+        "operationId": "v1_health_v1_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response V1 Health V1 Health Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "V1 Health",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/imports/pending": {
+      "get": {
+        "operationId": "v1_imports_pending_v1_imports_pending_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "cell_path",
+            "required": true,
+            "schema": {
+              "title": "Cell Path",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response V1 Imports Pending V1 Imports Pending Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Imports Pending",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/imports/{import_id}/approve": {
+      "post": {
+        "operationId": "v1_approve_import_route_v1_imports__import_id__approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "import_id",
+            "required": true,
+            "schema": {
+              "title": "Import Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Approve Import Route",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/imports/{import_id}/reject": {
+      "post": {
+        "operationId": "v1_reject_import_route_v1_imports__import_id__reject_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "import_id",
+            "required": true,
+            "schema": {
+              "title": "Import Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Reject Import Route",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/ingest": {
+      "post": {
+        "description": "Ingest a evidence / adapter-discovered inputs.\n\nExpects JSON body:\n  {\"config_path\": \"...\", \"cell_path\": \"...\", \"dry_run\": false}\nDelegates to shyftr.ingest.ingest_from_adapter.",
+        "operationId": "v1_ingest_evidence_v1_ingest_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "V1 Ingest evidence",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/pack": {
+      "post": {
+        "description": "Request a pack / Pack.\n\nExpects JSON body conforming to RuntimepackRequest schema.\nDelegates to shyftr.integrations.pack_api.process_runtime_pack_request.",
+        "operationId": "v1_request_pack_v1_pack_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "V1 Request Pack",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/proposals/export": {
+      "post": {
+        "description": "Export advisory runtime proposals.\n\nExpects JSON body:\n  {\"cell_path\": \"...\", \"external_system\": \"...\", \"include_accepted\": false}\nDelegates to shyftr.integrations.proposals.export_runtime_proposals.",
+        "operationId": "v1_export_proposals_v1_proposals_export_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "V1 Export Proposals",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/readiness": {
+      "post": {
+        "operationId": "v1_readiness_v1_readiness_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "V1 Readiness",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/registry/cells": {
+      "get": {
+        "operationId": "v1_registry_cells_v1_registry_cells_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "registry",
+            "required": true,
+            "schema": {
+              "title": "Registry",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cell_type",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cell Type"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tag",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tag"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response V1 Registry Cells V1 Registry Cells Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Registry Cells",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/resonance/scan": {
+      "post": {
+        "operationId": "v1_resonance_scan_route_v1_resonance_scan_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "V1 Resonance Scan Route",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/rules/proposed": {
+      "get": {
+        "operationId": "v1_rules_proposed_v1_rules_proposed_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "cell_path",
+            "required": true,
+            "schema": {
+              "title": "Cell Path",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response V1 Rules Proposed V1 Rules Proposed Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Rules Proposed",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/rules/{rule_id}/approve": {
+      "post": {
+        "operationId": "v1_approve_rule_route_v1_rules__rule_id__approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "rule_id",
+            "required": true,
+            "schema": {
+              "title": "Rule Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Approve Rule Route",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/rules/{rule_id}/reject": {
+      "post": {
+        "operationId": "v1_reject_rule_route_v1_rules__rule_id__reject_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "rule_id",
+            "required": true,
+            "schema": {
+              "title": "Rule Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "V1 Reject Rule Route",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/simulate": {
+      "post": {
+        "description": "Run a read-only retrieval policy simulation.",
+        "operationId": "v1_simulate_v1_simulate_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "V1 Simulate",
+        "tags": [
+          "v1"
+        ]
+      }
+    },
+    "/v1/validate": {
+      "post": {
+        "description": "Validate a runtime adapter config file.\n\nExpects JSON body: {\"config_path\": \"/path/to/adapter.yaml\"}\nDelegates to shyftr.integrations.config.{load_config, validate_config}.",
+        "operationId": "v1_validate_adapter_v1_validate_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "V1 Validate Adapter",
+        "tags": [
+          "v1"
+        ]
+      }
+    }
+  }
+}

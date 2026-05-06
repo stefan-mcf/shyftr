@@ -341,6 +341,8 @@ See `docs/api.md` and `docs/console.md` for current endpoints, UI capabilities, 
 Start here:
 
 - `docs/status/current-implementation-status.md` — evidence-backed capability matrix and public wording rule.
+- `docs/sdk/adapter-sdk.md` — adapter guide, template, and harness.
+- `docs/api-versioning.md` — v1 local HTTP API namespace and OpenAPI contract.
 - `docs/status/alpha-readiness.md` — tester audience, alpha gate, and data boundaries.
 - `docs/example-lifecycle.md` — CLI lifecycle walkthrough.
 - `examples/README.md` — synthetic examples and lifecycle script.
