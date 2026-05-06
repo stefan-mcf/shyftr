@@ -29,7 +29,7 @@ packs, and feedback.
 
 ---
 
-## 2. Ingest a evidence
+## 2. Ingest evidence
 
 A evidence is raw evidence — a file, a log, a chat transcript. Ingest it:
 
