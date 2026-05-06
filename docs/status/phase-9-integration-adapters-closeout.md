@@ -1,6 +1,6 @@
 # Phase 9 integration adapters closeout
 
-Status: local Phase 9 implementation complete through the external evidence gate; stop before Phase 10.
+Status: local Phase 9 implementation complete; Phase 10 local gate opened by operator review.
 
 Recorded: 2026-05-06T13:22:05Z
 
@@ -31,7 +31,6 @@ Not implemented and intentionally blocked:
 - Phase 10 proof-of-work/demo work;
 - hosted service or production posture;
 - stable-release wording;
-- external validation claims.
 
 ## Adaptations from research
 
@@ -72,28 +71,12 @@ Observed local results before this status file was committed:
 
 Exact-SHA CI evidence must be recorded after commit/push.
 
-## External evidence gate
+## Operator gate
 
-External evidence remains open and is not claimed.
+Phase 9 acceptance is human-in-the-loop with the operator as the human reviewer. The tested local implementation, local gates, exact-SHA CI, and operator decision are sufficient to open the next local implementation phase.
 
-Collection surfaces:
-
-- tracker: https://github.com/stefan-mcf/shyftr/issues/2
-- report template: `.github/ISSUE_TEMPLATE/phase9_integration_evidence.yml`
-- report labels: `phase9-external-evidence`, `external-evidence`
-
-Phase 9 must stop here until a public-safe external runtime or non-operator integration provides evidence that it can:
-
-1. write a closeout/evidence artifact;
-2. ingest it through the Phase 9 adapter path;
-3. request a bounded pack through the generic client contract;
-4. report feedback;
-5. record exact SHA, environment, commands, result, friction, and public-safe failures.
-
-Current count of external Phase 9 evidence reports at this local closeout: 0.
+The former external-report collection path has been removed as a phase gate. Public reports may still be filed as normal issues, but they are advisory inputs rather than gate requirements.
 
 ## Stop point
 
-Original stop: stop at the Phase 9 external evidence gate. Do not start Phase 10 until the operator explicitly approves it after external evidence review or rescope.
-
-Rescope recorded: the operator opened the Phase 10 local implementation gate from tested local evidence on 2026-05-06. See `docs/status/phase-10-operator-gate.md`.
+Phase 9 local implementation is complete. Phase 10 local implementation is opened by `docs/status/phase-10-operator-gate.md`. Stop before Checkpoint E/F, stable-release, hosted-service, production, or private-core-heavy claims unless separately approved by the operator.

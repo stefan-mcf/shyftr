@@ -21,46 +21,48 @@ Current status:
 | Area | Status | Evidence | Next action |
 | --- | --- | --- | --- |
 | Repository/CI | ready | clean `main`, public readiness PASS, latest CI green | keep exact-SHA gate before any larger run |
-| Public alpha gate | ready | `scripts/alpha_gate.sh` reaches `ALPHA_GATE_READY` locally | require tester machines to run the same gate |
+| Public alpha gate | ready | `scripts/alpha_gate.sh` reaches `ALPHA_GATE_READY` locally | require operator review before release-scope changes |
 | Phase 0-2 core local loop | implemented/proven | current status matrix, tests, local lifecycle, console build | regression guard only |
 | Phase 3 runtime/pilot harness | partial | runtime-neutral examples and synthetic fixtures exist | prove at least one real or replayable pilot loop before closing 8.5 |
 | Phase 4-5 local advisory/durability surfaces | implemented enough for alpha claims | sweep/challenge/quarantine, backup/restore, ledger verification, privacy/sensitivity tests | keep as regression guards during alpha |
 | Phase 6 distributed multi-cell intelligence | implemented for local controlled pilots | registry, resonance, rule review, federation export/import, console/API surfaces, and demo tests | keep explicit-scope and review-gate regressions green; do not extend into Phase 7 from the Phase 6 plan |
 | Phase 7 private-core-adjacent differentiators | implemented as public-safe foundations | `docs/status/phase-7-public-private-split.md`, focused Phase 7 tests, CLI/API/console surfaces | keep private-core algorithms and real data out of public `main` |
 | Phase 7.8 regulated autonomous memory evolution | implemented as public-safe foundation | `src/shyftr/evolution.py`, CLI/API/console surfaces, synthetic tests, and `docs/status/phase-7.8-public-private-split.md` | stop before Phase 8 productization unless explicitly approved |
-| Phase 8 productization | implemented locally to external evidence gate | adapter SDK/template/harness, `/v1` API aliases and OpenAPI contract, tester issue form, desktop shell start gate, and `docs/status/phase-8-productization-closeout.md` | closed by final local human gate; external tester evidence remains open |
-| Phase 9 integration adapters | implemented locally; Phase 10 local gate opened by operator rescope | generic evidence adapters, closeout artifact adapter, generic SourceAdapter ingestion, retrieval usage log contract, research/plan/closeout status artifacts, `docs/status/phase-10-operator-gate.md` | keep collecting public-safe reports through issue #2; external validation remains unclaimed |
+| Phase 8 productization | implemented locally and operator-accepted | adapter SDK/template/harness, `/v1` API aliases and OpenAPI contract, desktop shell start gate, and `docs/status/phase-8-productization-closeout.md` | closed by final local human gate |
+| Phase 9 integration adapters | implemented locally; Phase 10 local gate opened by operator review | generic evidence adapters, closeout artifact adapter, generic SourceAdapter ingestion, retrieval usage log contract, research/plan/closeout status artifacts, `docs/status/phase-10-operator-gate.md` | proceed within Phase 10 local implementation scope |
 
 ## Current larger-run start point
 
 Start from:
 
 - regulated autonomous memory evolution is implemented as a public-safe, review-gated foundation.
-- Phase 8 productization has local proof surfaces implemented through the external evidence gate.
+- Phase 8 productization has local proof surfaces implemented and accepted by the operator.
 - Phase 9 integration adapters have local proof surfaces implemented; the operator opened the Phase 10 local implementation gate from tested local evidence.
-- keep collecting external Phase 9 reports, but do not claim external validation from local evidence.
+- phase progression is operator-gated; public reports are advisory issue inputs, not phase gates.
 
 Do not start from:
 
 - Checkpoint E alpha-exit;
 - Checkpoint F stable-release language cleanup.
 
-## Why Tranche 8.5 is the right next run
+## Human-in-the-loop gate policy
 
-Tranche 8.5 is the first tranche whose remaining evidence cannot be proven solely by local tests. The codebase now has enough alpha infrastructure to invite technical testers, but the tranche itself still needs external proof:
+ShyftR phase progression is human-in-the-loop with the operator as the human reviewer. Local repo-backed evidence is valid gate evidence when the operator accepts it. Public reports and third-party issues can inform quality work, but they are not required phase gates.
 
-- 3-5 external technical testers can run clone/install/gate/demo;
-- failures become actionable issues;
-- the product value is understandable without live explanation;
-- at least one real or replayable runtime/pilot loop is proven or explicitly scoped out for the first alpha wave.
+Current gate basis:
 
-## Required larger-run waves
+- clean `main` synced to `origin/main`;
+- exact-SHA GitHub CI success;
+- public readiness PASS;
+- alpha gate `ALPHA_GATE_READY`;
+- full Python suite passing;
+- operator acceptance recorded in status artifacts.
 
 ### Wave 0: preflight and freeze
 
 Gate type: pre-flight.
 
-Objective: confirm the exact public SHA is healthy before sending anyone instructions.
+Objective: confirm the exact public SHA is healthy before starting a larger implementation wave.
 
 Commands:
 
@@ -82,94 +84,29 @@ Pass condition:
 
 Failure behavior:
 
-- block tester outreach;
+- block the implementation wave;
 - repair the failing gate;
 - rerun Wave 0.
 
-### Wave 1: alpha tester packet
+### Wave 1: operator acceptance
 
-Gate type: pre-flight.
+Gate type: human review.
 
-Objective: prepare tester instructions without changing the approved public README.
+Objective: record whether the operator accepts the tested local evidence for the next implementation phase.
 
-Artifact:
+Record:
 
-- `docs/status/alpha-readiness.md` remains the canonical tester limits document.
-- A short private/outbound message can link the public README and tell testers to run `bash scripts/alpha_gate.sh`.
+- exact SHA;
+- local verification results;
+- exact-SHA CI URL;
+- scope opened;
+- scopes still blocked.
 
-Tester scope:
-
-- clone/install;
-- run alpha gate;
-- run deterministic lifecycle example;
-- optionally inspect the local console;
-- report confusing docs, install issues, gate failures, and concept clarity.
-
-Do not ask testers to use private, customer, employer, regulated, or production memory.
-
-### Wave 2: runtime/pilot proof lane
+### Wave 2: implementation scope
 
 Gate type: revision.
 
-Objective: satisfy or explicitly narrow Tranche 8.5 requirement 7.
-
-Preferred public-safe option:
-
-- run the existing runtime-neutral file/JSONL adapter example as a replayable pilot harness;
-- capture evidence that the loop moves from evidence to candidate to memory to pack to feedback;
-- record diagnostics/readiness evidence in `docs/status/` without private paths or real data.
-
-If a true real-runtime loop is not ready:
-
-- keep Tranche 8.5 marked partial;
-- state that this alpha wave is clone/install/synthetic-demo validation only;
-- do not claim the tranche is complete.
-
-Private-core route:
-
-- if the pilot lane needs private scoring/ranking/compaction, route that experiment to `shyftr-private-core` and publish only public contracts or synthetic fixtures here.
-
-### Wave 3: external tester evidence
-
-Gate type: revision.
-
-Objective: collect enough feedback to decide whether Tranche 8.5 can use externally validated alpha language.
-
-Minimum evidence when external validation is claimed:
-
-- tester count;
-- exact SHA tested;
-- OS/Python/Node versions;
-- alpha gate verdict;
-- install friction;
-- demo/lifecycle success or failure;
-- first-impression concept clarity;
-- actionable bug list.
-
-Rescope behavior:
-
-- if fewer than 3 technical testers complete the gate, do not claim external alpha validation;
-- the operator may explicitly defer this evidence and continue pre-Phase-6 planning from local gates and operator usability acceptance;
-- keep the external evidence tracker open and record reports when they arrive.
-
-### Wave 4: Tranche 8.5 closeout decision
-
-Gate type: escalation.
-
-Objective: decide whether to close Tranche 8.5, keep it open, or split remaining proof into a follow-up tracker.
-
-Close only as externally validated if:
-
-- CI and local gates remain green;
-- tester evidence is recorded;
-- runtime/pilot proof is satisfied or explicitly scoped out for the first alpha wave;
-- product value is understandable enough from public docs and tester reports.
-
-If not externally validated:
-
-- split or keep the tester-evidence track open;
-- allow continued pre-Phase-6 planning only if explicitly operator-rescoped from local gate evidence;
-- do not proceed to Checkpoint E or stable-release language from local-only evidence.
+Objective: execute only the operator-opened local implementation scope. Public reports and issue feedback remain useful inputs, but they do not define phase readiness.
 
 ## Private-core separation during the run
 
@@ -189,7 +126,7 @@ Suggested lane split:
 | --- | --- | --- | --- |
 | controller/integration | exact SHA, final docs, commits, CI | controller | one mutating owner for canonical repo |
 | gate runner | public readiness, alpha gate, CI watch | bounded helper or controller | no code changes unless assigned |
-| docs/status lane | tester packet and status evidence | bounded helper | public-safe wording only |
+| docs/status lane | operator packet and status evidence | bounded helper | public-safe wording only |
 | runtime proof lane | replayable adapter/pilot evidence | bounded helper or isolated branch | no private data |
 | review lane | spec/quality/readiness review | independent reviewer | read-only unless routed back |
 
@@ -197,6 +134,6 @@ Persistent swarm profiles are not required unless the run becomes long-lived or 
 
 ## Ready-to-run verdict
 
-Ready for current larger phased run: yes, through Phase 10 local implementation scope after operator rescope recorded in `docs/status/phase-10-operator-gate.md`.
+Ready for current larger phased run: yes, through Phase 10 local implementation scope after operator gate opening recorded in `docs/status/phase-10-operator-gate.md`.
 
-Not ready for: external validation claims, Checkpoint E, Checkpoint F, hosted/production/stable-release posture, or private-core-heavy work.
+Not ready for: Checkpoint E, Checkpoint F, hosted/production/stable-release posture, or private-core-heavy work without separate operator approval.

@@ -14,10 +14,9 @@
 
 ## Operator authorization and scope boundary
 
-The operator explicitly rescoped the external tester threshold on 2026-05-06. External tester reports remain deferred and tracked separately, but they do not block continued pre-Phase-6 planning. This plan records that distinction:
+The operator explicitly confirmed on 2026-05-06 that ShyftR phase gates are human-in-the-loop with the operator as the human reviewer. This plan records that distinction:
 
 - local gates plus operator usability acceptance are enough to plan Phase 6;
-- external alpha validation is still not claimed;
 - Checkpoint E, Checkpoint F, stable-release wording, hosted SaaS behavior, and Phase 7 are outside this plan;
 - Phase 6 implementation must still begin from a clean exact-SHA preflight and tranche-by-tranche review.
 
@@ -733,7 +732,7 @@ git diff --check
 - operator can see registered cells;
 - operator can see cross-cell provenance and trust labels;
 - review queues are visible and explicit;
-- no UI surface implies hosted SaaS or external validation;
+- no UI surface implies hosted SaaS or release readiness;
 - service/API reject ambiguous cross-cell operations.
 
 **Commit:**
@@ -847,7 +846,7 @@ Closeout evidence must record:
 - local gate results;
 - GitHub CI URL and conclusion;
 - files/tranches completed;
-- remaining deferred external tester evidence, if still deferred;
+- remaining operator-gated release-scope blockers, if any;
 - explicit statement that Phase 7 was not started.
 
 ## Stop boundary after Phase 6
@@ -866,6 +865,6 @@ Phase 7 includes private-core-adjacent differentiators such as richer confidence
 - [ ] Federation is selective and auditable.
 - [ ] Default pack/search behavior remains single-cell.
 - [ ] Source ledgers are not silently mutated.
-- [ ] Public docs do not claim external validation unless reports exist.
+- [ ] Public docs do not claim release readiness unless operator-approved evidence exists.
 - [ ] Public docs do not expose private paths, private data, or private-core strategy.
 - [ ] Phase 7 is not started.

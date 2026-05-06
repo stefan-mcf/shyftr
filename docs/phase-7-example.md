@@ -47,6 +47,5 @@ Eval tasks are deterministic and provenance-linked. They are intended for regres
 ## Public safety notes
 
 - Do not use real private memory in public fixtures.
-- Do not claim external alpha validation from this local example.
 - Do not treat reputation as permission to bypass review.
 - Do not auto-apply policy changes from simulation.

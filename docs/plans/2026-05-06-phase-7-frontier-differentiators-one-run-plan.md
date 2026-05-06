@@ -12,7 +12,7 @@
 
 **Mutating Owner:** controller/integration owner only. Helper lanes may inspect or implement isolated chunks, but the controller verifies, lands, tests, commits, pushes, and checks CI.
 
-**Human Input Requirement:** none for planning, public-safe implementation, synthetic fixtures, tests, local gates, commits, pushes, and CI checks. Human approval is required only for moving private-core logic into public `main`, using real/private memory data, changing package/release posture, claiming external alpha validation, or starting Checkpoint E/F/stable-release cleanup.
+**Human Input Requirement:** none for planning, public-safe implementation, synthetic fixtures, tests, local gates, commits, pushes, and CI checks. Human approval is required only for moving private-core logic into public `main`, using real/private memory data, changing package/release posture, or starting Checkpoint E/F/stable-release cleanup.
 
 ---
 

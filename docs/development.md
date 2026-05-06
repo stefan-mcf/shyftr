@@ -38,7 +38,7 @@ bash scripts/smoke-install.sh
 bash scripts/alpha_gate.sh
 ```
 
-Use `scripts/alpha_gate.sh` before inviting outside technical testers. It uses synthetic data only and should end with `ALPHA_GATE_READY`. See `docs/status/alpha-readiness.md` for tester scope and data boundaries.
+Use `scripts/alpha_gate.sh` before operator release-scope review. It uses synthetic data only and should end with `ALPHA_GATE_READY`. See `docs/status/alpha-readiness.md` for scope and data boundaries.
 
 ## Optional dependency notes
 

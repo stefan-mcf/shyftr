@@ -1,6 +1,6 @@
 # Desktop shell plan
 
-Status: Phase 8.4 is deferred until the external alpha evidence gate is reduced.
+Status: Phase 8.4 is deferred until operator review accepts packaging scope.
 
 The desktop shell should be a thin local wrapper around the existing web console and `shyftr serve`. It must not replace the CLI, HTTP API, or web console.
 
@@ -16,7 +16,7 @@ The desktop shell should be a thin local wrapper around the existing web console
 
 Do not begin desktop-shell implementation until:
 
-1. external tester evidence has reduced the Phase 8.5 gate enough to justify packaging work;
+1. operator review has accepted the packaging scope;
 2. the web console has no UI-blocking alpha issues;
 3. service start/stop, health polling, port conflict handling, and orphan cleanup are specified;
 4. at least two OS families have clone/install/gate evidence or the operator explicitly narrows desktop support;

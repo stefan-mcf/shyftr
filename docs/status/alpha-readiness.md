@@ -2,16 +2,16 @@
 
 Status: local-first alpha / controlled pilot.
 
-ShyftR is public so technical testers can clone it, run local synthetic examples, inspect the architecture, and report setup or workflow issues. It is not a hosted SaaS product, not a multi-tenant production service, and not ready for unreviewed sensitive production memory.
+ShyftR is public so the operator and collaborators can clone it, run local synthetic examples, inspect the architecture, and report setup or workflow issues. It is not a hosted SaaS product, not a multi-tenant production service, and not ready for unreviewed sensitive production memory.
 
 ## Who should test now
 
-Good alpha testers:
+Good alpha review scope:
 
-- developers comfortable with Python virtual environments and terminal output;
-- people willing to use synthetic or non-sensitive data;
-- people who can report exact commands, platform details, and error output;
-- people evaluating concept clarity, install friction, CLI/example reliability, and local console feel.
+- operator or collaborators comfortable with Python virtual environments and terminal output;
+- synthetic or non-sensitive data only;
+- exact commands, platform details, and error output recorded when relevant;
+- concept clarity, install friction, CLI/example reliability, and local console feel reviewed.
 
 Not the right audience yet:
 
@@ -43,9 +43,9 @@ The gate uses synthetic data only. It checks:
 - diagnostic logging summary;
 - optional console build and production-dependency audit when npm is available.
 
-If the gate fails, ShyftR is not alpha-ready on that machine. Capture the full terminal output, OS, Python version, Node/npm version if relevant, and whether the failure occurred before or after dependency installation.
+If the gate fails, ShyftR is not alpha-ready on that machine. Capture the full terminal output, OS, Python version, Node/npm version if relevant, and whether the failure occurred before or after dependency installation for operator review.
 
-## Data policy for alpha testers
+## Data policy for alpha review
 
 Use:
 
@@ -63,16 +63,9 @@ Do not use:
 
 ## What feedback is useful
 
-Use the GitHub alpha test report template when possible:
+For operator review, record:
 
-- `.github/ISSUE_TEMPLATE/alpha_test_report.md`
-- `.github/ISSUE_TEMPLATE/alpha_test_report.yml`
-
-Integration adapter testers should choose the dedicated integration evidence report form instead of the general alpha test report form.
-
-Record:
-
-- tester label;
+- reviewer label;
 - exact commit tested from `git rev-parse HEAD`;
 - OS and version;
 - Python version;
@@ -85,4 +78,4 @@ Record:
 
 ## Current boundary
 
-Alpha readiness means the local synthetic proof path is healthy enough for technical testers. It does not mean production readiness, hosted-service readiness, or broad memory-backend replacement readiness. Bounded-domain primary memory requires explicit operator approval after replay/readiness evidence and fallback/archive review.
+Alpha readiness means the local synthetic proof path is healthy enough for operator review. It does not mean production readiness, hosted-service readiness, or broad memory-backend replacement readiness. Bounded-domain primary memory requires explicit operator approval after replay/readiness evidence and fallback/archive review.

@@ -26,4 +26,4 @@ Phase 6 uses these public ledgers:
 
 Phase 6 implementation must add or use public model surfaces without deleting compatibility readers. Cross-cell behavior must stay explicit, provenance-linked, scoped, and review-gated. No resonance scan, import, or rule proposal is allowed to rewrite source cell ledgers silently.
 
-This reconciliation note was created before Phase 6 code changes. It does not claim external alpha validation, hosted behavior, or Phase 7 functionality.
+This reconciliation note was created before Phase 6 code changes. It does not claim hosted behavior or Phase 7 functionality.

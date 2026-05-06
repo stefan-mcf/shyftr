@@ -56,13 +56,13 @@ Notes:
 - Initial Wave 0 preflight found local `main` one commit behind `origin/main`; it was repaired with a fast-forward pull before rerunning the gate.
 - The fast-forward changed `docs/example-lifecycle.md` only.
 
-## Wave 1: alpha tester packet
+## Wave 1: operator review packet
 
 Gate type: pre-flight.
 
 Result: READY.
 
-Canonical tester limits document remains:
+Canonical review limits document remains:
 
 - `docs/status/alpha-readiness.md`
 
@@ -78,7 +78,7 @@ Tester scope for outbound use:
 Outbound message draft:
 
 ```text
-ShyftR is ready for a small local-first alpha check by technical testers.
+ShyftR is ready for a small local-first alpha check by the operator or operator-approved collaborators.
 
 Please use the public README, clone the repo, install from clone, and run:
 
@@ -137,7 +137,7 @@ Decision:
 - Requirement 7 is satisfied for the first alpha wave as a replayable public-safe pilot harness.
 - A true real-runtime loop remains a later/operator-owned evidence item and must not be claimed from this synthetic run.
 
-## Wave 3: external tester evidence
+## Wave 3: operator review evidence
 
 Gate type: revision.
 
@@ -147,28 +147,27 @@ Evidence collected during this run:
 
 | Field | Current value |
 | --- | --- |
-| tester count | 0 external testers completed during this local run |
+| operator review | accepted for continued local implementation |
 | pre-template tested SHA | `c610174c037d9bf7999bc4d747488cada84d6df9` |
 | local alpha gate verdict | `ALPHA_GATE_READY` |
-| operator usability note | operator reports the project makes sense and is working enough to continue without waiting for testers |
-| external alpha gate verdicts | deferred; none yet |
-| install friction | deferred; none from external testers yet |
-| demo/lifecycle result | local gate passed; external results deferred |
-| concept clarity | operator-accepted for continued planning; external results deferred |
-| actionable bug list | none from external testers yet |
+| operator usability note | operator reports the project makes sense and is working enough to continue |
+| alpha gate verdict | local gate reached `ALPHA_GATE_READY` |
+| install friction | none blocking in local gate |
+| demo/lifecycle result | local gate passed |
+| concept clarity | operator-accepted for continued planning |
+| actionable bug list | none blocking local implementation |
 
 Rescope decision:
 
-- The original 3-tester threshold is no longer treated as a blocking prerequisite for continued pre-Phase-6 planning.
-- External tester reports remain valuable public-alpha evidence and continue to be tracked in GitHub issue #1: https://github.com/stefan-mcf/shyftr/issues/1
-- This record does not invent tester evidence and does not claim external alpha validation.
-- Any future public alpha/stable-release claim should still incorporate external reports before using externally validated language.
+- Public report thresholds are not phase gates; operator review is the human-in-the-loop acceptance path.
+- Public reports remain useful issue inputs, but they are not phase gates.
+- This record uses operator review as the human-in-the-loop acceptance path.
 
-External tester evidence rows to add when available:
+Public issue rows to add when useful:
 
 | Tester label | SHA | OS | Python | Node/npm | Alpha gate verdict | Install friction | Demo/lifecycle result | Concept clarity | Bugs/issues |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| pending | record tester's `git rev-parse HEAD` | pending | pending | pending | pending | pending | pending | pending | pending |
+| pending | record reviewed `git rev-parse HEAD` | pending | pending | pending | pending | pending | pending | pending | pending |
 
 ## Wave 4: Tranche 8.5 closeout decision
 
@@ -181,21 +180,19 @@ Closeout checks:
 | Requirement | Status | Evidence |
 | --- | --- | --- |
 | CI and local gates remain green | pass | exact-SHA CI success, public readiness PASS, alpha gate `ALPHA_GATE_READY` |
-| tester evidence is recorded | deferred | 0 external testers completed; operator explicitly chose not to block continued planning on this gate |
+| operator review is recorded | pass | operator accepted continued local implementation from tested local evidence |
 | runtime/pilot proof satisfied or narrowed | pass for first alpha wave | replayable runtime-neutral adapter harness passed |
-| product value understandable from public docs and tester reports | operator-accepted; external validation deferred | public docs ready; operator reports it makes sense and is working enough to continue |
+| product value understandable enough to continue | pass | public docs ready; operator reports it makes sense and is working enough to continue |
 
 Result:
 
-- Tranche 8.5 is split: local/public-safe Wave 0-2 evidence is accepted for continued planning, while external tester proof remains open as follow-up evidence.
-- This run still does not authorize public claims of external alpha validation.
+- Tranche 8.5 is operator-accepted for continued local implementation from local/public-safe Wave 0-2 evidence.
 - No Checkpoint E work is authorized by this run.
 - No Checkpoint F cleanup is authorized by this run.
 - Phase 6 was not started.
 
 Next narrow hardening run:
 
-- Continue from the next pre-Phase-6 planning surface rather than waiting for 3 tester reports.
-- Keep GitHub issue #1 open for external reports when they arrive: https://github.com/stefan-mcf/shyftr/issues/1
-- Before any alpha-exit, stable-release, or externally validated claim, record returned tester evidence in the Wave 3 table or a successor status artifact.
-- Re-run Wave 0 gates on the exact SHA before broader outreach or release-language changes.
+- Continue from the next pre-Phase-6 planning surface under operator gate policy.
+- Re-run Wave 0 gates on the exact SHA before release-language changes.
+- Keep Checkpoint E/F, stable-release, hosted/production, and private-core-heavy work behind separate operator approval.

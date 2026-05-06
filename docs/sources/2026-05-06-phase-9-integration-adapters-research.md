@@ -8,7 +8,7 @@ Recorded: 2026-05-06
 
 This research pass reviewed Phase 9 integration adapters before implementation. It used the source Phase 9 plan in `docs/plans/2026-04-24-shyftr-phased-plan.md`, the current Phase 8 adapter SDK/API implementation, and an external-pattern research lane covering adapter/port design, provenance, idempotency, bounded retrieval, failure isolation, telemetry, and evidence gates.
 
-Stop scope: implement Phase 9 only through the external evidence gate. Do not begin Phase 10 metrics, decay, or proof-of-work demo work.
+Stop scope: implement Phase 9 only through the operator gate. Do not begin Phase 10 metrics, decay, or proof-of-work demo work until the operator opens that scope.
 
 ## Source plan summary
 
@@ -72,19 +72,19 @@ Phase 9 should not rebuild pack generation. Existing `RuntimeLoadoutRequest` / `
 
 The missing Phase 9 improvement is exposing retrieval usage logs as a stable local client contract so external clients can audit which memory ids were selected and whether limits were applied.
 
-### Adaptation 5: define the external evidence gate
+### Adaptation 5: define the operator gate
 
-Phase 9 should stop when local implementation is complete and the repo has scaffolding for external adapter evidence, but returned external evidence is not yet recorded.
+Phase 9 should stop when local implementation is complete and the repo has recorded operator acceptance or a remaining operator blocker.
 
-Evidence that remains external:
+Evidence for operator review:
 
-- at least one non-operator or real external runtime writes a public-safe closeout/evidence artifact;
+- the tested local adapter path writes or reads a public-safe closeout/evidence artifact;
 - it is ingested through the Phase 9 adapter path;
 - it requests a bounded pack through the generic client contract;
 - it records feedback without private data;
-- the result is recorded in a public-safe status/tracker artifact.
+- the result is recorded in a public-safe status artifact.
 
-Until that happens, do not claim external Phase 9 validation.
+Until the operator opens the next scope, do not proceed to Phase 10.
 
 ## Revised Phase 9 implementation outline
 
@@ -93,5 +93,5 @@ Until that happens, do not claim external Phase 9 validation.
 3. Add closeout adapter support for local closeout artifact directories.
 4. Add retrieval log read/filter API for generic clients.
 5. Add tests proving provenance, idempotency, closeout isolation, retrieval-log filtering, and no raw operational state leakage.
-6. Add status docs and a tracker for Phase 9 external evidence.
+6. Add status docs for Phase 9 operator acceptance.
 7. Stop before Phase 10.

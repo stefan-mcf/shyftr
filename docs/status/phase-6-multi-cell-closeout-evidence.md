@@ -1,6 +1,6 @@
 # Phase 6 multi-cell closeout evidence
 
-Phase 6 implements local-first, explicit, review-gated multi-cell behavior for controlled-pilot use. It does not claim external alpha validation, hosted SaaS behavior, stable release readiness, or Phase 7 functionality.
+Phase 6 implements local-first, explicit, review-gated multi-cell behavior for controlled-pilot use. It does not claim hosted SaaS behavior, stable release readiness, or Phase 7 functionality.
 
 ## Completed tranches
 
@@ -38,5 +38,4 @@ bash scripts/alpha_gate.sh
 - Federation export is selective and excludes pending/rejected candidates, feedback logs, grid files, local absolute paths, and sensitive records forbidden by policy.
 - Federation import starts with non-local trust and requires review before local-use treatment.
 - Default pack/search behavior remains single-cell.
-- External tester evidence remains separately deferred and is not claimed here.
 - Phase 7 was not started.

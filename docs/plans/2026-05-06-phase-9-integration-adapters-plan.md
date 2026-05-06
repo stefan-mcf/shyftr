@@ -14,7 +14,7 @@ Source plan:
 
 ## Scope
 
-Implement public-safe Phase 9 integration adapter logic through the external evidence gate.
+Implement public-safe Phase 9 integration adapter logic through operator acceptance.
 
 Allowed:
 
@@ -78,7 +78,7 @@ Implementation:
 
 - create `src/shyftr/integrations/closeout_adapter.py`;
 - discover Markdown and JSON closeout artifacts from a configured directory;
-- treat the source artifact as immutable external evidence;
+- treat the evidence artifact as immutable input;
 - preserve provenance and closeout-specific metadata;
 - document that external runtimes should write the closeout artifact first, then call ShyftR ingestion.
 
@@ -106,15 +106,15 @@ Acceptance:
 - returned records contain selected memory ids and score traces but no raw operational state payloads;
 - tests prove filtering and sanitization.
 
-## Tranche 9.5: status and external evidence gate
+## Tranche 9.5: status and operator gate
 
-Objective: record local Phase 9 completion and stop at the external evidence gate.
+Objective: record local Phase 9 completion and stop at the operator gate.
 
 Implementation:
 
 - create `docs/status/phase-9-integration-adapters-closeout.md`;
 - update `docs/status/tranched-plan-status.md` and roadmap/status references as needed;
-- if useful, add or refresh a GitHub tracker for external Phase 9 adapter evidence.
+- record operator acceptance or remaining blocker notes in status docs.
 
 Local close condition:
 
@@ -124,14 +124,6 @@ Local close condition:
 - alpha gate passes;
 - exact-SHA CI is green after push.
 
-External evidence gate:
+Operator gate:
 
-Stop before Phase 10 until a public-safe external runtime or non-operator integration has recorded evidence that it can:
-
-1. write a closeout/evidence artifact;
-2. ingest it through the Phase 9 adapter path;
-3. request a bounded pack through the generic client contract;
-4. report feedback;
-5. provide exact SHA, environment, commands, result, friction, and public-safe failures.
-
-Do not claim external Phase 9 validation until that evidence is recorded and reviewed.
+Stop before Phase 10 until the operator reviews the tested local Phase 9 implementation and opens the next local implementation phase. Record exact SHA, verification commands/results, CI URL, scope opened, and scopes still blocked.

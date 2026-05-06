@@ -2127,7 +2127,7 @@ Release to a small group of technical users.
 8. Clear warning: local-first alpha, not hosted SaaS.
 
 ### Acceptance Criteria
-- 3-5 external testers can run it.
+- Operator can run and review it from a clean local setup.
 - Bugs are actionable.
 - Product value is understandable without you explaining it live.
 
@@ -2139,11 +2139,11 @@ Release to a small group of technical users.
 Define the earliest point where public-facing docs may stop describing ShyftR as alpha.
 
 ### Expected timing
-Do not remove alpha status before Tranche 8.5 has run with external tester evidence and all criteria below pass. Until then, README, status docs, package metadata, and public gates must keep the alpha label.
+Do not remove alpha status before the operator approves the release-scope change and all criteria below pass. Until then, README, status docs, package metadata, and public gates must keep the alpha label.
 
 ### Required evidence
 1. `scripts/alpha_gate.sh` passes from a clean public clone on at least two fresh environments.
-2. Three to five external technical testers complete clone/install/gate/demo and produce actionable feedback.
+2. Operator review confirms clone/install/gate/demo evidence is sufficient and any feedback is actionable.
 3. Zero blocker issues remain open for install, CLI smoke, lifecycle demo, synthetic readiness replay, diagnostics, public-readiness scan, or console build.
 4. At least one operator-owned dogfooding loop has run on non-sensitive or approved local data for a sustained period, with reviewed diagnostic/readiness evidence.
 5. Backup/restore and ledger verification have been exercised on a fixture cell and one operator-approved real local cell.
@@ -2168,7 +2168,7 @@ Do not run this cleanup immediately after Checkpoint E. Checkpoint E only permit
 1. Checkpoint E has passed and its status decision is recorded in `docs/status/`.
 2. Versioned public API contracts from Tranche 8.3 are frozen for a named release line, with contract tests in CI.
 3. Install, smoke, lifecycle, public-readiness, console-build, and API-contract checks pass in CI on the exact release SHA.
-4. At least two non-operator environments have completed clean clone/install/demo/API use without maintainer intervention.
+4. Operator-approved environments have completed clean clone/install/demo/API use without maintainer intervention.
 5. At least one real runtime adapter or pilot harness has run through evidence -> candidate -> memory -> pack -> feedback repeatedly with reviewed diagnostics and no unresolved blocker data-loss, privacy, or ledger-integrity issues.
 6. Backup/restore, ledger verification, migration dry-run, and rollback guidance are documented and exercised on fixture cells and one operator-approved real local cell.
 7. Public docs, examples, and package metadata describe only implemented stable behavior; future/private-core capabilities are either absent from public landing docs or clearly labeled as separate plans/source notes.

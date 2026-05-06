@@ -16,7 +16,7 @@ This split keeps public `main` focused on transparent, append-only, review-gated
 | 7.6 regulator proposals | proposal and review event shapes | repeated synthetic event detection, required simulation reference for approval, no policy mutation | self-modifying regulator logic without human review | auto-apply of policies or rules | `tests/test_regulator_proposals.py` | graph/reputation concept doc |
 | 7.7 synthetic eval generator | public-safe eval task schema | deterministic tasks from synthetic feedback and high-value memory fixtures | real/private training data generation | opaque benchmark generation | `tests/test_eval_generator.py` | eval example docs |
 | 7B surface coherence | CLI/API/console discovery surfaces | `pack --retrieval-mode`, `simulate`, `graph`, `reputation`, `regulator-proposals`, `evalgen`, `/simulate`, `/frontier`, console projection | hosted service or production control plane | stable public API guarantee | console/server/CLI smoke tests | status docs |
-| 7C docs/status | public concepts and examples | public docs tied to implemented behavior | private roadmap or strategy | external alpha validation claims | terminology/readiness guards | this document plus concept/example docs |
+| 7C docs/status | public concepts and examples | public docs tied to implemented behavior | private roadmap or strategy | release-scope claims | terminology/readiness guards | this document plus concept/example docs |
 | 7D bridge landing | exact-SHA proof gate | local tests, guards, alpha gate, push, CI watch | Checkpoint E/F or Phase 8 execution | starting Phase 8 | full suite and CI | closeout evidence after CI |
 
 ## One-run gate checklist

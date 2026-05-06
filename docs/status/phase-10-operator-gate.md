@@ -1,6 +1,6 @@
 # Phase 10 operator gate
 
-Status: operator gate opened for Phase 10 local implementation planning and execution; external validation is still not claimed.
+Status: operator gate opened for Phase 10 local implementation planning and execution; ShyftR gates are human-in-the-loop with the operator as the human reviewer.
 
 Recorded: 2026-05-06T14:06:02Z
 
@@ -38,29 +38,21 @@ Opened:
 
 - Phase 10 local implementation planning and execution;
 - local metrics/proof surfaces that remain public-safe and evidence-backed;
-- status updates that clearly distinguish local proof from external validation.
+- status updates that clearly distinguish tested local proof from broader release posture.
 
 Still not claimed or opened:
 
-- external Phase 9 validation;
-- externally validated alpha language;
 - Checkpoint E alpha-exit;
 - Checkpoint F stable-release wording;
 - hosted service, production, or package-release posture;
 - private-core-heavy work or proprietary scoring/ranking/compaction logic in public `main`.
 
-## External evidence track
+## Human-in-the-loop policy
 
-The external evidence track remains useful but is no longer a blocker for starting Phase 10 local implementation after this operator rescope.
+ShyftR phase gates are operator-gated. The operator is the human reviewer for phase progression, release-scope decisions, and acceptance of tested local evidence.
 
-Collection surfaces remain open:
-
-- tracker: https://github.com/stefan-mcf/shyftr/issues/2
-- report template: `.github/ISSUE_TEMPLATE/phase9_integration_evidence.yml`
-- report labels: `phase9-external-evidence`, `external-evidence`
-
-Current count of external Phase 9 evidence reports at gate opening: 0.
+Public feedback and third-party reports can still be useful issue inputs, but they are not phase gates and are not required to open or close implementation phases.
 
 ## Next stop point
 
-Proceed into Phase 10 only within local public-safe implementation scope. Stop before any Checkpoint E/F, stable-release, production, hosted-service, externally validated, or private-core-heavy claims unless separately approved and evidenced.
+Proceed into Phase 10 only within local public-safe implementation scope. Stop before any Checkpoint E/F, stable-release, production, hosted-service, or private-core-heavy claims unless separately approved and evidenced by the operator.

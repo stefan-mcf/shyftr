@@ -43,17 +43,17 @@ Pass condition:
 
 ## Larger run objective
 
-Prepare and execute a controlled public-alpha evidence run that proves external technical users can install, run the gate, understand the local lifecycle, and report actionable issues.
+Prepare and execute a controlled public-alpha evidence run that proves the operator can install, run the gate, understand the local lifecycle, and record actionable issues.
 
 This run is evidence collection and hardening, not a new capability sprint.
 
 ## In-scope for the larger run
 
 - exact-SHA preflight;
-- alpha tester instructions based on current public README and `docs/status/alpha-readiness.md`;
-- external tester evidence collection;
+- operator review notes based on current public README and `docs/status/alpha-readiness.md`;
+- operator acceptance evidence collection;
 - runtime-neutral replayable pilot proof if it can be done with synthetic/public-safe data;
-- bug/hardening follow-up based on tester results;
+- bug/hardening follow-up based on operator review results;
 - Tranche 8.5 closeout decision.
 
 ## Out of scope without a new instruction
@@ -68,13 +68,13 @@ This run is evidence collection and hardening, not a new capability sprint.
 
 ## Human input gates
 
-### Gate A: tester outreach approval
+### Gate A: operator review approval
 
 Type: escalation.
 
 Needed before sending messages to people or posting anywhere.
 
-The run can prepare a tester packet, but the operator decides who receives it.
+The run can prepare an operator review packet, and the operator decides any further sharing.
 
 ### Gate B: real/pilot data approval
 
@@ -96,7 +96,7 @@ Use the controller as final mutating owner of the canonical repo. Use bounded he
 
 Parallelizable lanes after Wave 0:
 
-1. tester packet review lane: confirm install/gate instructions are unambiguous;
+1. operator packet review lane: confirm install/gate instructions are unambiguous;
 2. runtime proof lane: determine whether the public synthetic adapter examples satisfy Tranche 8.5 requirement 7 or need a follow-up;
 3. status evidence lane: draft the Tranche 8.5 evidence ledger shape;
 4. independent review lane: check that the run does not leak private-core details or overclaim readiness.
@@ -120,7 +120,7 @@ Minimum fields:
 - exact SHA;
 - CI run ID;
 - local alpha gate verdict;
-- tester count and anonymized environment matrix;
+- operator review notes and environment matrix;
 - failures/bugs with links or summaries;
 - runtime/pilot proof status;
 - public/private separation review;
@@ -128,6 +128,6 @@ Minimum fields:
 
 ## Current verdict
 
-Ready to launch Wave 0 and prepare tester evidence collection.
+Ready to launch Wave 0 and prepare operator acceptance evidence collection.
 
 Do not claim Tranche 8.5 complete yet.

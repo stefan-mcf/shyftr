@@ -1,6 +1,6 @@
 # Phase 8 productization closeout
 
-Status: local implementation complete to the external evidence gate.
+Status: local implementation complete and operator-gated.
 
 Recorded: 2026-05-06T12:43:33Z
 
@@ -11,9 +11,9 @@ This run implemented safe Phase 8 productization surfaces that can be proven loc
 - adapter SDK metadata, template adapter, and reusable adapter contract harness;
 - `/v1` local HTTP API aliases, compatibility deprecation headers, and generated public OpenAPI contract;
 - adapter SDK and API versioning docs;
-- desktop shell start-gate note, with implementation deferred until external evidence justifies packaging work;
-- public alpha issue form and tester report helper script;
-- roadmap/status documentation for the remaining external evidence gate.
+- desktop shell start-gate note, with implementation deferred until operator review justifies packaging work;
+- public issue-report path for advisory feedback;
+- roadmap/status documentation for operator-gated continuation.
 
 This run did not begin Checkpoint E, Checkpoint F, stable-release wording cleanup, hosted-service work, or any later product phase.
 
@@ -52,7 +52,7 @@ Observed results:
 
 Final local human-gate evidence is recorded in `docs/status/phase-8-final-human-gate.md`.
 
-Decision: Phase 8 local final human gate is accepted, with the stop point preserved before Phase 9, Checkpoint E, Checkpoint F, stable-release wording, and external validation claims.
+Decision: Phase 8 local final human gate is accepted, with the stop point preserved before Phase 9, Checkpoint E, Checkpoint F, stable-release wording, and public validation claims.
 
 ## External evidence gate
 
@@ -61,8 +61,7 @@ External alpha evidence remains open and is not fabricated.
 Current tracker state checked during closeout:
 
 - issue: https://github.com/stefan-mcf/shyftr/issues/1
-- state: open;
-- labels: `help wanted`, `alpha-feedback`, `phase-gate`;
-- external tester reports counted in this run: 0.
+- phase progression is operator-gated;
+- public feedback is advisory and can use normal GitHub issues.
 
-Stop condition: do not claim external alpha validation, do not start Checkpoint E, do not start Checkpoint F, and do not remove alpha/controlled-pilot posture until returned tester evidence is recorded and reviewed.
+Stop condition: do not start Checkpoint E, do not start Checkpoint F, and do not remove alpha/controlled-pilot posture until the operator separately approves release-scope changes.

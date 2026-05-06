@@ -1237,7 +1237,7 @@ All commands above pass. Final `git status --short` shows only intended tracked 
 
 - push to `origin/main`;
 - tag/release;
-- external alpha tester announcement;
+- operator-approved announcement;
 - deleting old aliases in a future breaking-change release.
 
 **Steps after approval only:**

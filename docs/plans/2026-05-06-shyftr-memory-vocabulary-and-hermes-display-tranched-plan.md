@@ -410,7 +410,7 @@ python <local-hermes-root>/scripts/smoke_shyftr_display_and_memory_id.py
 **Option C: Remove compatibility readers**
 - Highest risk.
 - Requires public release note, migration tool, fixture coverage, and explicit approval.
-- Not recommended until external alpha feedback confirms no old cells need compatibility.
+- Not recommended until operator review confirms compatibility can be safely narrowed.
 
 **Verification for any approved destructive option:**
 ```bash

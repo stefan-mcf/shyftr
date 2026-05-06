@@ -12,7 +12,7 @@ ShyftR proves local-first memory cells, append-only ledger truth, review-gated m
 2. Adapter SDK guide, template, and harness.
 3. `/v1` local HTTP API namespace and OpenAPI contract.
 4. Public alpha evidence collection.
-5. Desktop shell only after external evidence justifies packaging work.
+5. Desktop shell only after operator review justifies packaging work.
 
 ## Phase 9 integration adapter sequence
 
@@ -26,7 +26,7 @@ Status record: `docs/status/phase-9-integration-adapters-closeout.md`.
 
 ## External evidence gate
 
-Before alpha-exit or stable-release wording, ShyftR still needs external tester reports with exact SHA, environment, gate verdict, install friction, lifecycle/demo result, concept clarity, and actionable bugs.
+Before alpha-exit or stable-release wording, ShyftR needs a separate operator gate with exact-SHA CI, local verification, release-scope review, and documented acceptance.
 
 ## Out of scope for public alpha
 

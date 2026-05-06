@@ -4,7 +4,7 @@ Date: 2026-05-06 | Repo: public ShyftR checkout | Mode: pre-implementation recon
 
 ## 1. Executive Summary
 
-The repo is in strong shape for controlled-pilot alpha. Phase 7 and 7.8 (regulated autonomous memory evolution) are implemented as public-safe foundations. Phase 8 productisation had not been started before this reconnaissance. The codebase has substantial infrastructure (adapters, API, console, tests, docs) but has concrete, surgically-targeted gaps in landing docs, versioned API, adapter examples, desktop shell, and external tester evidence.
+The repo is in strong shape for controlled-pilot alpha. Phase 7 and 7.8 (regulated autonomous memory evolution) are implemented as public-safe foundations. Phase 8 productisation had not been started before this reconnaissance. The codebase has substantial infrastructure (adapters, API, console, tests, docs) but had concrete, surgically-targeted gaps in landing docs, versioned API, adapter examples, and desktop shell.
 
 **Key finding:** Phase 8 can begin safely from current `main` (SHA 0f53948). The gaps are additive documentation and surface-level API/package work — they do NOT require core refactoring.
 
@@ -190,7 +190,7 @@ The repo is in strong shape for controlled-pilot alpha. Phase 7 and 7.8 (regulat
 
 **Tests to add:** None new. Existing suite must stay green.
 
-**Public/private risk:** LOW for the tranche. External tester evidence must NOT include private/customer/production data (per Wave 1 scope in `docs/status/tranched-plan-status.md`).
+**Public/private risk:** LOW for the tranche. Operator/public feedback must not include private/customer/production data.
 
 ---
 
@@ -293,24 +293,24 @@ docs/desktop.md
 |------|----------|------------|
 | 8.3 `/v1/` could break unversioned routes | LOW | Sub-application mount means existing routes untouched. |
 | 8.4 Tauri adds build complexity | MEDIUM | Keep as separate optional `apps/desktop/` dir. Do not make CI depend on Tauri build. |
-| 8.5 external tester evidence blocked by missing docs | LOW | 8.1 docs can be written first to unblock 8.5. |
+| 8.5 operator review readiness blocked by missing docs | LOW | 8.1 docs can be written first to unblock 8.5. |
 
 ---
 
 ## 5. Recommended Implementation Order
 
-1. **8.1 first** — landing docs are lowest-risk, highest-visibility. Docs-only. Unblocks 8.5 tester clarity.
+1. **8.1 first** — landing docs are lowest-risk, highest-visibility. Docs-only. Unblocks 8.5 operator review clarity.
 2. **8.2 second** — adapter examples are self-contained in `examples/`. Add synthetic fixtures, validate they work.
 3. **8.3 third** — versioned API is the most impactful code change. `/v1/` sub-app mount + contract tests.
-4. **8.5 pre-flight** — run Wave 0 checks, then proceed to tester outreach.
-5. **8.4 last** — desktop shell explicitly optional. Defer until after external tester feedback on web console.
+4. **8.5 pre-flight** — run Wave 0 checks, then proceed to operator review.
+5. **8.4 last** — desktop shell explicitly optional. Defer until after operator review of the web console.
 
 ---
 
 ## 6. Stop limit
 
-Per task instructions: **stop before external tester evidence gate. Do not start Checkpoint E or Phase 9.**
+Per task instructions at the time: **stop before the next operator gate. Do not start Checkpoint E or Phase 9.**
 
-Phase 8 implementation (tranches 8.1-8.4) can be executed. Phase 8.5's Wave 1-4 (external tester outreach, evidence collection) is the hard stop — documentation and code can be prepared but tester instructions should not be sent until explicitly approved.
+Phase 8 implementation (tranches 8.1-8.4) can be executed. Phase 8.5 operator review is the hard stop — documentation and code can be prepared before the operator explicitly opens the next phase.
 
 Note: `docs/status/tranched-plan-status.md` line 31 says "do not begin Phase 8 from this planning update." That status doc may need updating before Phase 8 work begins.

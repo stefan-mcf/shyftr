@@ -72,4 +72,4 @@ Latest local gate run: 2026-05-06.
 
 Completed: the public repository was published as a clean one-commit alpha baseline after private-side gates, clean-history export verification, CI, public visibility verification, unauthenticated clone checks, and fresh-clone readiness scans.
 
-Current rule: keep the repo clearly labelled as local-first alpha / controlled-pilot. Before inviting outside technical testers, run `bash scripts/alpha_gate.sh` and expect `ALPHA_GATE_READY`. Do not direct testers to use sensitive production memory until operator dogfooding, readiness reports, diagnostics, and fallback/archive evidence support a bounded pilot.
+Current rule: keep the repo clearly labelled as local-first alpha / controlled-pilot. Before operator release-scope review, run `bash scripts/alpha_gate.sh` and expect `ALPHA_GATE_READY`. Do not use sensitive production memory until operator dogfooding, readiness reports, diagnostics, and fallback/archive evidence support a bounded pilot.
