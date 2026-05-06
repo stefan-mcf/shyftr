@@ -48,6 +48,12 @@ Observed results:
 - whitespace diff check: PASS;
 - alpha gate: `ALPHA_GATE_READY`.
 
+## Final human gate
+
+Final local human-gate evidence is recorded in `docs/status/phase-8-final-human-gate.md`.
+
+Decision: Phase 8 local final human gate is accepted, with the stop point preserved before Phase 9, Checkpoint E, Checkpoint F, stable-release wording, and external validation claims.
+
 ## External evidence gate
 
 External alpha evidence remains open and is not fabricated.
