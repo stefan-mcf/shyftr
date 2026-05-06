@@ -66,6 +66,9 @@ Do not use:
 Use the GitHub alpha test report template when possible:
 
 - `.github/ISSUE_TEMPLATE/alpha_test_report.md`
+- `.github/ISSUE_TEMPLATE/alpha_test_report.yml`
+
+Integration adapter testers should choose the dedicated integration evidence report form instead of the general alpha test report form.
 
 Record:
 

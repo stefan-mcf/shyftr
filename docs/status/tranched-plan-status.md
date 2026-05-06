@@ -29,7 +29,7 @@ Current status:
 | Phase 7 private-core-adjacent differentiators | implemented as public-safe foundations | `docs/status/phase-7-public-private-split.md`, focused Phase 7 tests, CLI/API/console surfaces | keep private-core algorithms and real data out of public `main` |
 | Phase 7.8 regulated autonomous memory evolution | implemented as public-safe foundation | `src/shyftr/evolution.py`, CLI/API/console surfaces, synthetic tests, and `docs/status/phase-7.8-public-private-split.md` | stop before Phase 8 productization unless explicitly approved |
 | Phase 8 productization | implemented locally to external evidence gate | adapter SDK/template/harness, `/v1` API aliases and OpenAPI contract, tester issue form, desktop shell start gate, and `docs/status/phase-8-productization-closeout.md` | closed by final local human gate; external tester evidence remains open |
-| Phase 9 integration adapters | implemented locally to external evidence gate | generic evidence adapters, closeout artifact adapter, generic SourceAdapter ingestion, retrieval usage log contract, research/plan/closeout status artifacts | stop at external Phase 9 evidence; do not begin Phase 10 |
+| Phase 9 integration adapters | implemented locally to external evidence gate | generic evidence adapters, closeout artifact adapter, generic SourceAdapter ingestion, retrieval usage log contract, research/plan/closeout status artifacts | collect public-safe reports through issue #2 and `.github/ISSUE_TEMPLATE/phase9_integration_evidence.yml`; do not begin Phase 10 |
 
 ## Current larger-run start point
 

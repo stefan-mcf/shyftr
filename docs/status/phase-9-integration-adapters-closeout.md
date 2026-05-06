@@ -76,6 +76,12 @@ Exact-SHA CI evidence must be recorded after commit/push.
 
 External evidence remains open and is not claimed.
 
+Collection surfaces:
+
+- tracker: https://github.com/stefan-mcf/shyftr/issues/2
+- report template: `.github/ISSUE_TEMPLATE/phase9_integration_evidence.yml`
+- report labels: `phase9-external-evidence`, `external-evidence`
+
 Phase 9 must stop here until a public-safe external runtime or non-operator integration provides evidence that it can:
 
 1. write a closeout/evidence artifact;

@@ -1,0 +1,105 @@
+name: Phase 9 integration evidence report
+description: Public-safe report from an external or non-operator Phase 9 integration adapter run
+title: "Phase 9 integration evidence: <runtime> / <SHA>"
+labels: ["phase9-external-evidence", "external-evidence"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for testing the ShyftR Phase 9 integration adapter path. Use synthetic or intentionally non-sensitive data only. Do not paste secrets, API keys, customer data, employer data, regulated data, production memory, or private local paths.
+
+        This report is for external or non-operator evidence only. See `docs/status/phase-9-integration-adapters-closeout.md` for the gate this report helps satisfy.
+  - type: input
+    id: sha
+    attributes:
+      label: Exact git SHA tested
+      description: Run `git rev-parse HEAD` in the clone.
+    validations:
+      required: true
+  - type: input
+    id: runtime
+    attributes:
+      label: External runtime or integration tested
+      placeholder: "Example: local script, CI job, agent runtime, MCP client, other"
+    validations:
+      required: true
+  - type: dropdown
+    id: operator_relation
+    attributes:
+      label: Reporter relationship
+      options:
+        - External tester
+        - Non-operator integration owner
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: "OS/version, Python version, Node/npm version if used"
+    validations:
+      required: true
+  - type: textarea
+    id: commands
+    attributes:
+      label: Commands run
+      description: Paste public-safe commands only. Redact user names, local private paths, tokens, and secrets.
+      render: shell
+    validations:
+      required: true
+  - type: dropdown
+    id: artifact_written
+    attributes:
+      label: Closeout/evidence artifact written by the integration
+      options:
+        - Yes
+        - No
+        - Failed before artifact write
+    validations:
+      required: true
+  - type: dropdown
+    id: adapter_ingest
+    attributes:
+      label: Ingested through the Phase 9 adapter path
+      options:
+        - Yes
+        - No
+        - Failed before adapter ingest
+    validations:
+      required: true
+  - type: dropdown
+    id: pack_request
+    attributes:
+      label: Bounded pack request result
+      options:
+        - Succeeded
+        - Failed
+        - Not attempted
+    validations:
+      required: true
+  - type: dropdown
+    id: feedback_recorded
+    attributes:
+      label: Feedback recorded
+      options:
+        - Yes
+        - No
+        - Failed before feedback
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: Result, friction, and public-safe failures
+      description: Include concise outcome notes and any terminal output needed to reproduce a failure.
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Data safety confirmation
+      options:
+        - label: I used only synthetic or intentionally non-sensitive test data and did not paste secrets, private data, or private local paths into this report.
+          required: true
+        - label: This is external or non-operator integration evidence, not an operator-local-only run.
+          required: true
