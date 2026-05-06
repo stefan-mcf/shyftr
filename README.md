@@ -4,9 +4,9 @@ Local-first, append-only memory control plane for AI agents.
 
 ## Current status
 
-ShyftR is a local-first alpha / controlled-pilot developer-preview MVP. It is designed for local Cells, synthetic demos, and operator-approved pilots where durable agent memory must stay inspectable, review-gated, and file-backed.
+ShyftR is a local-first alpha memory control plane for local Cells and operator-approved integrations where durable agent memory must stay inspectable, review-gated, and file-backed.
 
-It is not a hosted SaaS product, not a multi-tenant production service, not production-hardened, and not a package release.
+It is not a hosted SaaS product, not a multi-tenant production service, not production-hardened, and not a package release. Multi-cell federation and hosted platform operation remain deliberate non-goals for this repository.
 
 ## Why it exists
 
@@ -16,7 +16,7 @@ Agent memory often becomes opaque profile state, ad hoc context, or a vector ind
 - Sparks are extracted lessons awaiting review.
 - Charges are reviewed durable memory.
 - Packs supply bounded context to a runtime.
-- Signals report whether that context helped or harmed future work.
+- Signals report whether that context helped or harmed later work.
 
 ## What works today
 
@@ -26,7 +26,7 @@ Agent memory often becomes opaque profile state, ad hoc context, or a vector ind
 - Pack generation and Signal recording.
 - Hygiene, readiness, diagnostics, audit, sweep, challenge, proposal, privacy, and backup/restore workflows.
 - Optional localhost FastAPI service and React console.
-- Runtime-neutral adapter examples and synthetic demo fixtures.
+- Runtime-neutral adapter examples and synthetic fixtures.
 
 See `docs/status/current-implementation-status.md` for the evidence-backed capability matrix.
 
@@ -79,13 +79,13 @@ The script creates a temporary Cell, ingests `examples/pulse.md`, extracts and r
 Manual path:
 
 ```bash
-shyftr init-cell /tmp/shyftr-demo-cell --cell-id demo-cell
-shyftr ingest /tmp/shyftr-demo-cell examples/pulse.md --kind lesson
-shyftr spark /tmp/shyftr-demo-cell <source_id>
-shyftr approve /tmp/shyftr-demo-cell <spark_id> --reviewer demo --rationale "Bounded synthetic lesson."
-shyftr charge /tmp/shyftr-demo-cell <spark_id> --promoter demo
-shyftr pack /tmp/shyftr-demo-cell "Pack relevance" --task-id demo-task
-shyftr signal /tmp/shyftr-demo-cell <pack_id> success --useful <charge_id>
+shyftr init-cell /tmp/shyftr-example-cell --cell-id example-cell
+shyftr ingest /tmp/shyftr-example-cell examples/pulse.md --kind lesson
+shyftr spark /tmp/shyftr-example-cell <source_id>
+shyftr approve /tmp/shyftr-example-cell <spark_id> --reviewer example-reviewer --rationale "Bounded synthetic lesson."
+shyftr charge /tmp/shyftr-example-cell <spark_id> --promoter example-promoter
+shyftr pack /tmp/shyftr-example-cell "Pack relevance" --task-id example-task
+shyftr signal /tmp/shyftr-example-cell <pack_id> success --useful <charge_id>
 ```
 
 ## Local service and console
@@ -146,14 +146,14 @@ External runtime or CLI
 - `docs/status/alpha-readiness.md` — public alpha scope, tester data boundaries, and alpha gate.
 - `docs/status/public-readiness-audit.md` — public-prep finding ledger and publication gate.
 - `docs/development.md` — setup and local verification.
-- `docs/demo.md` — CLI demo flow.
-- `docs/demo-runtime-integration.md` — runtime adapter demo.
+- `docs/example-lifecycle.md` — CLI lifecycle walkthrough.
+- `docs/runtime-integration-example.md` — runtime adapter example.
 - `docs/api.md` — localhost service endpoints.
 - `docs/console.md` — React console setup and boundaries.
 - `docs/concepts/` — concept and architecture notes.
 - `examples/README.md` — synthetic examples and lifecycle script.
 
-Historical plans, sources, feeds, and runbooks remain under `docs/` as implementation notes. Treat them as historical or future-planning material unless a status document marks a capability current.
+Historical plans, sources, feeds, and runbooks remain under `docs/` as implementation notes. Treat them as historical or planning material unless a status document marks a capability current.
 
 ## Development checks
 

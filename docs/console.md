@@ -1,6 +1,6 @@
 # ShyftR React Console
 
-Status: local developer-preview console for inspecting and reviewing local Cells. It is not a hosted dashboard.
+Status: local developer console for inspecting and reviewing local Cells. It is not a hosted dashboard.
 
 ## Setup
 

@@ -1,4 +1,4 @@
-"""Tests for the ShyftR demo flow described in docs/demo.md.
+"""Tests for the ShyftR example flow described in docs/example-lifecycle.md.
 
 Exercises the documented lifecycle using a temporary Cell and verifies
 that the example files exist and are parseable.
@@ -58,9 +58,9 @@ def test_example_task_json_exists_and_parseable() -> None:
     assert "steps" in data
 
 
-def test_demo_doc_exists() -> None:
-    """docs/demo.md exists and documents the CLI commands."""
-    path = REPO_ROOT / "docs" / "demo.md"
+def test_example_doc_exists() -> None:
+    """docs/example-lifecycle.md exists and documents the CLI commands."""
+    path = REPO_ROOT / "docs" / "example-lifecycle.md"
     assert path.is_file(), f"Missing: {path}"
     text = path.read_text(encoding="utf-8")
     assert "shyftr init-cell" in text
@@ -78,18 +78,18 @@ def test_demo_doc_exists() -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_demo_lifecycle_via_cli(tmp_path: Path) -> None:
-    """Exercise the documented demo lifecycle in a temporary Cell.
+def test_example_lifecycle_via_cli(tmp_path: Path) -> None:
+    """Exercise the documented example lifecycle in a temporary Cell.
 
     Covers:
       init-cell -> ingest -> fragments -> approve -> promote
       -> search -> loadout -> outcome
     """
-    cell = str(tmp_path / "demo-cell")
+    cell = str(tmp_path / "example-cell")
     repo_root = str(REPO_ROOT)
 
     # 1. Create a sample source file (same content pattern as examples/source.md)
-    source_file = tmp_path / "demo-source.md"
+    source_file = tmp_path / "example-source.md"
     source_file.write_text(
         "# Loadout Relevance Heuristic\n\n"
         "Kind: lesson\n\n"
@@ -99,11 +99,11 @@ def test_demo_lifecycle_via_cli(tmp_path: Path) -> None:
     )
 
     # 2. init-cell
-    result = _cli("init-cell", cell, "--cell-id", "demo-cell", "--cell-type", "domain")
+    result = _cli("init-cell", cell, "--cell-id", "example-cell", "--cell-type", "domain")
     assert result.returncode == 0, f"init failed: {result.stderr}"
     init_data = json.loads(result.stdout)
     assert init_data["status"] == "ok"
-    assert init_data["cell_id"] == "demo-cell"
+    assert init_data["cell_id"] == "example-cell"
 
     # 3. ingest
     result = _cli("ingest", cell, str(source_file), "--kind", "lesson")
@@ -124,7 +124,7 @@ def test_demo_lifecycle_via_cli(tmp_path: Path) -> None:
     result = _cli(
         "approve", cell, fragment_id,
         "--reviewer", "demo-test",
-        "--rationale", "Accurate lesson for demo flow",
+        "--rationale", "Accurate lesson for example flow",
     )
     assert result.returncode == 0, f"approve failed: {result.stderr}"
     review_data = json.loads(result.stdout)

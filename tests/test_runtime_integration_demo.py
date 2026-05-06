@@ -28,7 +28,7 @@ from shyftr.review import approve_fragment
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 FIXTURE_ROOT = REPO_ROOT / "examples" / "integrations" / "worker-runtime"
-DEMO_DOC = REPO_ROOT / "docs" / "demo-runtime-integration.md"
+DEMO_DOC = REPO_ROOT / "docs" / "runtime-integration-example.md"
 
 
 def _copy_fixture(tmp_path: Path) -> tuple[Path, Path]:
@@ -57,13 +57,13 @@ def _promote_demo_charge(cell: Path) -> str:
     approve_fragment(
         cell,
         fragment.fragment_id,
-        reviewer="runtime-demo-reviewer",
+        reviewer="runtime-example-reviewer",
         rationale="Fixture evidence is bounded and relevant to adapter validation.",
     )
     trace = promote_fragment(
         cell,
         fragment.fragment_id,
-        promoter="runtime-demo-promoter",
+        promoter="runtime-example-promoter",
         statement="Validate adapter configuration before syncing runtime evidence.",
         rationale="Promoted from RI-8 runtime integration fixture.",
     )

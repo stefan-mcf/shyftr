@@ -60,7 +60,7 @@ pieces (Sparks), and appends them to `ledger/sparks.jsonl`.
 Review each Spark and approve it for promotion:
 
 ```bash
-shyftr approve ./demo-cell <spark_id> --reviewer demo --rationale "Accurate and relevant lesson"
+shyftr approve ./demo-cell <spark_id> --reviewer example-reviewer --rationale "Accurate and relevant lesson"
 ```
 
 Approved Sparks remain in `ledger/sparks.jsonl` with
@@ -73,7 +73,7 @@ Approved Sparks remain in `ledger/sparks.jsonl` with
 Promote an approved Spark into a durable Charge:
 
 ```bash
-shyftr charge ./demo-cell <spark_id> --promoter demo --rationale "Regulator-scoping pattern confirmed"
+shyftr charge ./demo-cell <spark_id> --promoter example-promoter --rationale "Regulator-scoping pattern confirmed"
 ```
 
 The promotion creates a Charge record in `charges/approved.jsonl` with an
@@ -99,7 +99,7 @@ and tags — useful for verifying what was promoted.
 A Pack is a bounded, trust-labeled memory context for a task:
 
 ```bash
-shyftr pack ./demo-cell "How to improve Pack relevance" --task-id demo-task-001
+shyftr pack ./demo-cell "How to improve Pack relevance" --task-id example-task-001
 ```
 
 The Pack selects Charges by relevance score and returns a bounded
@@ -135,7 +135,7 @@ Pulse -> Spark -> Charge -> Pack -> Signal
 - **Packs** are the application — bounded memory for a specific task.
 - **Signal** are the learning signal — they update Charge confidence.
 
-Run the full demo test suite to verify the local setup:
+Run the full example test suite to verify the local setup:
 
 ```bash
 python3 -m pytest tests/test_demo_flow.py -v

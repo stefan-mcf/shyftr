@@ -40,7 +40,7 @@ Status: public alpha baseline published; ongoing hardening and controlled-pilot 
 
 ## Historical and future-doc classification
 
-Current docs intended as public navigation and evidence: `README.md`, `docs/status/**`, `docs/development.md`, `docs/demo.md`, `docs/demo-runtime-integration.md`, `docs/api.md`, `docs/console.md`, `docs/concepts/**`, `examples/**`, and GitHub community files.
+Current docs intended as public navigation and evidence: `README.md`, `docs/status/**`, `docs/development.md`, `docs/example-lifecycle.md`, `docs/runtime-integration-example.md`, `docs/api.md`, `docs/console.md`, `docs/concepts/**`, `examples/**`, and GitHub community files.
 
 Existing files under `docs/plans/**`, `docs/sources/**`, `docs/feeds/**`, and `docs/runbooks/**` are classified as historical implementation notes, source concept notes, or controlled-pilot runbooks. They may contain future concepts, local path evidence, or historical runtime names. They must not be treated as current product capability. Removing, rewriting, or excluding them from a public-history export is a final publication decision and is not performed autonomously in this cleanup.
 
@@ -53,7 +53,7 @@ Latest local gate run: 2026-05-06.
 | Python environment | `uv venv --python python3.11 /tmp/shyftr-public-verify-venv` | PASS; Python 3.11.13 |
 | Install with extras | `uv pip install --python /tmp/shyftr-public-verify-venv/bin/python -e '.[dev,service]'` | PASS; FastAPI test dependency gap fixed by adding `httpx` to `service` extra |
 | Python tests | `/tmp/shyftr-public-verify-venv/bin/python -m pytest -q` | PASS; 747 passed |
-| Focused API/console/demo tests | `/tmp/shyftr-public-verify-venv/bin/python -m pytest tests/test_demo_flow.py tests/test_runtime_integration_demo.py tests/test_server.py tests/test_console_api.py -q` | PASS; 32 passed |
+| Focused API/console/example tests | `/tmp/shyftr-public-verify-venv/bin/python -m pytest tests/test_demo_flow.py tests/test_runtime_integration_demo.py tests/test_server.py tests/test_console_api.py -q` | PASS; 32 passed |
 | Demo lifecycle | `PATH=/tmp/shyftr-public-verify-venv/bin:$PATH PYTHON=/tmp/shyftr-public-verify-venv/bin/python bash examples/run-local-lifecycle.sh` | PASS |
 | Smoke install | `bash scripts/smoke-install.sh` | PASS with uv-backed temp venv |
 | Full local check | `PATH=/tmp/shyftr-public-verify-venv/bin:$PATH PYTHON=/tmp/shyftr-public-verify-venv/bin/python bash scripts/check.sh` | PASS; includes pytest, lifecycle, console build/audit, readiness |

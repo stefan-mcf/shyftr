@@ -1,6 +1,6 @@
 # Runtime Integration Demo
 
-This demo shows a runtime-neutral closed learning loop using only files and
+This example shows a runtime-neutral closed learning loop using only files and
 JSON contracts. It avoids product-specific runtime details; any worker system
 that can write files and call the ShyftR CLI can use the same pattern.
 
@@ -34,7 +34,7 @@ canonical truth; adapter state and indexes are rebuildable acceleration.
 
 ## 3. Review and promote memory
 
-The demo test exercises the Pulse -> Spark -> Charge path by extracting a Spark
+The example test exercises the Pulse -> Spark -> Charge path by extracting a Spark
 from the closeout Pulse, approving it, and promoting it into a Charge. That
 Charge can later appear in a Pack.
 
@@ -61,7 +61,7 @@ The fixture includes all four signals required for a useful learning loop:
 - recovery pattern: timeout window increased after repeated evidence;
 - caution: ShyftR emits reviewable evidence rather than mutating runtime policy.
 
-The accompanying test `tests/test_runtime_integration_demo.py` proves the demo
+The accompanying test `tests/test_runtime_integration_demo.py` proves the example
 end to end without any product-specific runtime dependency.
 
 ## 7. Local HTTP service (optional)
