@@ -14,6 +14,16 @@ ShyftR proves local-first memory cells, append-only ledger truth, review-gated m
 4. Public alpha evidence collection.
 5. Desktop shell only after external evidence justifies packaging work.
 
+## Phase 9 integration adapter sequence
+
+1. Generic evidence adapters using the existing `SourceAdapter` protocol.
+2. Closeout artifact adapter for public-safe task/domain handoffs.
+3. Generic adapter ingestion into local evidence ledgers.
+4. Retrieval usage log contract for local generic clients.
+5. External integration evidence gate before Phase 10.
+
+Status record: `docs/status/phase-9-integration-adapters-closeout.md`.
+
 ## External evidence gate
 
 Before alpha-exit or stable-release wording, ShyftR still needs external tester reports with exact SHA, environment, gate verdict, install friction, lifecycle/demo result, concept clarity, and actionable bugs.

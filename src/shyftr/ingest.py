@@ -13,6 +13,87 @@ from .policy import check_source_boundary
 PathLike = Union[str, Path]
 
 
+def ingest_sources_from_adapter(
+    cell_path: PathLike,
+    adapter: Any,
+    dry_run: bool = False,
+) -> Dict[str, Any]:
+    """Ingest sources into a Cell from any SourceAdapter implementation.
+
+    This Phase 9 adapter path reuses the same ledger-first safety rules as the
+    config-backed file adapter: deterministic adapter source keys, boundary
+    checks before append, and Source ledger truth with external provenance in
+    metadata. Dry-run mode discovers and reads sources but never writes ledgers.
+    """
+    cell = Path(cell_path)
+    sources_ledger = cell / "ledger" / "sources.jsonl"
+    if not sources_ledger.exists():
+        raise ValueError(f"sources ledger does not exist for Cell: {sources_ledger}")
+
+    cell_id = _read_cell_id(cell)
+    refs = adapter.discover_sources()
+    existing_keys = _existing_adapter_source_keys(sources_ledger)
+    ingested = 0
+    skipped = 0
+    errors: List[str] = []
+    source_ids: List[str] = []
+    skipped_keys: List[str] = []
+
+    for ref in refs:
+        try:
+            payload = adapter.read_source(ref)
+            source_key = _adapter_source_key(payload.content_hash, ref.to_dict())
+            if source_key in existing_keys:
+                skipped += 1
+                skipped_keys.append(source_key)
+                continue
+
+            source_text = _adapter_source_text(ref)
+            check_source_boundary(source_text, metadata=_boundary_metadata(payload.metadata), raise_on_reject=True)
+
+            if dry_run:
+                ingested += 1
+                continue
+
+            record = Source(
+                source_id=f"src-{uuid4().hex}",
+                cell_id=cell_id,
+                kind=payload.kind or ref.source_kind,
+                uri=ref.source_uri,
+                sha256=payload.content_hash,
+                captured_at=datetime.now(timezone.utc).isoformat(),
+                metadata={
+                    "adapter_id": ref.adapter_id,
+                    "external_system": ref.external_system,
+                    "external_scope": ref.external_scope,
+                    "external_refs": [r.to_dict() for r in payload.external_refs],
+                    "adapter_source_key": source_key,
+                    **(payload.metadata or {}),
+                },
+            )
+            append_jsonl(sources_ledger, record.to_dict())
+            existing_keys.add(source_key)
+            ingested += 1
+            source_ids.append(record.source_id)
+        except Exception as exc:
+            errors.append(f"Failed to ingest {getattr(ref, 'source_uri', None)}: {exc}")
+
+    return {
+        "sources_ingested": ingested,
+        "sources_skipped": skipped,
+        "source_ids": source_ids,
+        "skipped_keys": skipped_keys,
+        "errors": errors,
+        "discovery_summary": {
+            "adapter_id": getattr(adapter, "adapter_id", "unknown"),
+            "total_sources": len(refs),
+            "total_ingested": ingested,
+            "total_skipped": skipped,
+            "dry_run": bool(dry_run),
+        },
+    }
+
+
 def ingest_source(
     cell_path: PathLike,
     source_path: PathLike,
@@ -105,7 +186,7 @@ def ingest_from_adapter(
                 continue
 
             source_text = _adapter_source_text(ref)
-            check_source_boundary(source_text, metadata=payload.metadata, raise_on_reject=True)
+            check_source_boundary(source_text, metadata=_boundary_metadata(payload.metadata), raise_on_reject=True)
 
             record = Source(
                 source_id=f"src-{uuid4().hex}",
@@ -284,6 +365,30 @@ def sync_from_adapter(
     }
 
 
+def _boundary_metadata(metadata: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    """Return user-content metadata for boundary checks, excluding provenance labels.
+
+    Adapter ids, source kinds, file names, and content types are provenance, not
+    durable memory text. Checking them verbatim would reject legitimate Phase 9
+    closeout/evidence adapters because their adapter names contain words the
+    boundary policy correctly rejects in memory content.
+    """
+    if not metadata:
+        return None
+    provenance_keys = {
+        "adapter_id",
+        "adapter_version",
+        "content_type",
+        "document_index",
+        "external_refs",
+        "materialized",
+        "relative_path",
+        "size_bytes",
+        "title",
+    }
+    return {key: value for key, value in metadata.items() if key not in provenance_keys}
+
+
 def _text_sha256(text: str) -> str:
     import hashlib
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
@@ -320,6 +425,8 @@ def _adapter_source_text(ref: Any) -> str:
         for line_number, line in enumerate(handle, start=1):
             if line_number == ref.source_line_offset:
                 return line.strip()
+            if line_number > ref.source_line_offset:
+                break
     return ""
 
 

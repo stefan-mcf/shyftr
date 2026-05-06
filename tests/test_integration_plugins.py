@@ -76,7 +76,7 @@ def test_builtin_adapters_returns_fresh_list() -> None:
             supported_input_kinds=("file",),
         )
     )
-    assert [plugin.name for plugin in builtin_adapters()] == ["file"]
+    assert [plugin.name for plugin in builtin_adapters()] == ["file", "generic-evidence", "closeout-artifact"]
 
 
 def test_discover_adapter_plugins_loads_fake_entry_point_metadata() -> None:
@@ -143,7 +143,7 @@ def test_list_adapter_plugins_includes_builtins_and_third_party_plugins() -> Non
 
     plugins = list_adapter_plugins(entry_point_provider=fake_provider([FakeEntryPoint("runtime-alpha", plugin)]))
 
-    assert [plugin.name for plugin in plugins] == ["file", "runtime-alpha"]
+    assert [plugin.name for plugin in plugins] == ["file", "generic-evidence", "closeout-artifact", "runtime-alpha"]
 
 
 def test_list_adapter_plugins_deduplicates_builtin_entry_point_metadata() -> None:
@@ -151,7 +151,7 @@ def test_list_adapter_plugins_deduplicates_builtin_entry_point_metadata() -> Non
         entry_point_provider=fake_provider([FakeEntryPoint("file", builtin_file_adapter)])
     )
 
-    assert [plugin.name for plugin in plugins] == ["file"]
+    assert [plugin.name for plugin in plugins] == ["file", "generic-evidence", "closeout-artifact"]
     assert plugins[0].supported_input_kinds == ("file", "glob", "jsonl", "directory")
 
 
@@ -160,10 +160,10 @@ def test_adapter_plugins_payload_is_json_ready() -> None:
 
     assert payload["status"] == "ok"
     assert payload["entry_point_group"] == "shyftr.adapters"
-    assert payload["builtin_count"] == 1
+    assert payload["builtin_count"] == 3
     assert payload["plugin_count"] == 0
-    assert payload["total"] == 1
-    assert payload["plugins"][0]["name"] == "file"
+    assert payload["total"] == 3
+    assert [plugin["name"] for plugin in payload["plugins"]] == ["file", "generic-evidence", "closeout-artifact"]
     json.dumps(payload)
 
 

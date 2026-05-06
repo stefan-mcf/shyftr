@@ -78,10 +78,26 @@ def builtin_file_adapter() -> AdapterPluginMeta:
     )
 
 
+def builtin_generic_evidence_adapter() -> AdapterPluginMeta:
+    """Return metadata for ShyftR's built-in generic evidence adapter."""
+
+    from shyftr.integrations.evidence_adapters import evidence_adapter_metadata
+
+    return AdapterPluginMeta(**evidence_adapter_metadata())
+
+
+def builtin_closeout_artifact_adapter() -> AdapterPluginMeta:
+    """Return metadata for ShyftR's built-in closeout artifact adapter."""
+
+    from shyftr.integrations.closeout_adapter import closeout_adapter_metadata
+
+    return AdapterPluginMeta(**closeout_adapter_metadata())
+
+
 def builtin_adapters() -> list[AdapterPluginMeta]:
     """Return built-in adapters that are available without optional plugins."""
 
-    return [builtin_file_adapter()]
+    return [builtin_file_adapter(), builtin_generic_evidence_adapter(), builtin_closeout_artifact_adapter()]
 
 
 def _select_entry_points(entry_points: Any, group: str) -> list[Any]:
@@ -194,7 +210,9 @@ __all__ = [
     "AdapterPluginMeta",
     "adapter_plugins_payload",
     "builtin_adapters",
+    "builtin_closeout_artifact_adapter",
     "builtin_file_adapter",
+    "builtin_generic_evidence_adapter",
     "discover_adapter_plugins",
     "discover_plugins",
     "list_adapter_plugins",

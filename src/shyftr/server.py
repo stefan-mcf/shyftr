@@ -300,6 +300,33 @@ def _register_routes(app: FastAPI) -> None:
                 content={"status": "error", "message": str(exc)},
             )
 
+    @app.get("/retrieval-logs")
+    async def retrieval_logs(
+        cell_path: str,
+        loadout_id: Optional[str] = None,
+        query: Optional[str] = None,
+        selected_memory_id: Optional[str] = None,
+        limit: int = 20,
+    ) -> JSONResponse:
+        """Return public-safe retrieval usage logs for generic clients."""
+        try:
+            from shyftr.integrations.retrieval_logs import list_retrieval_logs
+
+            return JSONResponse(
+                content=list_retrieval_logs(
+                    cell_path,
+                    loadout_id=loadout_id,
+                    query=query,
+                    selected_memory_id=selected_memory_id,
+                    limit=int(limit),
+                )
+            )
+        except Exception as exc:
+            return JSONResponse(
+                status_code=400,
+                content={"status": "error", "message": str(exc)},
+            )
+
     # -- Signal report ------------------------------------------------------
 
     @app.post("/feedback")
