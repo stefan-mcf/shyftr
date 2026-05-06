@@ -1,7 +1,7 @@
 [project]
 name = "shyftr"
 version = "0.0.0"
-description = "Local-first append-only memory control plane for AI agents."
+description = "Attachable recursive memory cells for AI agents."
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [{ name = "Stefan McFeeters" }]
