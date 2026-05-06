@@ -35,7 +35,10 @@ bash examples/run-local-lifecycle.sh
 python scripts/public_readiness_check.py
 bash scripts/check.sh
 bash scripts/smoke-install.sh
+bash scripts/alpha_gate.sh
 ```
+
+Use `scripts/alpha_gate.sh` before inviting outside technical testers. It uses synthetic data only and should end with `ALPHA_GATE_READY`. See `docs/status/alpha-readiness.md` for tester scope and data boundaries.
 
 ## Optional dependency notes
 

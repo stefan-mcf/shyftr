@@ -4,9 +4,9 @@ Local-first, append-only memory control plane for AI agents.
 
 ## Current status
 
-ShyftR is a controlled-pilot / developer-preview MVP. It is designed for local Cells, synthetic demos, and operator-approved pilots where durable agent memory must stay inspectable, review-gated, and file-backed.
+ShyftR is a local-first alpha / controlled-pilot developer-preview MVP. It is designed for local Cells, synthetic demos, and operator-approved pilots where durable agent memory must stay inspectable, review-gated, and file-backed.
 
-It is not a hosted SaaS product, not a multi-tenant production service, and not a package release. Phase 6 multi-cell intelligence is not started and is outside the current MVP boundary.
+It is not a hosted SaaS product, not a multi-tenant production service, not production-hardened, and not a package release. Phase 6 multi-cell intelligence is not started and is outside the current MVP boundary.
 
 ## Why it exists
 
@@ -49,6 +49,22 @@ python -m pip install -U pip
 python -m pip install -e '.[dev,service]'
 shyftr --help
 ```
+
+## Alpha gate
+
+Before asking others to test a clone, run the public alpha gate:
+
+```bash
+bash scripts/alpha_gate.sh
+```
+
+Expected final line:
+
+```text
+ALPHA_GATE_READY
+```
+
+The gate uses synthetic data only and checks the CLI, tests, local lifecycle, replacement-readiness replay, diagnostics, public readiness posture, and optional console build/audit. See `docs/status/alpha-readiness.md` for tester scope and data boundaries.
 
 ## Quickstart
 
@@ -127,6 +143,7 @@ External runtime or CLI
 ## Documentation
 
 - `docs/status/current-implementation-status.md` — evidence-backed capability matrix.
+- `docs/status/alpha-readiness.md` — public alpha scope, tester data boundaries, and alpha gate.
 - `docs/status/public-readiness-audit.md` — public-prep finding ledger and publication gate.
 - `docs/development.md` — setup and local verification.
 - `docs/demo.md` — CLI demo flow.
@@ -146,6 +163,7 @@ bash examples/run-local-lifecycle.sh
 (cd apps/console && npm run build && npm audit --omit=dev)
 python scripts/public_readiness_check.py
 bash scripts/check.sh
+bash scripts/alpha_gate.sh
 ```
 
 For a clean install smoke:

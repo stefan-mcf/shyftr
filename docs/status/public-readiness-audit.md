@@ -1,6 +1,6 @@
 # ShyftR Public Readiness Audit
 
-Status: local cleanup in progress; publication blocked until explicit operator approval.
+Status: public alpha baseline published; ongoing hardening and controlled-pilot testing continue through explicit gates.
 
 ## Repository identity
 
@@ -9,7 +9,7 @@ Status: local cleanup in progress; publication blocked until explicit operator a
 | Local path | `/Users/stefan/ShyftR` |
 | Remote | `https://github.com/stefan-mcf/shyftr.git` |
 | GitHub repo | `stefan-mcf/shyftr` |
-| Visibility at audit start | private |
+| Visibility at audit start | private; public alpha baseline published after clean one-commit export |
 | Branch at audit start | `main...origin/main [ahead 8]` |
 | Cleanup boundary | local files only; no push, visibility flip, tag, package publish, or history rewrite |
 | Commit identity for cleanup | `stefan-mcf <73107236+stefan-mcf@users.noreply.github.com>` |
@@ -68,10 +68,6 @@ Latest local gate run: 2026-05-06.
 
 ## Publication decision
 
-Recommended default after local cleanup: keep the repository private until Stefan explicitly chooses between:
+Completed: the public repository was published as a clean one-commit alpha baseline after private-side gates, clean-history export verification, CI, public visibility verification, unauthenticated clone checks, and fresh-clone readiness scans.
 
-1. push cleanup commits to the private remote, then decide later on visibility;
-2. create a clean public baseline/orphan export if historical docs or attribution are unacceptable;
-3. accept the existing private history and flip visibility only after exact-SHA CI and attribution/contributor checks pass.
-
-No final-tranche remote action has been approved or run by this cleanup.
+Current rule: keep the repo clearly labelled as local-first alpha / controlled-pilot developer preview. Before inviting outside technical testers, run `bash scripts/alpha_gate.sh` and expect `ALPHA_GATE_READY`. Do not direct testers to use sensitive production memory until operator dogfooding, readiness reports, diagnostics, and fallback/archive evidence support a bounded pilot.

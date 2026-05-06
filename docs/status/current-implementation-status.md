@@ -1,12 +1,12 @@
 # ShyftR Current Implementation Status
 
-Status: controlled-pilot / developer-preview local-first MVP.
+Status: local-first alpha / controlled-pilot developer-preview MVP.
 
 This document is the public truth source for what ShyftR implements today. Cell ledgers are canonical truth; Grid, API, console, reports, and profile artifacts are projections or local append-only writers.
 
 ## Current release posture
 
-ShyftR is a local-first MVP for controlled pilots. It is not a hosted SaaS product, not a multi-tenant production service, and not published as a package release. The supported path is cloning the repository, installing it in a Python 3.11+ environment, and running local Cells on synthetic or operator-approved data.
+ShyftR is a local-first alpha MVP for controlled pilots. It is not a hosted SaaS product, not a multi-tenant production service, and not published as a package release. The supported path is cloning the repository, installing it in a Python 3.11+ environment, and running local Cells on synthetic or operator-approved data.
 
 ## Capability matrix
 

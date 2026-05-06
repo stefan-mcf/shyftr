@@ -20,12 +20,14 @@ REQUIRED_FILES = [
     "LICENSE",
     "pyproject.toml",
     "docs/status/current-implementation-status.md",
+    "docs/status/alpha-readiness.md",
     "docs/status/public-readiness-audit.md",
     "docs/development.md",
     "docs/api.md",
     "docs/console.md",
     "examples/README.md",
     "examples/run-local-lifecycle.sh",
+    "scripts/alpha_gate.sh",
     "CONTRIBUTING.md",
     "SECURITY.md",
     "CHANGELOG.md",
@@ -34,6 +36,7 @@ REQUIRED_FILES = [
 README_SECTIONS = [
     "Current status",
     "Install from clone",
+    "Alpha gate",
     "Quickstart",
     "Safety model",
     "Architecture",
@@ -111,8 +114,21 @@ def main() -> int:
             fail(errors, f"README contains banned phrase: {banned}")
     if "Phase 6" in readme and "not started" not in readme:
         fail(errors, "README mentions Phase 6 without not-started boundary")
+    if "alpha" not in low:
+        fail(errors, "README missing alpha status boundary")
+    if "not a hosted saas" not in low or "not a multi-tenant production service" not in low:
+        fail(errors, "README missing non-hosted/non-production boundary")
+    if "ALPHA_GATE_READY" not in readme:
+        fail(errors, "README missing alpha gate expected verdict")
 
-    # .hermes must not be tracked.
+    pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    if "Development Status :: 3 - Alpha" not in pyproject:
+        fail(errors, "pyproject missing alpha development-status classifier")
+
+    alpha_doc = (ROOT / "docs" / "status" / "alpha-readiness.md").read_text(encoding="utf-8").lower()
+    for phrase in ["local-first alpha", "synthetic data", "not a hosted saas", "not a multi-tenant production service", "alpha_gate.sh"]:
+        if phrase not in alpha_doc:
+            fail(errors, f"alpha-readiness doc missing required phrase: {phrase}")
     tracked = set(run_git("ls-files"))
     if any(p.startswith(".hermes/") for p in tracked):
         fail(errors, ".hermes/ is tracked")
@@ -142,9 +158,10 @@ def main() -> int:
             except Exception as exc:
                 fail(errors, f"invalid YAML example {path.relative_to(ROOT)}: {exc}")
 
-    script = ROOT / "examples" / "run-local-lifecycle.sh"
-    if not script.exists() or not (script.stat().st_mode & 0o111):
-        fail(errors, "examples/run-local-lifecycle.sh missing or not executable")
+    for script_rel in ["examples/run-local-lifecycle.sh", "scripts/alpha_gate.sh"]:
+        script = ROOT / script_rel
+        if not script.exists() or not (script.stat().st_mode & 0o111):
+            fail(errors, f"{script_rel} missing or not executable")
 
     for path in public_files():
         try:
