@@ -37,7 +37,7 @@ TRACE_ID=$("${SHYFTR[@]}" charge "$CELL" "$FRAGMENT_ID" --promoter example-promo
 "${SHYFTR[@]}" search "$CELL" "Pack relevance" >/tmp/shyftr-example-search.json
 "${SHYFTR[@]}" profile "$CELL" >/tmp/shyftr-example-profile.json
 LOADOUT_ID=$("${SHYFTR[@]}" pack "$CELL" "Pack relevance" --task-id example-script-task --max-items 5 --query-tags domain:testing --include-fragments | json_get loadout_id)
-"${SHYFTR[@]}" signal "$CELL" "$LOADOUT_ID" success --applied "$TRACE_ID" --useful "$TRACE_ID" --verification '{"demo":"local lifecycle"}' >/tmp/shyftr-example-signal.json
+"${SHYFTR[@]}" signal "$CELL" "$LOADOUT_ID" success --applied "$TRACE_ID" --useful "$TRACE_ID" --verification '{"example":"local lifecycle"}' >/tmp/shyftr-example-signal.json
 "${SHYFTR[@]}" grid rebuild --cell "$CELL" --backend in-memory >/tmp/shyftr-example-grid.json
 "${SHYFTR[@]}" hygiene "$CELL" >/tmp/shyftr-example-hygiene.json
 "${SHYFTR[@]}" diagnostics "$CELL" --summary >/tmp/shyftr-example-diagnostics.json

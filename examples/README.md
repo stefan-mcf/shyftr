@@ -6,7 +6,7 @@ All examples are synthetic and local-only. They are safe fixtures for learning t
 
 | Path | Purpose | Used by |
 |---|---|---|
-| `examples/pulse.md` | Synthetic Pulse describing a Pack relevance lesson. | `shyftr ingest`, demo lifecycle, tests. |
+| `examples/pulse.md` | Synthetic Pulse describing a Pack relevance lesson. | `shyftr ingest`, example lifecycle, tests. |
 | `examples/task.json` | Synthetic task request for Pack generation. | Documentation and JSON parse checks. |
 | `examples/run-local-lifecycle.sh` | End-to-end local lifecycle using a temp Cell. | README quickstart, CI smoke, `scripts/check.sh`. |
 | `examples/integrations/runtime-adapter.yaml` | Runtime-neutral adapter config fixture. | Adapter validation examples. |

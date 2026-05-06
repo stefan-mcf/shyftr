@@ -8,7 +8,7 @@ PYTHON_BIN="${PYTHON:-python}"
 export PYTHONPATH="$ROOT_DIR/src${PYTHONPATH:+:$PYTHONPATH}"
 
 echo "== ShyftR alpha gate =="
-echo "Status: local-first alpha / controlled-pilot developer preview"
+echo "Status: local-first alpha / controlled pilot"
 echo "Data policy: synthetic or operator-approved data only; do not use sensitive production memory for this gate."
 echo
 

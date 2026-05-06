@@ -1,8 +1,8 @@
 # ShyftR alpha readiness
 
-Status: local-first alpha / controlled-pilot developer preview.
+Status: local-first alpha / controlled pilot.
 
-ShyftR is public so technical testers can clone it, run local synthetic demos, inspect the architecture, and report setup or workflow issues. It is not a hosted SaaS product, not a multi-tenant production service, and not ready for unreviewed sensitive production memory.
+ShyftR is public so technical testers can clone it, run local synthetic examples, inspect the architecture, and report setup or workflow issues. It is not a hosted SaaS product, not a multi-tenant production service, and not ready for unreviewed sensitive production memory.
 
 ## Who should test now
 
@@ -11,7 +11,7 @@ Good alpha testers:
 - developers comfortable with Python virtual environments and terminal output;
 - people willing to use synthetic or non-sensitive data;
 - people who can report exact commands, platform details, and error output;
-- people evaluating concept clarity, install friction, CLI/demo reliability, and local console feel.
+- people evaluating concept clarity, install friction, CLI/example reliability, and local console feel.
 
 Not the right audience yet:
 
@@ -38,7 +38,7 @@ The gate uses synthetic data only. It checks:
 - CLI import/help smoke;
 - public alpha/readiness posture;
 - Python tests;
-- deterministic local lifecycle demo;
+- deterministic local lifecycle example;
 - synthetic replacement-readiness replay;
 - diagnostic logging summary;
 - optional console build and production-dependency audit when npm is available.
@@ -66,7 +66,7 @@ Do not use:
 - Did install from clone work?
 - Did `scripts/alpha_gate.sh` finish with `ALPHA_GATE_READY`?
 - Which README or docs step was confusing?
-- Did the lifecycle demo make the Pack -> Signal loop understandable?
+- Did the lifecycle example make the Pack -> Signal loop understandable?
 - Did terminology help or confuse you?
 - Did the local console build or run cleanly?
 - What would block you from trying a small local pilot?

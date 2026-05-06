@@ -1,12 +1,12 @@
 # ShyftR Current Implementation Status
 
-Status: local-first alpha / controlled-pilot developer-preview MVP.
+Status: local-first alpha / controlled-pilot controlled-pilot release.
 
 This document is the public truth source for what ShyftR implements today. Cell ledgers are canonical truth; Grid, API, console, reports, and profile artifacts are projections or local append-only writers.
 
 ## Current release posture
 
-ShyftR is a local-first alpha MVP for controlled pilots. It is not a hosted SaaS product, not a multi-tenant production service, and not published as a package release. The supported path is cloning the repository, installing it in a Python 3.11+ environment, and running local Cells on synthetic or operator-approved data.
+ShyftR is a local-first alpha current release for controlled pilots. It is not a hosted SaaS product, not a multi-tenant production service, and not published as a package release. The supported path is cloning the repository, installing it in a Python 3.11+ environment, and running local Cells on synthetic or operator-approved data.
 
 ## Capability matrix
 
@@ -28,7 +28,7 @@ ShyftR is a local-first alpha MVP for controlled pilots. It is not a hosted SaaS
 | Privacy/sensitivity and policy scoping | implemented | yes | enforced through Pack/provider paths | policy effects visible through console metrics and diagnostics | `src/shyftr/privacy.py`, `src/shyftr/policy.py` | `tests/test_privacy_sensitivity.py`, `tests/test_policy.py` | This is local policy enforcement, not a guarantee for arbitrary external runtimes. |
 | Local HTTP service | implemented as optional adapter | yes, local-only | `shyftr serve --host 127.0.0.1 --port 8014` | FastAPI endpoints | `src/shyftr/server.py` | `tests/test_server.py` | Requires `.[service]`; bind to localhost for normal use. |
 | React console | implemented as local console | qualified | npm scripts under `apps/console` | browser UI backed by local service | `apps/console/src/**`, `src/shyftr/console_api.py` | `tests/test_console_api.py`, console build | Developer preview UI; no hosted deployment is claimed. |
-| Runtime adapter examples | implemented as fixtures and protocol demos | yes | `shyftr adapter validate/discover/ingest/backfill/sync` | service adapter endpoints | `src/shyftr/integrations/*` | `tests/test_runtime_integration_demo.py`, `tests/test_integration_cli.py` | Examples are synthetic and runtime-neutral. |
+| Runtime adapter examples | implemented as fixtures and protocol examples | yes | `shyftr adapter validate/discover/ingest/backfill/sync` | service adapter endpoints | `src/shyftr/integrations/*` | `tests/test_runtime_integration_demo.py`, `tests/test_integration_cli.py` | Examples are synthetic and runtime-neutral. |
 | Trusted memory provider integration | partial | qualified | provider modules and tests only | no hosted provider control plane | `src/shyftr/trusted_memory.py`, `src/shyftr/memory_provider.py` | `tests/test_trusted_memory.py`, `tests/test_memory_provider.py` | Controlled-pilot integration surface; do not imply managed backend replacement for all domains. |
 | Coil/Rail distillation | partial/planned | qualified/no current broad claim | older compatibility modules/tests | no public UI claim | `src/shyftr/alloys.py`, doctrine docs | `tests/test_alloys.py`, `tests/test_doctrine.py` | Treat as future-facing unless directly citing tested local behavior. |
 | Distributed multi-cell intelligence | not implemented | no current-capability claim | none | none | no current implementation surface | no current alpha test evidence | Outside the current alpha boundary. |

@@ -25,8 +25,8 @@ Status: public alpha baseline published; ongoing hardening and controlled-pilot 
 | F-05 | high | Existing history used placeholder attribution. | partially resolved | Local cleanup identity set to noreply; historical attribution is a publication decision item. |
 | F-06 | high | Repo was private and local branch was ahead of origin. | publication gate | Remote mutation blocked until explicit approval and exact-SHA verification. |
 | F-07 | high | Verification commands needed clean install context. | resolved locally | Added install/development docs and smoke scripts using Python 3.11+ and `.[dev,service]`. |
-| F-08 | medium/high | CI did not cover service extras, console, demo smoke, or readiness scan. | resolved locally | CI updated with Python, smoke, console, and readiness jobs. |
-| F-09 | medium | `.gitignore` missed release/runtime artifact classes. | resolved locally | `.gitignore` expanded for Hermes plans, coverage, caches, demo output, backups. |
+| F-08 | medium/high | CI did not cover service extras, console, example smoke, or readiness scan. | resolved locally | CI updated with Python, smoke, console, and readiness jobs. |
+| F-09 | medium | `.gitignore` missed release/runtime artifact classes. | resolved locally | `.gitignore` expanded for Hermes plans, coverage, caches, example output, backups. |
 | F-10 | medium | Local ignored artifacts needed classification. | resolved locally | Readiness script checks tracked ignored files and risky untracked files. |
 | F-11 | medium | API and console docs were incomplete. | resolved locally | Added `docs/api.md` and `docs/console.md`. |
 | F-12 | medium | Examples lacked a public map and deterministic lifecycle script. | resolved locally | Added `examples/README.md` and `examples/run-local-lifecycle.sh`. |
@@ -70,4 +70,4 @@ Latest local gate run: 2026-05-06.
 
 Completed: the public repository was published as a clean one-commit alpha baseline after private-side gates, clean-history export verification, CI, public visibility verification, unauthenticated clone checks, and fresh-clone readiness scans.
 
-Current rule: keep the repo clearly labelled as local-first alpha / controlled-pilot developer preview. Before inviting outside technical testers, run `bash scripts/alpha_gate.sh` and expect `ALPHA_GATE_READY`. Do not direct testers to use sensitive production memory until operator dogfooding, readiness reports, diagnostics, and fallback/archive evidence support a bounded pilot.
+Current rule: keep the repo clearly labelled as local-first alpha / controlled-pilot controlled pilot. Before inviting outside technical testers, run `bash scripts/alpha_gate.sh` and expect `ALPHA_GATE_READY`. Do not direct testers to use sensitive production memory until operator dogfooding, readiness reports, diagnostics, and fallback/archive evidence support a bounded pilot.

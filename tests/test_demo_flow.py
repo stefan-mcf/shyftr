@@ -74,7 +74,7 @@ def test_example_doc_exists() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Deterministic demo lifecycle
+# Deterministic example lifecycle
 # ---------------------------------------------------------------------------
 
 
@@ -123,7 +123,7 @@ def test_example_lifecycle_via_cli(tmp_path: Path) -> None:
     # 5. approve
     result = _cli(
         "approve", cell, fragment_id,
-        "--reviewer", "demo-test",
+        "--reviewer", "example-test",
         "--rationale", "Accurate lesson for example flow",
     )
     assert result.returncode == 0, f"approve failed: {result.stderr}"
@@ -133,7 +133,7 @@ def test_example_lifecycle_via_cli(tmp_path: Path) -> None:
     # 6. promote
     result = _cli(
         "promote", cell, fragment_id,
-        "--promoter", "demo-test",
+        "--promoter", "example-test",
         "--statement", "Scope-tagged Traces improve Loadout relevance.",
     )
     assert result.returncode == 0, f"promote failed: {result.stderr}"
@@ -151,7 +151,7 @@ def test_example_lifecycle_via_cli(tmp_path: Path) -> None:
     # 8. loadout
     result = _cli(
         "loadout", cell, "loadout relevance",
-        "--task-id", "demo-test-task",
+        "--task-id", "example-test-task",
         "--max-items", "5",
     )
     assert result.returncode == 0, f"loadout failed: {result.stderr}"
@@ -179,7 +179,7 @@ def test_example_lifecycle_via_cli(tmp_path: Path) -> None:
 
 
 def test_demo_lifecycle_runs_without_network_or_secrets() -> None:
-    """Verify the demo lifecycle itself requires no external dependencies.
+    """Verify the example lifecycle itself requires no external dependencies.
 
     This test asserts that the CLI has no network/model imports by checking
     that the import chain is pure local.
