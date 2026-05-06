@@ -29,7 +29,7 @@ Current status:
 | Phase 7 private-core-adjacent differentiators | implemented as public-safe foundations | `docs/status/phase-7-public-private-split.md`, focused Phase 7 tests, CLI/API/console surfaces | keep private-core algorithms and real data out of public `main` |
 | Phase 7.8 regulated autonomous memory evolution | implemented as public-safe foundation | `src/shyftr/evolution.py`, CLI/API/console surfaces, synthetic tests, and `docs/status/phase-7.8-public-private-split.md` | stop before Phase 8 productization unless explicitly approved |
 | Phase 8 productization | implemented locally to external evidence gate | adapter SDK/template/harness, `/v1` API aliases and OpenAPI contract, tester issue form, desktop shell start gate, and `docs/status/phase-8-productization-closeout.md` | closed by final local human gate; external tester evidence remains open |
-| Phase 9 integration adapters | implemented locally to external evidence gate | generic evidence adapters, closeout artifact adapter, generic SourceAdapter ingestion, retrieval usage log contract, research/plan/closeout status artifacts | collect public-safe reports through issue #2 and `.github/ISSUE_TEMPLATE/phase9_integration_evidence.yml`; do not begin Phase 10 |
+| Phase 9 integration adapters | implemented locally; Phase 10 local gate opened by operator rescope | generic evidence adapters, closeout artifact adapter, generic SourceAdapter ingestion, retrieval usage log contract, research/plan/closeout status artifacts, `docs/status/phase-10-operator-gate.md` | keep collecting public-safe reports through issue #2; external validation remains unclaimed |
 
 ## Current larger-run start point
 
@@ -37,8 +37,8 @@ Start from:
 
 - regulated autonomous memory evolution is implemented as a public-safe, review-gated foundation.
 - Phase 8 productization has local proof surfaces implemented through the external evidence gate.
-- Phase 9 integration adapters have local proof surfaces implemented through the external evidence gate.
-- stop at external Phase 9 evidence unless the operator explicitly approves Phase 10 after evidence review.
+- Phase 9 integration adapters have local proof surfaces implemented; the operator opened the Phase 10 local implementation gate from tested local evidence.
+- keep collecting external Phase 9 reports, but do not claim external validation from local evidence.
 
 Do not start from:
 
@@ -197,6 +197,6 @@ Persistent swarm profiles are not required unless the run becomes long-lived or 
 
 ## Ready-to-run verdict
 
-Ready for current larger phased run: yes, through local Phase 9 implementation and the Phase 9 external evidence gate.
+Ready for current larger phased run: yes, through Phase 10 local implementation scope after operator rescope recorded in `docs/status/phase-10-operator-gate.md`.
 
-Not ready for: Phase 10, Checkpoint E, Checkpoint F, or private-core-heavy work.
+Not ready for: external validation claims, Checkpoint E, Checkpoint F, hosted/production/stable-release posture, or private-core-heavy work.

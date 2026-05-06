@@ -94,4 +94,6 @@ Current count of external Phase 9 evidence reports at this local closeout: 0.
 
 ## Stop point
 
-Stop at the Phase 9 external evidence gate. Do not start Phase 10 until the operator explicitly approves it after external evidence review or rescope.
+Original stop: stop at the Phase 9 external evidence gate. Do not start Phase 10 until the operator explicitly approves it after external evidence review or rescope.
+
+Rescope recorded: the operator opened the Phase 10 local implementation gate from tested local evidence on 2026-05-06. See `docs/status/phase-10-operator-gate.md`.
