@@ -46,6 +46,7 @@ COMPATIBILITY_FILES = {
     "src/shyftr/distill/alloys.py",
     "src/shyftr/distill/doctrine.py",
     "tests/test_legacy_terminology_compatibility.py",
+    "scripts/audit_memory_vocabulary.py",
     "scripts/terminology_inventory.py",
 }
 HISTORICAL_PREFIXES = ("docs/sources/", "docs/feeds/")

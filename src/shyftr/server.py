@@ -118,6 +118,53 @@ def _register_routes(app: FastAPI) -> None:
         except Exception as exc:
             return JSONResponse(status_code=400, content={"status": "error", "message": str(exc)})
 
+    @app.get("/evolution")
+    async def evolution_list(cell_path: str, include_reviewed: bool = True) -> Dict[str, Any]:
+        from shyftr.evolution import read_evolution_proposals
+        proposals = read_evolution_proposals(cell_path, include_reviewed=include_reviewed)
+        return {"status": "ok", "proposals": proposals, "total": len(proposals), "review_gated": True}
+
+    @app.post("/evolution/scan")
+    async def evolution_scan(request: Request) -> JSONResponse:
+        body = await _parse_body(request)
+        try:
+            from shyftr.evolution import scan_cell
+            payload = scan_cell(
+                body["cell_path"],
+                write_proposals=bool(body.get("write_proposals", False)),
+                max_candidate_chars=int(body.get("max_candidate_chars", 360)),
+                rate_limit=int(body.get("rate_limit", 100)),
+            )
+            return JSONResponse(content=payload)
+        except Exception as exc:
+            return JSONResponse(status_code=400, content={"status": "error", "message": str(exc)})
+
+    @app.post("/evolution/{proposal_id}/simulate")
+    async def evolution_simulate(proposal_id: str, request: Request) -> JSONResponse:
+        body = await _parse_body(request)
+        try:
+            from shyftr.evolution import simulate_evolution_proposal
+            return JSONResponse(content=simulate_evolution_proposal(body["cell_path"], proposal_id, append_report=bool(body.get("append_report", False))))
+        except Exception as exc:
+            return JSONResponse(status_code=400, content={"status": "error", "message": str(exc)})
+
+    @app.post("/evolution/{proposal_id}/review")
+    async def evolution_review(proposal_id: str, request: Request) -> JSONResponse:
+        body = await _parse_body(request)
+        try:
+            from shyftr.evolution import review_evolution_proposal
+            event = review_evolution_proposal(
+                body["cell_path"],
+                proposal_id,
+                decision=str(body.get("decision") or ""),
+                rationale=str(body.get("rationale") or ""),
+                actor=str(body.get("actor") or "operator"),
+                simulation_ref=body.get("simulation_ref"),
+            )
+            return JSONResponse(content={"status": "ok", "event": event})
+        except Exception as exc:
+            return JSONResponse(status_code=400, content={"status": "error", "message": str(exc)})
+
     # -- Adapter validation -------------------------------------------------
 
     @app.post("/validate")
@@ -316,8 +363,8 @@ def _register_routes(app: FastAPI) -> None:
         from shyftr.console_api import cell_summary
         return cell_summary(_resolve_cell(root, cell_id))
 
-    @app.get("/cell/{cell_id}/charges")
-    async def cell_charges(
+    @app.get("/cell/{cell_id}/memories")
+    async def cell_memories(
         cell_id: str,
         root: str = ".",
         query: str = "",
@@ -325,8 +372,8 @@ def _register_routes(app: FastAPI) -> None:
         status: str = "",
         tag: str = "",
     ) -> Dict[str, Any]:
-        from shyftr.console_api import charge_explorer
-        return charge_explorer(_resolve_cell(root, cell_id), query=query, kind=kind, status=status, tag=tag)
+        from shyftr.console_api import memory_explorer
+        return memory_explorer(_resolve_cell(root, cell_id), query=query, kind=kind, status=status, tag=tag)
 
     @app.get("/cell/{cell_id}/sparks")
     async def cell_sparks(
@@ -364,6 +411,7 @@ def _register_routes(app: FastAPI) -> None:
         except Exception as exc:
             return JSONResponse(status_code=400, content={"status": "error", "message": str(exc)})
 
+    @app.post("/cell/{cell_id}/memories/{charge_id}/action")
     @app.post("/cell/{cell_id}/charges/{charge_id}/action")
     async def charge_lifecycle_action(cell_id: str, charge_id: str, request: Request, root: str = ".") -> JSONResponse:
         body = await _parse_body(request)

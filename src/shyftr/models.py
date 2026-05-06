@@ -8,6 +8,38 @@ from typing import Any, ClassVar, Dict, List, Optional, Sequence, Type, TypeVar
 T = TypeVar("T", bound="SerializableModel")
 
 
+_COMPAT_MEMORY_ID_KEYS = (
+    "memory_id",
+    "charge_id",
+    "trace_id",
+    "id",
+)
+
+
+def canonical_memory_id(record: Dict[str, Any]) -> Optional[str]:
+    """Return the current memory id from a record with compatibility fallback."""
+    if not isinstance(record, dict):
+        return None
+    for key in _COMPAT_MEMORY_ID_KEYS:
+        value = record.get(key)
+        if value:
+            return str(value)
+    return None
+
+
+def with_canonical_memory_id(record: Dict[str, Any], *, include_compat: bool = False) -> Dict[str, Any]:
+    """Return a copy that exposes memory_id as the primary user-facing id."""
+    payload = dict(record)
+    memory_id = canonical_memory_id(payload)
+    if memory_id is not None:
+        payload["memory_id"] = memory_id
+    if not include_compat:
+        for key in _COMPAT_MEMORY_ID_KEYS:
+            if key != "memory_id":
+                payload.pop(key, None)
+    return payload
+
+
 class SerializableModel:
     """Small deterministic serialization base for ShyftR lifecycle records."""
 

@@ -13,7 +13,7 @@ python -m shyftr.cli init /tmp/shyftr-frontier-demo --cell-id frontier-demo
 Append or ingest ordinary public-safe fixtures, then promote reviewed memory through the normal review path. For direct development tests, synthetic rows can include scalar confidence plus counters:
 
 ```json
-{"trace_id":"m-deploy-1","cell_id":"frontier-demo","statement":"Run deterministic tests before changing retrieval policy.","confidence":0.9,"success_count":3,"failure_count":0,"kind":"workflow","status":"approved"}
+{"memory_id":"m-deploy-1","cell_id":"frontier-demo","statement":"Run deterministic tests before changing retrieval policy.","confidence":0.9,"success_count":3,"failure_count":0,"kind":"workflow","status":"approved"}
 ```
 
 Pack projection keeps scalar `confidence` and adds display metadata for expected confidence and uncertainty.

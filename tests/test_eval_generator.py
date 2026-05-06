@@ -3,11 +3,15 @@ from shyftr.layout import init_cell
 from shyftr.evalgen import export_eval_tasks, generate_eval_tasks
 
 
-def test_empty_eval_generator_returns_public_safe_empty_payload(tmp_path):
+def test_empty_eval_generator_returns_public_safe_evolution_safety_payload(tmp_path):
     cell = init_cell(tmp_path, "core")
-    assert generate_eval_tasks(cell) == []
+    tasks = generate_eval_tasks(cell)
+    assert tasks
+    assert all(task["task_id"].startswith("evolution-") for task in tasks)
     payload = export_eval_tasks(cell)
-    assert payload == {"status": "ok", "tasks": [], "total": 0, "public_safe": True}
+    assert payload["status"] == "ok"
+    assert payload["total"] == len(tasks)
+    assert payload["public_safe"] is True
 
 
 def test_eval_generator_creates_deterministic_public_safe_tasks(tmp_path):

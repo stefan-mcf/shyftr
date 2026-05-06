@@ -1151,6 +1151,60 @@ def _add_evalgen(sub: argparse.ArgumentParser) -> None:
     sub.add_argument("--jsonl", action="store_true", default=False, help="write JSONL when --output is set")
 
 
+def cmd_evolve_scan(args: argparse.Namespace) -> None:
+    from shyftr.evolution import scan_cell
+    write = bool(args.write_proposals)
+    _print_json(scan_cell(args.cell_path, write_proposals=write, max_candidate_chars=args.max_candidate_chars, rate_limit=args.rate_limit))
+
+
+def cmd_evolve_proposals(args: argparse.Namespace) -> None:
+    from shyftr.evolution import read_evolution_proposals
+    proposals = read_evolution_proposals(args.cell_path, include_reviewed=bool(args.include_reviewed))
+    _print_json({"status": "ok", "proposals": proposals, "total": len(proposals), "review_gated": True})
+
+
+def cmd_evolve_simulate(args: argparse.Namespace) -> None:
+    from shyftr.evolution import simulate_evolution_proposal
+    _print_json(simulate_evolution_proposal(args.cell_path, args.proposal_id, append_report=bool(args.append_report)))
+
+
+def cmd_evolve_review(args: argparse.Namespace) -> None:
+    from shyftr.evolution import review_evolution_proposal
+    event = review_evolution_proposal(
+        args.cell_path,
+        args.proposal_id,
+        decision=args.decision,
+        rationale=args.rationale,
+        actor=args.actor,
+        simulation_ref=args.simulation_ref,
+    )
+    _print_json({"status": "ok", "event": event})
+
+
+def _add_evolve(sub: argparse.ArgumentParser) -> None:
+    evolve_sub = sub.add_subparsers(dest="evolve_action", required=True)
+    scan = evolve_sub.add_parser("scan", help="Scan a Cell for review-gated evolution proposals")
+    scan.add_argument("cell_path", type=_cell_path, help="path to the Cell directory")
+    scan.add_argument("--dry-run", action="store_true", default=False, help="emit proposals without writing ledgers (default)")
+    scan.add_argument("--write-proposals", action="store_true", default=False, help="append proposals only; never apply lifecycle changes")
+    scan.add_argument("--max-candidate-chars", type=int, default=360, help="split-proposal threshold for candidate text")
+    scan.add_argument("--rate-limit", type=int, default=100, help="maximum proposals emitted per scan")
+    proposals = evolve_sub.add_parser("proposals", help="List memory evolution proposals")
+    proposals.add_argument("cell_path", type=_cell_path, help="path to the Cell directory")
+    proposals.add_argument("--include-reviewed", action="store_true", default=True, help="include accepted/rejected/deferred proposals")
+    simulate = evolve_sub.add_parser("simulate", help="Run read-only projection simulation for an evolution proposal")
+    simulate.add_argument("cell_path", type=_cell_path, help="path to the Cell directory")
+    simulate.add_argument("proposal_id", type=str, help="evolution proposal id")
+    simulate.add_argument("--append-report", action="store_true", default=False, help="append the simulation report to the simulation ledger")
+    review = evolve_sub.add_parser("review", help="Record a review decision for an evolution proposal")
+    review.add_argument("cell_path", type=_cell_path, help="path to the Cell directory")
+    review.add_argument("proposal_id", type=str, help="evolution proposal id")
+    review.add_argument("--decision", required=True, choices=("accept", "reject", "defer"), help="review decision")
+    review.add_argument("--rationale", required=True, type=str, help="operator rationale")
+    review.add_argument("--actor", default="operator", type=str, help="review actor")
+    review.add_argument("--simulation-ref", default=None, type=str, help="required for accepting retrieval-affecting proposals")
+
+
 # ---------------------------------------------------------------------------
 # Subcommand: serve
 # ---------------------------------------------------------------------------
@@ -1259,6 +1313,7 @@ def _resolve_subcommand(args: argparse.Namespace) -> None:
         "reputation": cmd_reputation,
         "regulator-proposals": cmd_regulator_proposals,
         "evalgen": cmd_evalgen,
+        "evolve": cmd_evolve_scan,
         "serve": cmd_serve,
     }
 
@@ -1277,6 +1332,17 @@ def _resolve_subcommand(args: argparse.Namespace) -> None:
         if args.proposals_action == "export":
             return cmd_proposals_export(args)
         _fail(f"unknown proposals action: {args.proposals_action}")
+
+    if cmd_name == "evolve":
+        if args.evolve_action == "scan":
+            return cmd_evolve_scan(args)
+        if args.evolve_action == "proposals":
+            return cmd_evolve_proposals(args)
+        if args.evolve_action == "simulate":
+            return cmd_evolve_simulate(args)
+        if args.evolve_action == "review":
+            return cmd_evolve_review(args)
+        _fail(f"unknown evolve action: {args.evolve_action}")
 
     if cmd_name == "adapter":
         if args.adapter_action == "validate":
@@ -1403,6 +1469,7 @@ def build_parser() -> argparse.ArgumentParser:
     _add_reputation(sub.add_parser("reputation", help="Summarize append-only reputation events"))
     _add_regulator_proposals(sub.add_parser("regulator-proposals", help="Generate review-gated regulator proposals"))
     _add_evalgen(sub.add_parser("evalgen", help="Generate synthetic public-safe eval tasks"))
+    _add_evolve(sub.add_parser("evolve", help="Scan, simulate, and review memory evolution proposals"))
     _add_serve(sub.add_parser("serve", help="Start the optional local HTTP service"))
 
     return parser

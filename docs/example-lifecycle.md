@@ -89,7 +89,7 @@ The search command rebuilds or queries the sparse FTS5 index:
 shyftr search ./demo-cell "pack confidence"
 ```
 
-Results include `memory_id` / legacy `memory_id`, `statement`, `confidence`, `bm25_score`,
+Results include `memory_id` / compatibility `memory_id`, `statement`, `confidence`, `bm25_score`,
 and tags — useful for verifying what was promoted.
 
 ---

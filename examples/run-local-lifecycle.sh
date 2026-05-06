@@ -33,11 +33,11 @@ echo "Creating temp cell: $CELL"
 EVIDENCE_ID=$("${SHYFTR[@]}" ingest "$CELL" "$EVIDENCE" --kind lesson | json_get evidence_id)
 FRAGMENT_ID=$("${SHYFTR[@]}" candidate "$CELL" "$EVIDENCE_ID" | json_first_candidate)
 "${SHYFTR[@]}" approve "$CELL" "$FRAGMENT_ID" --reviewer demo-script --rationale "Synthetic demo candidate is bounded and useful." >/tmp/shyftr-demo-review.json
-TRACE_ID=$("${SHYFTR[@]}" memory "$CELL" "$FRAGMENT_ID" --promoter demo-script --statement "Scope-tagged memories improve pack relevance." --rationale "Promoted from synthetic demo evidence." | json_get memory_id)
+MEMORY_ID=$("${SHYFTR[@]}" memory "$CELL" "$FRAGMENT_ID" --promoter demo-script --statement "Scope-tagged memories improve pack relevance." --rationale "Promoted from synthetic demo evidence." | json_get memory_id)
 "${SHYFTR[@]}" search "$CELL" "pack relevance" >/tmp/shyftr-demo-search.json
 "${SHYFTR[@]}" profile "$CELL" >/tmp/shyftr-demo-profile.json
 LOADOUT_ID=$("${SHYFTR[@]}" pack "$CELL" "pack relevance" --task-id demo-script-task --max-items 5 --query-tags domain:testing --include-candidates | json_get pack_id)
-"${SHYFTR[@]}" feedback "$CELL" "$LOADOUT_ID" success --applied "$TRACE_ID" --useful "$TRACE_ID" --verification '{"demo":"local lifecycle"}' >/tmp/shyftr-demo-feedback.json
+"${SHYFTR[@]}" feedback "$CELL" "$LOADOUT_ID" success --applied "$MEMORY_ID" --useful "$MEMORY_ID" --verification '{"demo":"local lifecycle"}' >/tmp/shyftr-demo-feedback.json
 "${SHYFTR[@]}" grid rebuild --cell "$CELL" --backend in-memory >/tmp/shyftr-demo-grid.json
 "${SHYFTR[@]}" hygiene "$CELL" >/tmp/shyftr-demo-hygiene.json
 "${SHYFTR[@]}" diagnostics "$CELL" --summary >/tmp/shyftr-demo-diagnostics.json

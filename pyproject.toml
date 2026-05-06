@@ -25,6 +25,7 @@ Documentation = "https://github.com/stefan-mcf/shyftr/tree/main/docs"
 
 [project.scripts]
 shyftr = "shyftr.cli:main"
+shyftr-mcp = "shyftr.mcp_server:main"
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "PyYAML>=6"]

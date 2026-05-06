@@ -29,13 +29,13 @@ def test_console_dashboard_metrics_and_csv(tmp_path: Path) -> None:
     assert summary.status_code == 200
     payload = summary.json()
     assert payload["counts"]["pulses"] == 1
-    assert payload["counts"]["approved_charges"] == 1
-    assert payload["counts"]["signals"] == 1
+    assert payload["counts"]["approved_memories"] == 1
+    assert payload["counts"]["feedback"] == 1
 
-    charges = client.get("/cell/pilot-cell/charges", params={"root": str(tmp_path), "query": "adapter"})
-    assert charges.status_code == 200
-    assert charges.json()["total"] == 1
-    assert charges.json()["charges"][0]["charge_id"] == "trace-1"
+    memories = client.get("/cell/pilot-cell/memories", params={"root": str(tmp_path), "query": "adapter"})
+    assert memories.status_code == 200
+    assert memories.json()["total"] == 1
+    assert memories.json()["memories"][0]["memory_id"] == "trace-1"
 
     metrics = client.get("/cell/pilot-cell/metrics", params={"root": str(tmp_path)})
     assert metrics.status_code == 200

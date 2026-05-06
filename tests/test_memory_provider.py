@@ -33,7 +33,7 @@ def test_remember_promotes_explicit_preference_with_provenance(tmp_path):
     )
 
     assert result.status == "approved"
-    assert result.trust_tier == "trace"
+    assert result.trust_tier == "memory"
     assert result.charge_id.startswith("trace-")
     assert result.pulse_id.startswith("src-")
     assert result.spark_id.startswith("frag-")
@@ -76,7 +76,7 @@ def test_search_returns_trust_labels_charge_ids_and_filters_kinds(tmp_path):
     results = search(cell, "concise updates", kinds=["preference"])
 
     assert [item.charge_id for item in results] == [preference.charge_id]
-    assert results[0].trust_tier == "trace"
+    assert results[0].trust_tier == "memory"
     assert results[0].kind == "preference"
     assert results[0].lifecycle_status == "approved"
     assert results[0].selection_rationale == "lexical_overlap"

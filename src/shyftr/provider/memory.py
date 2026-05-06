@@ -28,16 +28,28 @@ PathLike = Union[str, Path]
 
 @dataclass(frozen=True)
 class RememberResult:
-    charge_id: str
-    pulse_id: str
-    spark_id: str
+    memory_id: str
+    evidence_id: str
+    candidate_id: str
     status: str
-    trust_tier: str = "trace"
+    trust_tier: str = "memory"
+
+    @property
+    def charge_id(self) -> str:
+        return self.memory_id
+
+    @property
+    def pulse_id(self) -> str:
+        return self.evidence_id
+
+    @property
+    def spark_id(self) -> str:
+        return self.candidate_id
 
 
 @dataclass(frozen=True)
 class SearchResult:
-    charge_id: str
+    memory_id: str
     statement: str
     trust_tier: str
     kind: Optional[str]
@@ -47,15 +59,27 @@ class SearchResult:
     selection_rationale: str = "lexical_overlap"
     provenance: Dict[str, Any] = field(default_factory=dict)
 
+    @property
+    def charge_id(self) -> str:
+        return self.memory_id
+
 
 @dataclass(frozen=True)
 class LifecycleEventResult:
     event_id: str
     action: str
-    charge_id: str
+    memory_id: str
     reason: str
     actor: str
-    replacement_charge_id: Optional[str] = None
+    replacement_memory_id: Optional[str] = None
+
+    @property
+    def charge_id(self) -> str:
+        return self.memory_id
+
+    @property
+    def replacement_charge_id(self) -> Optional[str]:
+        return self.replacement_memory_id
 
 
 class MemoryProvider:
@@ -231,9 +255,9 @@ def remember(
     )
 
     return RememberResult(
-        charge_id=trace.trace_id,
-        pulse_id=source.source_id,
-        spark_id=fragment.fragment_id,
+        memory_id=trace.trace_id,
+        evidence_id=source.source_id,
+        candidate_id=fragment.fragment_id,
         status=trace.status,
     )
 
@@ -266,9 +290,9 @@ def search(
             continue
         results.append(
             SearchResult(
-                charge_id=trace.trace_id,
+                memory_id=trace.trace_id,
                 statement=trace.statement,
-                trust_tier="trace",
+                trust_tier="memory",
                 kind=trace.kind,
                 confidence=trace.confidence,
                 score=score,
@@ -276,7 +300,7 @@ def search(
             )
         )
 
-    results.sort(key=lambda item: (-item.score, item.charge_id))
+    results.sort(key=lambda item: (-item.score, item.memory_id))
     return results[: max(top_k, 0)]
 
 
@@ -287,14 +311,23 @@ def profile(cell_path: PathLike, max_tokens: int = 2000) -> ProfileProjection:
     return build_profile(cell_path, max_tokens=max_tokens)
 
 
+def _lifecycle_result_from_event(event: Any) -> LifecycleEventResult:
+    payload = dict(event.__dict__)
+    if "memory_id" not in payload and "charge_id" in payload:
+        payload["memory_id"] = payload.pop("charge_id")
+    if "replacement_memory_id" not in payload and "replacement_charge_id" in payload:
+        payload["replacement_memory_id"] = payload.pop("replacement_charge_id")
+    return LifecycleEventResult(**payload)
+
+
 def forget(cell_path: PathLike, charge_id: str, reason: str, actor: str) -> LifecycleEventResult:
     event = forget_charge(cell_path, charge_id, reason=reason, actor=actor)
-    return LifecycleEventResult(**event.__dict__)
+    return _lifecycle_result_from_event(event)
 
 
 def deprecate(cell_path: PathLike, charge_id: str, reason: str, actor: str) -> LifecycleEventResult:
     event = deprecate_charge(cell_path, charge_id, reason=reason, actor=actor)
-    return LifecycleEventResult(**event.__dict__)
+    return _lifecycle_result_from_event(event)
 
 
 def replace(
@@ -305,7 +338,7 @@ def replace(
     actor: str,
 ) -> LifecycleEventResult:
     event = replace_charge(cell_path, charge_id, new_statement, reason=reason, actor=actor)
-    return LifecycleEventResult(**event.__dict__)
+    return _lifecycle_result_from_event(event)
 
 
 def pack(

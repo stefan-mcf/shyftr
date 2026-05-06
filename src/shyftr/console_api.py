@@ -15,6 +15,7 @@ from typing import Any, Dict, Iterable, List, Optional, Union
 
 from .ledger import read_jsonl
 from .mutations import get_effective_charge_states
+from .models import with_canonical_memory_id
 from .observability import summarize_diagnostics
 
 PathLike = Union[str, Path]
@@ -75,10 +76,13 @@ def cell_summary(cell_path: PathLike) -> Dict[str, Any]:
             "sparks": len(sparks),
             "pending_review": len(pending_sparks),
             "approved_charges": len(charges),
+            "approved_memories": len(charges),
             "signals": len(signals),
+            "feedback": len(signals),
             "graph_edges": len(_records(cell / "ledger" / "graph_edges.jsonl")),
             "reputation_events": len(_records(cell / "ledger" / "reputation" / "events.jsonl")),
             "regulator_proposals": len(_records(cell / "ledger" / "regulator_proposals.jsonl")),
+            "evolution_proposals": len(_records(cell / "ledger" / "evolution" / "proposals.jsonl")),
             "open_proposals": len([p for p in proposals if p.get("status") not in {"accepted", "rejected"}]),
             "hygiene_warnings": hygiene_warnings,
             "grid_artifacts": len([p for p in grid_files if p.is_file()]),
@@ -110,7 +114,7 @@ def spark_review_queue(cell_path: PathLike, *, status: Optional[str] = None, kin
     return {"status": "ok", "sparks": rows, "total": len(rows)}
 
 
-def charge_explorer(cell_path: PathLike, *, query: str = "", kind: str = "", status: str = "", tag: str = "") -> Dict[str, Any]:
+def memory_explorer(cell_path: PathLike, *, query: str = "", kind: str = "", status: str = "", tag: str = "") -> Dict[str, Any]:
     cell = Path(cell_path)
     charges = _records(cell / "traces" / "approved.jsonl") + _records(cell / "charges" / "approved.jsonl")
     states = {k: v.to_dict() for k, v in get_effective_charge_states(cell).items()}
@@ -119,13 +123,12 @@ def charge_explorer(cell_path: PathLike, *, query: str = "", kind: str = "", sta
     rows: List[Dict[str, Any]] = []
     q = query.lower().strip()
     for charge in charges:
-        charge_id = str(charge.get("trace_id") or charge.get("charge_id") or "")
+        memory_id = str(charge.get("memory_id") or charge.get("trace_id") or charge.get("charge_id") or "")
         statement = str(charge.get("statement") or charge.get("text") or "")
-        row = dict(charge)
-        row["charge_id"] = charge_id
-        row["effective_state"] = states.get(charge_id, {"lifecycle_status": charge.get("status", "active")})
-        row["signal_history"] = [o for o in outcomes if charge_id in (o.get("useful_trace_ids", []) + o.get("harmful_trace_ids", []) + o.get("applied_trace_ids", []))]
-        row["confidence_events"] = [e for e in confidence if e.get("charge_id") == charge_id or e.get("trace_id") == charge_id]
+        row = with_canonical_memory_id(charge)
+        row["effective_state"] = states.get(memory_id, {"lifecycle_status": charge.get("status", "active")})
+        row["feedback_history"] = [o for o in outcomes if memory_id in (o.get("useful_memory_ids", []) + o.get("harmful_memory_ids", []) + o.get("applied_memory_ids", []) + o.get("useful_trace_ids", []) + o.get("harmful_trace_ids", []) + o.get("applied_trace_ids", []))]
+        row["confidence_events"] = [e for e in confidence if e.get("memory_id") == memory_id or e.get("charge_id") == memory_id or e.get("trace_id") == memory_id]
         if q and q not in statement.lower() and q not in str(row.get("rationale", "")).lower():
             continue
         if kind and row.get("kind") != kind:
@@ -135,14 +138,16 @@ def charge_explorer(cell_path: PathLike, *, query: str = "", kind: str = "", sta
         if tag and tag not in row.get("tags", []):
             continue
         rows.append(row)
-    return {"status": "ok", "charges": rows, "total": len(rows)}
+    return {"status": "ok", "memories": rows, "total": len(rows)}
 
 
 def proposal_inbox(cell_path: PathLike) -> Dict[str, Any]:
     cell = Path(cell_path)
     proposals = _records(cell / "reports" / "runtime_proposals.jsonl")
     proposals.extend(_records(cell / "reports" / "sweep_proposals.jsonl"))
+    proposals.extend(_records(cell / "ledger" / "evolution" / "proposals.jsonl"))
     decisions = _latest_by(_records(cell / "ledger" / "proposal_decisions.jsonl"), "proposal_id")
+    decisions.update(_latest_by(_records(cell / "ledger" / "evolution" / "reviews.jsonl"), "proposal_id"))
     rows: List[Dict[str, Any]] = []
     status_map = {"accept": "accepted", "reject": "rejected", "defer": "deferred"}
     for proposal in proposals:
@@ -163,6 +168,7 @@ def frontier_review_surfaces(cell_path: PathLike) -> Dict[str, Any]:
     from .regulator_proposals import generate_regulator_proposals
     from .evalgen import generate_eval_tasks
     from .retrieval_modes import RETRIEVAL_MODES
+    from .evolution import read_evolution_proposals, scan_cell
 
     cell = Path(cell_path)
     return {
@@ -173,6 +179,11 @@ def frontier_review_surfaces(cell_path: PathLike) -> Dict[str, Any]:
         "graph_edges": list_graph_edges(cell),
         "reputation": reputation_summary(cell),
         "regulator_proposals": _records(cell / "ledger" / "regulator_proposals.jsonl") or generate_regulator_proposals(cell),
+        "evolution": {
+            "proposals": read_evolution_proposals(cell),
+            "dry_run_scan": scan_cell(cell, write_proposals=False),
+            "simulation_required_for_retrieval_changes": True,
+        },
         "eval_tasks": generate_eval_tasks(cell),
     }
 
@@ -207,11 +218,11 @@ def pilot_metrics(cell_path: PathLike) -> Dict[str, Any]:
 
     metrics = {
         "pack_count": len(retrieval_logs) or len([d for d in diagnostics if d.get("operation") in {"pack", "provider_pack"}]),
-        "signal_count": len(outcomes),
+        "feedback_count": len(outcomes),
         "pack_application_rate": rate(applied, total_selected),
-        "useful_charge_rate": rate(useful, total_selected),
-        "harmful_charge_rate": rate(harmful, total_selected),
-        "ignored_charge_rate": rate(ignored, total_selected),
+        "useful_memory_rate": rate(useful, total_selected),
+        "harmful_memory_rate": rate(harmful, total_selected),
+        "ignored_memory_rate": rate(ignored, total_selected),
         "over_retrieval_rate": rate(max(total_selected - applied - ignored, 0), total_selected),
         "missing_memory_rate": rate(missing, max(len(outcomes), 1)),
         "review_approval_rate": rate(len(accepted_reviews), len(reviews)),
@@ -296,3 +307,7 @@ def import_review_queue(cell_path: PathLike, *, status: Optional[str] = "pending
     from .federation import list_imports
     imports = list_imports(cell_path, status=status)
     return {"status": "ok", "imports": imports, "total": len(imports), "trust_labels": ["local", "imported", "federated", "verified"]}
+
+
+# Compatibility alias for older server imports.
+charge_explorer = memory_explorer

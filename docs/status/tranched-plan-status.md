@@ -27,15 +27,15 @@ Current status:
 | Phase 4-5 local advisory/durability surfaces | implemented enough for alpha claims | sweep/challenge/quarantine, backup/restore, ledger verification, privacy/sensitivity tests | keep as regression guards during alpha |
 | Phase 6 distributed multi-cell intelligence | implemented for local controlled pilots | registry, resonance, rule review, federation export/import, console/API surfaces, and demo tests | keep explicit-scope and review-gate regressions green; do not extend into Phase 7 from the Phase 6 plan |
 | Phase 7 private-core-adjacent differentiators | implemented as public-safe foundations | `docs/status/phase-7-public-private-split.md`, focused Phase 7 tests, CLI/API/console surfaces | keep private-core algorithms and real data out of public `main` |
-| Phase 7.8 regulated autonomous memory evolution | planned/not started | `docs/plans/2026-05-06-regulated-autonomous-memory-evolution-plan.md`, main plan insertion before Phase 8 | implement as review-gated proposal/simulation layer before productization if approved |
+| Phase 7.8 regulated autonomous memory evolution | implemented as public-safe foundation | `src/shyftr/evolution.py`, CLI/API/console surfaces, synthetic tests, and `docs/status/phase-7.8-public-private-split.md` | stop before Phase 8 productization unless explicitly approved |
 | Phase 8 productization | not started in this run | Phase 8 remains after the regulated autonomous memory evolution planning gate or explicit continuation | do not begin Phase 8 from this planning update |
 
 ## Current larger-run start point
 
 Start from:
 
-- regulated autonomous memory evolution is now planned as Phase 7.8 before Phase 8 productization.
-- stop before Phase 8 unless Phase 7.8 is explicitly implemented/closed or the operator explicitly chooses to skip it.
+- regulated autonomous memory evolution is implemented as a public-safe, review-gated foundation before Phase 8.
+- stop before Phase 8 unless the operator explicitly approves beginning productization.
 
 Do not start from:
 
