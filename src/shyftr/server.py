@@ -98,6 +98,26 @@ def _register_routes(app: FastAPI) -> None:
     async def health() -> Dict[str, Any]:
         return {"status": "ok", "service": "shyftr-local-http"}
 
+    @app.get("/frontier")
+    async def frontier(cell_path: str) -> JSONResponse:
+        """Read-only frontier review surfaces for a local Cell."""
+        try:
+            from shyftr.console_api import frontier_review_surfaces
+            return JSONResponse(content=frontier_review_surfaces(cell_path))
+        except Exception as exc:
+            return JSONResponse(status_code=400, content={"status": "error", "message": str(exc)})
+
+    @app.post("/simulate")
+    async def simulate(request: Request) -> JSONResponse:
+        """Run a read-only retrieval policy simulation."""
+        body = await _parse_body(request)
+        try:
+            from shyftr.simulation import SimulationRequest, simulate_policy
+            sim = SimulationRequest(**{k: v for k, v in body.items() if k in SimulationRequest.__dataclass_fields__})
+            return JSONResponse(content=simulate_policy(sim))
+        except Exception as exc:
+            return JSONResponse(status_code=400, content={"status": "error", "message": str(exc)})
+
     # -- Adapter validation -------------------------------------------------
 
     @app.post("/validate")

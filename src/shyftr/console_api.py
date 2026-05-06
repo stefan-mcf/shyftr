@@ -76,6 +76,9 @@ def cell_summary(cell_path: PathLike) -> Dict[str, Any]:
             "pending_review": len(pending_sparks),
             "approved_charges": len(charges),
             "signals": len(signals),
+            "graph_edges": len(_records(cell / "ledger" / "graph_edges.jsonl")),
+            "reputation_events": len(_records(cell / "ledger" / "reputation" / "events.jsonl")),
+            "regulator_proposals": len(_records(cell / "ledger" / "regulator_proposals.jsonl")),
             "open_proposals": len([p for p in proposals if p.get("status") not in {"accepted", "rejected"}]),
             "hygiene_warnings": hygiene_warnings,
             "grid_artifacts": len([p for p in grid_files if p.is_file()]),
@@ -152,6 +155,26 @@ def proposal_inbox(cell_path: PathLike) -> Dict[str, Any]:
         rows.append(row)
     return {"status": "ok", "proposals": rows, "total": len(rows)}
 
+
+def frontier_review_surfaces(cell_path: PathLike) -> Dict[str, Any]:
+    """Return read-only frontier surface projections for the console."""
+    from .graph import list_graph_edges
+    from .reputation import reputation_summary
+    from .regulator_proposals import generate_regulator_proposals
+    from .evalgen import generate_eval_tasks
+    from .retrieval_modes import RETRIEVAL_MODES
+
+    cell = Path(cell_path)
+    return {
+        "status": "ok",
+        "review_gated": True,
+        "auto_apply": False,
+        "retrieval_modes": sorted(RETRIEVAL_MODES),
+        "graph_edges": list_graph_edges(cell),
+        "reputation": reputation_summary(cell),
+        "regulator_proposals": _records(cell / "ledger" / "regulator_proposals.jsonl") or generate_regulator_proposals(cell),
+        "eval_tasks": generate_eval_tasks(cell),
+    }
 
 def pilot_metrics(cell_path: PathLike) -> Dict[str, Any]:
     """Compute controlled-pilot usefulness and operator-burden metrics."""

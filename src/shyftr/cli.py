@@ -306,6 +306,7 @@ def cmd_pack(args: argparse.Namespace) -> None:
         user_id=args.user_id,
         project_id=args.project_id,
         allowed_sensitivity=args.allowed_sensitivity.split(",") if args.allowed_sensitivity else None,
+        retrieval_mode=args.retrieval_mode,
     )
 
     assembled = assemble_loadout(task)
@@ -327,6 +328,7 @@ def _add_pack(sub: argparse.ArgumentParser) -> None:
     sub.add_argument("--user-id", type=str, default=None, help="user identity for sensitivity policy checks")
     sub.add_argument("--project-id", type=str, default=None, help="project identity for sensitivity policy checks")
     sub.add_argument("--allowed-sensitivity", type=str, default=None, help="comma-separated sensitivity levels explicitly allowed for export")
+    sub.add_argument("--retrieval-mode", type=str, default="balanced", choices=("balanced", "conservative", "exploratory", "risk_averse", "audit", "rule_only", "low_latency"), help="explicit retrieval mode (default: balanced)")
 
 
 # ---------------------------------------------------------------------------
@@ -1073,6 +1075,83 @@ def _add_readiness(sub: argparse.ArgumentParser) -> None:
 
 
 # ---------------------------------------------------------------------------
+# Frontier public-safe surfaces
+# ---------------------------------------------------------------------------
+
+
+def cmd_simulate(args: argparse.Namespace) -> None:
+    from shyftr.simulation import SimulationRequest, simulate_policy
+    report = simulate_policy(SimulationRequest(
+        cell_path=str(args.cell_path),
+        query=args.query,
+        task_id=args.task_id,
+        current_mode=args.current_mode,
+        proposed_mode=args.proposed_mode,
+        max_items=args.max_items,
+        max_tokens=args.max_tokens,
+    ))
+    _print_json(report)
+
+
+def _add_simulate(sub: argparse.ArgumentParser) -> None:
+    sub.add_argument("cell_path", type=_cell_path, help="path to the Cell directory")
+    sub.add_argument("query", type=str, help="query to replay read-only")
+    sub.add_argument("--task-id", type=str, default="simulation", help="simulation task id")
+    sub.add_argument("--current-mode", type=str, default="balanced", help="baseline retrieval mode")
+    sub.add_argument("--proposed-mode", type=str, default="balanced", help="proposed retrieval mode")
+    sub.add_argument("--max-items", type=int, default=20, help="max items")
+    sub.add_argument("--max-tokens", type=int, default=4000, help="max tokens")
+
+
+def cmd_graph(args: argparse.Namespace) -> None:
+    from shyftr.graph import list_graph_edges
+    _print_json({"status": "ok", "edges": list_graph_edges(args.cell_path, source_id=args.source_id, target_id=args.target_id, edge_type=args.edge_type)})
+
+
+def _add_graph(sub: argparse.ArgumentParser) -> None:
+    sub.add_argument("cell_path", type=_cell_path, help="path to the Cell directory")
+    sub.add_argument("--source-id", type=str, default=None, help="filter by source memory id")
+    sub.add_argument("--target-id", type=str, default=None, help="filter by target memory id")
+    sub.add_argument("--edge-type", type=str, default=None, help="filter by edge type")
+
+
+def cmd_reputation(args: argparse.Namespace) -> None:
+    from shyftr.reputation import reputation_summary
+    _print_json(reputation_summary(args.cell_path, target_type=args.target_type, target_id=args.target_id))
+
+
+def _add_reputation(sub: argparse.ArgumentParser) -> None:
+    sub.add_argument("cell_path", type=_cell_path, help="path to the Cell directory")
+    sub.add_argument("--target-type", type=str, default=None, help="filter by target type")
+    sub.add_argument("--target-id", type=str, default=None, help="filter by target id")
+
+
+def cmd_regulator_proposals(args: argparse.Namespace) -> None:
+    from shyftr.regulator_proposals import append_regulator_proposals, generate_regulator_proposals
+    proposals = generate_regulator_proposals(args.cell_path, min_repeated=args.min_repeated)
+    if args.append:
+        append_regulator_proposals(args.cell_path, proposals)
+    _print_json({"status": "ok", "proposals": proposals, "total": len(proposals), "appended": bool(args.append)})
+
+
+def _add_regulator_proposals(sub: argparse.ArgumentParser) -> None:
+    sub.add_argument("cell_path", type=_cell_path, help="path to the Cell directory")
+    sub.add_argument("--min-repeated", type=int, default=2, help="minimum repeated synthetic events")
+    sub.add_argument("--append", action="store_true", default=False, help="append proposals to the review queue ledger")
+
+
+def cmd_evalgen(args: argparse.Namespace) -> None:
+    from shyftr.evalgen import export_eval_tasks
+    _print_json(export_eval_tasks(args.cell_path, output_path=args.output, jsonl=args.jsonl))
+
+
+def _add_evalgen(sub: argparse.ArgumentParser) -> None:
+    sub.add_argument("cell_path", type=_cell_path, help="path to the Cell directory")
+    sub.add_argument("--output", type=str, default=None, help="optional JSON/JSONL output path")
+    sub.add_argument("--jsonl", action="store_true", default=False, help="write JSONL when --output is set")
+
+
+# ---------------------------------------------------------------------------
 # Subcommand: serve
 # ---------------------------------------------------------------------------
 
@@ -1175,6 +1254,11 @@ def _resolve_subcommand(args: argparse.Namespace) -> None:
         "verify-ledger": cmd_verify_ledger,
         "diagnostics": cmd_diagnostics,
         "readiness": cmd_readiness,
+        "simulate": cmd_simulate,
+        "graph": cmd_graph,
+        "reputation": cmd_reputation,
+        "regulator-proposals": cmd_regulator_proposals,
+        "evalgen": cmd_evalgen,
         "serve": cmd_serve,
     }
 
@@ -1314,6 +1398,11 @@ def build_parser() -> argparse.ArgumentParser:
     _add_audit(sub.add_parser("audit", help="Inspect and review audit findings for a Cell"))
     _add_diagnostics(sub.add_parser("diagnostics", help="Read structured ShyftR diagnostic logs"))
     _add_readiness(sub.add_parser("readiness", help="Run replacement-readiness checks for bounded pilots"))
+    _add_simulate(sub.add_parser("simulate", help="Run a read-only retrieval policy simulation"))
+    _add_graph(sub.add_parser("graph", help="List append-only causal memory graph edges"))
+    _add_reputation(sub.add_parser("reputation", help="Summarize append-only reputation events"))
+    _add_regulator_proposals(sub.add_parser("regulator-proposals", help="Generate review-gated regulator proposals"))
+    _add_evalgen(sub.add_parser("evalgen", help="Generate synthetic public-safe eval tasks"))
     _add_serve(sub.add_parser("serve", help="Start the optional local HTTP service"))
 
     return parser

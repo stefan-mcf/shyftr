@@ -20,6 +20,7 @@ from typing import Any, Dict, List, Optional, Sequence, Union
 
 from .ledger import append_jsonl, read_jsonl
 from .mutations import active_charge_ids
+from .frontier import project_confidence_state
 from .policy import check_source_boundary  # noqa: F401 (re-exported for downstream)
 from .privacy import AccessPolicy, is_charge_export_allowed
 from .retrieval.hybrid import (
@@ -104,6 +105,8 @@ class LoadoutTaskInput:
     query_tags: Optional[List[str]] = None
     caution_max_items: int = 3
     audit_mode: bool = False
+    retrieval_mode: str = "balanced"
+    dry_run: bool = False
     runtime_id: str = "default"
     user_id: Optional[str] = None
     project_id: Optional[str] = None
@@ -122,6 +125,8 @@ class LoadoutTaskInput:
             "query_tags": self.query_tags,
             "caution_max_items": self.caution_max_items,
             "audit_mode": self.audit_mode,
+            "retrieval_mode": self.retrieval_mode,
+            "dry_run": self.dry_run,
             "runtime_id": self.runtime_id,
             "user_id": self.user_id,
             "project_id": self.project_id,
@@ -182,6 +187,7 @@ class LoadoutItem:
     score: float
     score_trace: Dict[str, Any]
     loadout_role: Optional[str] = None
+    graph_context: List[Dict[str, Any]] = field(default_factory=list)
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -195,6 +201,7 @@ class LoadoutItem:
             "score": self.score,
             "score_trace": self.score_trace,
             "loadout_role": self.loadout_role,
+            "graph_context": list(self.graph_context),
         }
 
     @classmethod
@@ -462,6 +469,11 @@ def assemble_loadout(task: LoadoutTaskInput) -> AssembledLoadout:
     5. Appends a retrieval log to ledger/retrieval_logs.jsonl.
     """
     from .retrieval.hybrid import hybrid_search
+    from .graph import graph_context_for
+    from .retrieval_modes import apply_retrieval_mode_to_task, filter_items_for_retrieval_mode, retrieval_mode_config
+
+    task = apply_retrieval_mode_to_task(task)
+    mode_config = retrieval_mode_config(task.retrieval_mode)
 
     cell_path = Path(task.cell_path)
     now = datetime.now(timezone.utc).isoformat()
@@ -480,8 +492,9 @@ def assemble_loadout(task: LoadoutTaskInput) -> AssembledLoadout:
             query=task.query,
             generated_at=now,
         )
-        log_ledger = cell_path / "ledger" / "retrieval_logs.jsonl"
-        append_jsonl(log_ledger, retrieval_log.to_dict())
+        if not task.dry_run:
+            log_ledger = cell_path / "ledger" / "retrieval_logs.jsonl"
+            append_jsonl(log_ledger, retrieval_log.to_dict())
         return AssembledLoadout(
             loadout_id=loadout_id,
             cell_id=cell_id,
@@ -525,7 +538,7 @@ def assemble_loadout(task: LoadoutTaskInput) -> AssembledLoadout:
         if not privacy_allowed:
             privacy_suppressed_ids.append(str(trace_id))
             continue
-        candidates.append(_build_candidate_from_trace(record))
+        candidates.append(_build_candidate_from_trace(project_confidence_state(record)))
 
     # Alloys (always included)
     for record in _read_alloys(cell_path):
@@ -601,6 +614,8 @@ def assemble_loadout(task: LoadoutTaskInput) -> AssembledLoadout:
             **result.components.to_dict(),
             "selection_reason": selection_reason,
             "loadout_role": loadout_role,
+            "retrieval_mode": task.retrieval_mode,
+            "retrieval_mode_description": mode_config["description"],
         }
         items.append(
             LoadoutItem(
@@ -614,11 +629,39 @@ def assemble_loadout(task: LoadoutTaskInput) -> AssembledLoadout:
                 score=result.final_score,
                 score_trace=score_trace,
                 loadout_role=loadout_role,
+                graph_context=[],
             )
         )
         if loadout_role == "caution":
             caution_ids.append(result.item_id)
         total_tokens += item_tokens
+
+    # Apply final retrieval-mode filters after scoring so default balanced mode
+    # remains compatible and non-default modes are explicit/dry-run friendly.
+    items, mode_suppressed_ids = filter_items_for_retrieval_mode(items, task.retrieval_mode)
+    suppressed_ids.extend(mode_suppressed_ids)
+
+    graph_map = graph_context_for(cell_path, [item.item_id for item in items])
+    if graph_map:
+        items = [
+            LoadoutItem(
+                item_id=item.item_id,
+                trust_tier=item.trust_tier,
+                statement=item.statement,
+                rationale=item.rationale,
+                tags=item.tags,
+                kind=item.kind,
+                confidence=item.confidence,
+                score=item.score,
+                score_trace=item.score_trace,
+                loadout_role=item.loadout_role,
+                graph_context=graph_map.get(item.item_id, []),
+            )
+            for item in items
+        ]
+
+    total_tokens = sum(estimate_tokens(item.statement) + (estimate_tokens(item.rationale) if item.rationale else 0) for item in items)
+    caution_ids = [item.item_id for item in items if item.loadout_role == "caution"]
 
     # Build retrieval log
     selected_ids = [i.item_id for i in items]
@@ -636,9 +679,11 @@ def assemble_loadout(task: LoadoutTaskInput) -> AssembledLoadout:
         suppressed_ids=suppressed_ids,
     )
 
-    # Append retrieval log to ledger
-    log_ledger = cell_path / "ledger" / "retrieval_logs.jsonl"
-    append_jsonl(log_ledger, retrieval_log.to_dict())
+    # Append retrieval log to ledger unless this is an explicit read-only
+    # simulation/dry-run request.
+    if not task.dry_run:
+        log_ledger = cell_path / "ledger" / "retrieval_logs.jsonl"
+        append_jsonl(log_ledger, retrieval_log.to_dict())
 
     return AssembledLoadout(
         loadout_id=loadout_id,

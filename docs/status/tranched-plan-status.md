@@ -26,18 +26,18 @@ Current status:
 | Phase 3 runtime/pilot harness | partial | runtime-neutral examples and synthetic fixtures exist | prove at least one real or replayable pilot loop before closing 8.5 |
 | Phase 4-5 local advisory/durability surfaces | implemented enough for alpha claims | sweep/challenge/quarantine, backup/restore, ledger verification, privacy/sensitivity tests | keep as regression guards during alpha |
 | Phase 6 distributed multi-cell intelligence | implemented for local controlled pilots | registry, resonance, rule review, federation export/import, console/API surfaces, and demo tests | keep explicit-scope and review-gate regressions green; do not extend into Phase 7 from the Phase 6 plan |
-| Phase 7 private-core-adjacent differentiators | not public-run ready | advanced confidence/ranking/compaction can be moat-bearing | route private-core experiments first when needed |
-| Phase 8 productization | active | README, docs, alpha gate, CI are public-ready | continue at Tranche 8.5 |
+| Phase 7 private-core-adjacent differentiators | implemented as public-safe foundations | `docs/status/phase-7-public-private-split.md`, focused Phase 7 tests, CLI/API/console surfaces | keep private-core algorithms and real data out of public `main`; stop before Phase 8 |
+| Phase 8 productization | not started in this run | Phase 8 remains the next phase after explicit continuation | do not begin Phase 8 from this Phase 7 landing |
 
 ## Current larger-run start point
 
 Start from:
 
-- `Tranche 8.5: Public Alpha`
+- stop before Phase 8 after the Phase 7 public-safe foundation landing is verified.
 
 Do not start from:
 
-- Phase 7 advanced confidence/ranking/simulation work;
+- Phase 8 productization;
 - Checkpoint E alpha-exit;
 - Checkpoint F stable-release language cleanup.
 

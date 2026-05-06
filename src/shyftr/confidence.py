@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 from .ledger import append_jsonl, read_jsonl
+from .frontier import ConfidenceState, confidence_from_feedback, project_confidence_state
 
 PathLike = Union[str, Path]
 

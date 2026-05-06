@@ -46,6 +46,8 @@ export const api = {
   metrics: (root: string, cellId: string) => request<Metrics>(`/cell/${encodeURIComponent(cellId)}/metrics?${rootParam(root)}`),
   burden: (root: string, cellId: string) => request<Json>(`/cell/${encodeURIComponent(cellId)}/operator-burden?${rootParam(root)}`),
   policy: (root: string, cellId: string) => request<Json>(`/cell/${encodeURIComponent(cellId)}/policy-tuning?${rootParam(root)}`),
+  frontier: (cellPath: string) => request<Json>(`/frontier?cell_path=${encodeURIComponent(cellPath)}`),
+  simulate: (body: Json) => request<Json>("/simulate", { method: "POST", body: JSON.stringify(body) }),
   pack: (root: string, cellId: string, body: Json) => request<Json>(`/cell/${encodeURIComponent(cellId)}/pack?${rootParam(root)}`, { method: "POST", body: JSON.stringify(body) }),
   signal: (root: string, cellId: string, body: Json) => request<Json>(`/cell/${encodeURIComponent(cellId)}/signal?${rootParam(root)}`, { method: "POST", body: JSON.stringify(body) }),
   ingest: (body: Json) => request<Json>("/ingest", { method: "POST", body: JSON.stringify(body) }),
