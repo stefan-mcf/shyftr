@@ -1,0 +1,172 @@
+#!/usr/bin/env python3
+"""Local public-readiness checks for the ShyftR repo."""
+from __future__ import annotations
+
+import json
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+try:
+    import yaml  # type: ignore
+except Exception:  # pragma: no cover
+    yaml = None
+
+ROOT = Path(__file__).resolve().parents[1]
+
+REQUIRED_FILES = [
+    "README.md",
+    "LICENSE",
+    "pyproject.toml",
+    "docs/status/current-implementation-status.md",
+    "docs/status/public-readiness-audit.md",
+    "docs/development.md",
+    "docs/api.md",
+    "docs/console.md",
+    "examples/README.md",
+    "examples/run-local-lifecycle.sh",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "CHANGELOG.md",
+    ".github/pull_request_template.md",
+]
+README_SECTIONS = [
+    "Current status",
+    "Install from clone",
+    "Quickstart",
+    "Safety model",
+    "Architecture",
+    "Documentation",
+    "Development checks",
+    "License",
+]
+BANNED_README = [
+    "production-ready",
+    "enterprise-grade",
+]
+PRIVATE_PATTERNS = [
+    re.compile(r"/Users/(?!stefan/ShyftR\b)"),
+    re.compile(r"stefan@example\.com"),
+    re.compile(r"github_pat_[A-Za-z0-9_]{20,}"),
+    re.compile(r"ghp_[A-Za-z0-9_]{20,}"),
+    re.compile(r"sk-[A-Za-z0-9_-]{20,}"),
+    re.compile(r"-----BEGIN (RSA |OPENSSH |EC |DSA )?PRIVATE KEY-----"),
+]
+CURRENT_PUBLIC_PATHS = [
+    "README.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "CHANGELOG.md",
+    "pyproject.toml",
+    "docs/status",
+    "docs/development.md",
+    "docs/api.md",
+    "docs/console.md",
+    "docs/demo.md",
+    "docs/demo-runtime-integration.md",
+    "docs/concepts",
+    "examples",
+    ".github",
+]
+ALLOW_UNTRACKED_PREFIXES = {".hermes/"}
+RISKY_UNTRACKED = re.compile(r"(\.env|auth\.json|MEMORY\.md|USER\.md|state\.db|\.sqlite|\.sqlite3|\.db|\.pem|\.key|id_rsa|id_ed25519|\.tar\.gz)$", re.I)
+
+
+def run_git(*args: str) -> list[str]:
+    proc = subprocess.run(["git", *args], cwd=ROOT, text=True, capture_output=True, check=True)
+    return [line for line in proc.stdout.splitlines() if line]
+
+
+def fail(errors: list[str], message: str) -> None:
+    errors.append(message)
+
+
+def public_files() -> list[Path]:
+    out: list[Path] = []
+    for rel in CURRENT_PUBLIC_PATHS:
+        p = ROOT / rel
+        if p.is_file():
+            out.append(p)
+        elif p.is_dir():
+            out.extend(x for x in p.rglob("*") if x.is_file() and ".git" not in x.parts)
+    return sorted(set(out))
+
+
+def main() -> int:
+    errors: list[str] = []
+    warnings: list[str] = []
+
+    for rel in REQUIRED_FILES:
+        if not (ROOT / rel).exists():
+            fail(errors, f"missing required file: {rel}")
+
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    low = readme.lower()
+    for section in README_SECTIONS:
+        if section.lower() not in low:
+            fail(errors, f"README missing section: {section}")
+    for banned in BANNED_README:
+        if banned in low:
+            fail(errors, f"README contains banned phrase: {banned}")
+    if "Phase 6" in readme and "not started" not in readme:
+        fail(errors, "README mentions Phase 6 without not-started boundary")
+
+    # .hermes must not be tracked.
+    tracked = set(run_git("ls-files"))
+    if any(p.startswith(".hermes/") for p in tracked):
+        fail(errors, ".hermes/ is tracked")
+
+    ignored_tracked = run_git("ls-files", "-ci", "--exclude-standard")
+    if ignored_tracked:
+        fail(errors, "tracked files match ignore rules: " + ", ".join(ignored_tracked[:10]))
+
+    untracked = run_git("ls-files", "--others", "--exclude-standard")
+    risky = [p for p in untracked if RISKY_UNTRACKED.search(p) and not any(p.startswith(a) for a in ALLOW_UNTRACKED_PREFIXES)]
+    if risky:
+        fail(errors, "risky nonignored untracked files: " + ", ".join(risky[:10]))
+
+    for path in [ROOT / "examples" / "task.json", ROOT / "examples" / "integrations" / "task-request.json", ROOT / "examples" / "integrations" / "outcome-report.json"]:
+        try:
+            json.loads(path.read_text(encoding="utf-8"))
+        except Exception as exc:
+            fail(errors, f"invalid JSON example {path.relative_to(ROOT)}: {exc}")
+
+    yaml_paths = list((ROOT / "examples").rglob("*.yaml")) + list((ROOT / "examples").rglob("*.yml"))
+    if yaml is None and yaml_paths:
+        warnings.append("PyYAML unavailable; YAML examples not parsed")
+    elif yaml is not None:
+        for path in yaml_paths:
+            try:
+                yaml.safe_load(path.read_text(encoding="utf-8"))
+            except Exception as exc:
+                fail(errors, f"invalid YAML example {path.relative_to(ROOT)}: {exc}")
+
+    script = ROOT / "examples" / "run-local-lifecycle.sh"
+    if not script.exists() or not (script.stat().st_mode & 0o111):
+        fail(errors, "examples/run-local-lifecycle.sh missing or not executable")
+
+    for path in public_files():
+        try:
+            text = path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue
+        rel = path.relative_to(ROOT).as_posix()
+        for pat in PRIVATE_PATTERNS:
+            if pat.search(text):
+                fail(errors, f"private/secret pattern in current public file: {rel}: {pat.pattern}")
+
+    print("ShyftR public readiness check")
+    for warning in warnings:
+        print(f"WARN: {warning}")
+    if errors:
+        print("FAIL")
+        for err in errors:
+            print(f"- {err}")
+        return 1
+    print("PASS")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

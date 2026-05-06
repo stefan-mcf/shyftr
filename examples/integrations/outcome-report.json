@@ -1,0 +1,24 @@
+{
+  "cell_path_or_id": "/path/to/cell",
+  "loadout_id": "lo-example-runtime-loadout",
+  "result": "success",
+  "external_system": "runtime-adapter-example",
+  "external_scope": "workspace/default",
+  "external_run_id": "run-20260424-example",
+  "external_task_id": "task-example-001",
+  "applied_trace_ids": ["tr-example-guidance"],
+  "useful_trace_ids": ["tr-example-guidance"],
+  "harmful_trace_ids": [],
+  "ignored_trace_ids": ["tr-example-background"],
+  "violated_caution_ids": [],
+  "missing_memory_notes": ["Add deployment rollback checklist for this service."],
+  "verification_evidence": {
+    "checks": ["unit tests passed", "review accepted"],
+    "result_url": null
+  },
+  "runtime_metadata": {
+    "task_kind": "code",
+    "duration_seconds": 120
+  },
+  "tags": ["runtime", "outcome", "example"]
+}

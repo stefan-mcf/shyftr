@@ -1,0 +1,32 @@
+adapter_id: "generic-worker-runtime-demo"
+cell_id: "worker-runtime-demo-cell"
+external_system: "generic-worker-runtime"
+external_scope: "demo-worker"
+source_root: "examples/integrations/worker-runtime"
+identity_mapping:
+  external_system: "external_system"
+  external_run_id: "external_run_id"
+  external_task_id: "external_task_id"
+inputs:
+  - kind: "file"
+    path: "pulse-closeout.md"
+    source_kind: "closeout"
+    identity_mapping:
+      external_task_id: "task_ref"
+  - kind: "jsonl"
+    path: "signal-log.jsonl"
+    source_kind: "outcome"
+    identity_mapping:
+      external_run_id: "external_run_id"
+      external_task_id: "external_task_id"
+  - kind: "file"
+    path: "task-request.json"
+    source_kind: "task"
+  - kind: "file"
+    path: "signal-report.json"
+    source_kind: "outcome"
+ingest_options:
+  deduplicate: true
+  recursive: false
+  max_sources: 100
+  include_hidden: false

@@ -1,0 +1,11 @@
+{
+  "task_id": "task-example-loadout-001",
+  "query": "How should we handle authentication token refresh in CLI tools?",
+  "expected_trace_tags": ["lang:python", "domain:auth", "pattern:token-refresh"],
+  "max_traces": 5,
+  "description": "Assemble a Loadout with relevant authentication refresh patterns from the python-tooling Cell, then generate an Outcome that reports which Traces were useful.",
+  "steps": [
+    "shyftr loadout ./my-cell \"How should we handle authentication token refresh in CLI tools?\" --task-id task-example-loadout-001 --query-tags lang:python,domain:auth",
+    "shyftr outcome ./my-cell <loadout_id> success --useful <trace_id_1>,<trace_id_2> --missing \"CLI-specific retry pattern\""
+  ]
+}

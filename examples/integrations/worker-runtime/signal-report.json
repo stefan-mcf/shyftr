@@ -1,0 +1,24 @@
+{
+  "cell_path_or_id": "worker-runtime-demo-cell",
+  "loadout_id": "loadout-runtime-demo-001",
+  "result": "success",
+  "external_system": "generic-worker-runtime",
+  "external_scope": "demo-worker",
+  "external_run_id": "run-success-001",
+  "external_task_id": "runtime-task-001",
+  "applied_trace_ids": ["trace-runtime-config-paths"],
+  "useful_trace_ids": ["trace-runtime-config-paths"],
+  "harmful_trace_ids": [],
+  "ignored_trace_ids": [],
+  "violated_caution_ids": [],
+  "missing_memory_notes": [],
+  "verification_evidence": {
+    "report_feed": "runtime report feed",
+    "task_result": "worker task completed after timeout window adjustment"
+  },
+  "runtime_metadata": {
+    "adapter_id": "generic-worker-runtime-demo",
+    "policy_change_applied_by_runtime": "timeout_window_120s"
+  },
+  "tags": ["runtime-integration", "closed-loop-demo"]
+}

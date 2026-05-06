@@ -1,0 +1,77 @@
+# ShyftR Public Readiness Audit
+
+Status: local cleanup in progress; publication blocked until explicit operator approval.
+
+## Repository identity
+
+| Field | Value |
+|---|---|
+| Local path | `/Users/stefan/ShyftR` |
+| Remote | `https://github.com/stefan-mcf/shyftr.git` |
+| GitHub repo | `stefan-mcf/shyftr` |
+| Visibility at audit start | private |
+| Branch at audit start | `main...origin/main [ahead 8]` |
+| Cleanup boundary | local files only; no push, visibility flip, tag, package publish, or history rewrite |
+| Commit identity for cleanup | `stefan-mcf <73107236+stefan-mcf@users.noreply.github.com>` |
+
+## Findings register
+
+| ID | Severity | Finding | Resolution status | Evidence / action |
+|---|---:|---|---|---|
+| F-01 | high | README was vision-heavy and not optimized as a public landing page. | resolved locally | README rewritten to status/quickstart/safety/docs/checks. |
+| F-02 | high | Public current-capability truth source was missing. | resolved locally | Added `docs/status/current-implementation-status.md`. |
+| F-03 | high | Durable public-readiness audit report was missing. | resolved locally | This report records findings, scans, decisions, and gates. |
+| F-04 | blocker until classified | Historical docs contain local/private and future-planning material. | classified; deletion deferred | Historical/source/plan docs are classified below; deletion or history rewrite requires approval. |
+| F-05 | high | Existing history used placeholder attribution. | partially resolved | Local cleanup identity set to noreply; historical attribution is a publication decision item. |
+| F-06 | high | Repo was private and local branch was ahead of origin. | publication gate | Remote mutation blocked until explicit approval and exact-SHA verification. |
+| F-07 | high | Verification commands needed clean install context. | resolved locally | Added install/development docs and smoke scripts using Python 3.11+ and `.[dev,service]`. |
+| F-08 | medium/high | CI did not cover service extras, console, demo smoke, or readiness scan. | resolved locally | CI updated with Python, smoke, console, and readiness jobs. |
+| F-09 | medium | `.gitignore` missed release/runtime artifact classes. | resolved locally | `.gitignore` expanded for Hermes plans, coverage, caches, demo output, backups. |
+| F-10 | medium | Local ignored artifacts needed classification. | resolved locally | Readiness script checks tracked ignored files and risky untracked files. |
+| F-11 | medium | API and console docs were incomplete. | resolved locally | Added `docs/api.md` and `docs/console.md`. |
+| F-12 | medium | Examples lacked a public map and deterministic lifecycle script. | resolved locally | Added `examples/README.md` and `examples/run-local-lifecycle.sh`. |
+| F-13 | medium | Package metadata and release stance were ambiguous. | resolved locally | `pyproject.toml` metadata updated while retaining version `0.0.0`. |
+| F-14 | medium | Contributor/security/community surface was incomplete. | resolved locally | Added CONTRIBUTING, SECURITY, CHANGELOG, PR and issue templates. |
+| F-15 | high | Public docs needed a Phase 6/future boundary. | resolved locally | Status and README mark Phase 6 as not started/out of scope. |
+| F-16 | medium | Public readiness scan was ad hoc. | resolved locally | Added `scripts/public_readiness_check.py`. |
+| F-17 | medium | Full gate needed normalized environment. | resolved locally | `scripts/smoke-install.sh` creates a temp venv and installs extras. |
+| F-18 | medium | `.hermes/plans` was untracked and could leak. | resolved locally | `.hermes/` ignored; public-safe summary lives in this report. |
+| F-19 | medium | Large-object, line-ending, and dependency-license checks were missing. | resolved locally / advisory | Added `.gitattributes`; check script summarizes large/binary and dependency-license inventory gaps. |
+
+## Historical and future-doc classification
+
+Current docs intended as public navigation and evidence: `README.md`, `docs/status/**`, `docs/development.md`, `docs/demo.md`, `docs/demo-runtime-integration.md`, `docs/api.md`, `docs/console.md`, `docs/concepts/**`, `examples/**`, and GitHub community files.
+
+Existing files under `docs/plans/**`, `docs/sources/**`, `docs/feeds/**`, and `docs/runbooks/**` are classified as historical implementation notes, source concept notes, or controlled-pilot runbooks. They may contain future concepts, local path evidence, or historical runtime names. They must not be treated as current product capability. Removing, rewriting, or excluding them from a public-history export is a final publication decision and is not performed autonomously in this cleanup.
+
+## Scan and gate summary
+
+Latest local gate run: 2026-05-06.
+
+| Gate | Command | Latest local result |
+|---|---|---|
+| Python environment | `uv venv --python python3.11 /tmp/shyftr-public-verify-venv` | PASS; Python 3.11.13 |
+| Install with extras | `uv pip install --python /tmp/shyftr-public-verify-venv/bin/python -e '.[dev,service]'` | PASS; FastAPI test dependency gap fixed by adding `httpx` to `service` extra |
+| Python tests | `/tmp/shyftr-public-verify-venv/bin/python -m pytest -q` | PASS; 747 passed |
+| Focused API/console/demo tests | `/tmp/shyftr-public-verify-venv/bin/python -m pytest tests/test_demo_flow.py tests/test_runtime_integration_demo.py tests/test_server.py tests/test_console_api.py -q` | PASS; 32 passed |
+| Demo lifecycle | `PATH=/tmp/shyftr-public-verify-venv/bin:$PATH PYTHON=/tmp/shyftr-public-verify-venv/bin/python bash examples/run-local-lifecycle.sh` | PASS |
+| Smoke install | `bash scripts/smoke-install.sh` | PASS with uv-backed temp venv |
+| Full local check | `PATH=/tmp/shyftr-public-verify-venv/bin:$PATH PYTHON=/tmp/shyftr-public-verify-venv/bin/python bash scripts/check.sh` | PASS; includes pytest, lifecycle, console build/audit, readiness |
+| Console build/audit | `(cd apps/console && npm run build && npm audit --omit=dev)` | PASS; build completed and 0 vulnerabilities reported |
+| Public readiness | `python scripts/public_readiness_check.py` | PASS |
+| Artifact scan | `git ls-files -ci --exclude-standard` | PASS; no tracked ignored files |
+| Large object scan | `git rev-list --objects --all ... >1MB` | PASS; no blobs above threshold reported |
+| Binary scan | `git ls-files -z \| xargs -0 file ...` | PASS; no tracked binary/image/archive hits reported |
+| Dependency license inventory | `pip-licenses --format=markdown --with-urls`; `npm ls --json --all` | PASS/advisory; Python licenses inventoried, npm dependency tree captured for manual review |
+| Diff whitespace | `git diff --check` | PASS |
+| Independent review | read-only repo review | PASS; independent review returned no blockers |
+
+## Publication decision
+
+Recommended default after local cleanup: keep the repository private until Stefan explicitly chooses between:
+
+1. push cleanup commits to the private remote, then decide later on visibility;
+2. create a clean public baseline/orphan export if historical docs or attribution are unacceptable;
+3. accept the existing private history and flip visibility only after exact-SHA CI and attribution/contributor checks pass.
+
+No final-tranche remote action has been approved or run by this cleanup.

@@ -1,0 +1,61 @@
+# Runtime Adapter Configuration Example
+#
+# This example shows how to configure a ShyftR runtime integration
+# adapter using a declarative YAML config. Every runtime (agent system,
+# CLI tool, monitor, pipeline) that produces files can use this pattern.
+#
+# ShyftR vocabulary: Pulses -> Packs -> Signals -> Proposals.
+# This config describes how a runtime sends Pulses to a ShyftR Cell.
+#
+# Runtime-agnostic: no hardcoded agent system, queue implementation,
+# worker framework, or product-specific paths.
+
+adapter_id: "generic-runtime-adapter"
+cell_id: "cell-alpha"
+
+# Identity of the external system providing the sources.
+external_system: "agent-runtime"
+external_scope: "worker"
+
+# Base directory for resolving relative input paths.
+source_root: "/tmp/shyftr-runtime-sources"
+
+# Default identity mapping applied to all inputs.
+identity_mapping:
+  external_system: "system_name"
+  external_run_id: "execution_run_id"
+  external_task_id: "task_id"
+
+# Input definitions describe where and how to discover Pulse evidence.
+inputs:
+  # Single file: a specific closeout or outcome report.
+  - kind: "file"
+    path: "closeout.md"
+    source_kind: "closeout"
+    identity_mapping:
+      external_task_id: "task_ref"
+
+  # Glob pattern: collect all log files from a session.
+  - kind: "glob"
+    path: "logs/*.log"
+    source_kind: "log"
+
+  # JSONL file: structured outcome or event records with row-level refs.
+  - kind: "jsonl"
+    path: "outcomes.jsonl"
+    source_kind: "outcome"
+    identity_mapping:
+      external_run_id: "run_id"
+      external_task_id: "task_ref"
+
+  # Directory tree: recursively discover all artifacts.
+  - kind: "directory"
+    path: "artifacts/"
+    source_kind: "artifact"
+
+# Ingestion behaviour flags.
+ingest_options:
+  deduplicate: true
+  recursive: true
+  max_sources: 1000
+  include_hidden: false

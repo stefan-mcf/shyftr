@@ -1,0 +1,21 @@
+{
+  "cell_path_or_id": "/tmp/shyftr-example-cell",
+  "task_id": "runtime-demo-task-001",
+  "query": "Find reviewed guidance for validating runtime adapter configs before sync.",
+  "task_kind": "documentation_lookup",
+  "external_system": "generic-worker-runtime",
+  "external_scope": "workspace/example",
+  "external_task_id": "task-example-001",
+  "tags": [
+    "pack",
+    "runtime-integration",
+    "adapter",
+    "ledger"
+  ],
+  "max_items": 20,
+  "max_tokens": 4000,
+  "include_fragments": false,
+  "requested_trust_tiers": [
+    "trace"
+  ]
+}

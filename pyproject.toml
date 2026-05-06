@@ -1,0 +1,43 @@
+[project]
+name = "shyftr"
+version = "0.0.0"
+description = "Local-first append-only memory control plane for AI agents."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Stefan McFeeters" }]
+license = { text = "MIT" }
+keywords = ["agent-memory", "ai-agents", "local-first", "retrieval", "audit-log"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = []
+
+[project.urls]
+Repository = "https://github.com/stefan-mcf/shyftr"
+Issues = "https://github.com/stefan-mcf/shyftr/issues"
+Documentation = "https://github.com/stefan-mcf/shyftr/tree/main/docs"
+
+[project.scripts]
+shyftr = "shyftr.cli:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "PyYAML>=6"]
+service = ["fastapi>=0.111", "uvicorn[standard]>=0.30", "httpx>=0.27"]
+lancedb = ["lancedb>=0.14"]
+
+[project.entry-points."shyftr.adapters"]
+file = "shyftr.integrations.plugins:builtin_file_adapter"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"

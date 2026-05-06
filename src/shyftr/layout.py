@@ -1,0 +1,100 @@
+from __future__ import annotations
+
+import json
+import re
+from pathlib import Path
+from typing import Union
+
+PathLike = Union[str, Path]
+
+CELL_DIRECTORIES = (
+    "ledger",
+    "charges",
+    "coils",
+    "rails",
+    "grid",
+    "summaries",
+    "reports",
+    "config",
+    # Legacy compatibility directories. Existing code and old Cells may still
+    # refer to these while the public vocabulary migrates to the power theme.
+    "traces",
+    "alloys",
+    "doctrine",
+    "indexes",
+)
+
+SEEDED_JSONL_FILES = (
+    # Preferred power-theme ledgers.
+    "ledger/pulses.jsonl",
+    "ledger/sparks.jsonl",
+    "ledger/reviews.jsonl",
+    "ledger/promotions.jsonl",
+    "ledger/retrieval_logs.jsonl",
+    "ledger/signals.jsonl",
+    # Active-learning ledgers (Sweep / Challenger passes).
+    "ledger/confidence_events.jsonl",
+    "ledger/retrieval_affinity_events.jsonl",
+    "ledger/audit_sparks.jsonl",
+    "ledger/audit_reviews.jsonl",
+    # Append-only lifecycle ledgers for user-facing memory mutation semantics.
+    "ledger/status_events.jsonl",
+    "ledger/supersession_events.jsonl",
+    "ledger/deprecation_events.jsonl",
+    "ledger/isolation_events.jsonl",
+    "ledger/conflict_events.jsonl",
+    "ledger/redaction_events.jsonl",
+    "ledger/proposal_decisions.jsonl",
+    "ledger/access_policy_events.jsonl",
+    "charges/approved.jsonl",
+    "charges/decayed.jsonl",
+    "coils/proposed.jsonl",
+    "coils/approved.jsonl",
+    "rails/proposed.jsonl",
+    "rails/approved.jsonl",
+    # Legacy compatibility ledgers used by the current Python API.
+    "ledger/sources.jsonl",
+    "ledger/fragments.jsonl",
+    "ledger/outcomes.jsonl",
+    "traces/approved.jsonl",
+    "traces/deprecated.jsonl",
+    "alloys/proposed.jsonl",
+    "alloys/approved.jsonl",
+    "doctrine/proposed.jsonl",
+    "doctrine/approved.jsonl",
+)
+
+_CELL_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]*$")
+
+
+def _validate_cell_id(cell_id: str) -> None:
+    if not cell_id:
+        raise ValueError("cell_id is required")
+    if not _CELL_ID_PATTERN.fullmatch(cell_id):
+        raise ValueError("cell_id must be a single safe path segment")
+
+
+def init_cell(root: PathLike, cell_id: str, cell_type: str = "domain") -> Path:
+    """Create an idempotent ShyftR Cell layout under root/cell_id."""
+    _validate_cell_id(cell_id)
+    if not cell_type:
+        raise ValueError("cell_type is required")
+
+    root_path = Path(root)
+    cell_path = root_path / cell_id
+    cell_path.mkdir(parents=True, exist_ok=True)
+
+    for relative_directory in CELL_DIRECTORIES:
+        (cell_path / relative_directory).mkdir(parents=True, exist_ok=True)
+
+    for relative_file in SEEDED_JSONL_FILES:
+        seeded_file = cell_path / relative_file
+        seeded_file.parent.mkdir(parents=True, exist_ok=True)
+        seeded_file.touch(exist_ok=True)
+
+    manifest = {"cell_id": cell_id, "cell_type": cell_type}
+    (cell_path / "config" / "cell_manifest.json").write_text(
+        json.dumps(manifest, sort_keys=True, separators=(",", ":")) + "\n",
+        encoding="utf-8",
+    )
+    return cell_path
