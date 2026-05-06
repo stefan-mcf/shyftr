@@ -1831,6 +1831,192 @@ Turn ShyftR memory into evaluation tasks for agents.
 
 ---
 
+# Phase 7.8: Regulated Autonomous Memory Evolution
+
+Goal: compose the Phase 4 advisory loops and Phase 7 frontier foundations into a public-safe memory evolution layer that can propose splitting, consolidation, supersession, deprecation, replacement, and logical forgetting without silently rewriting ledger truth.
+
+Dedicated plan: `docs/plans/2026-05-06-regulated-autonomous-memory-evolution-plan.md`
+
+## Tranche 7.8A: Public/Private Split and Doctrine Lock
+
+### Objective
+Define the release boundary for autonomous memory evolution before implementation.
+
+### Tasks
+1. Document public-safe evolution contracts.
+2. Reserve private scoring, calibration, and real-data heuristics for private core.
+3. Confirm evolution proposals are review-gated and append-only.
+4. Update status docs without claiming implementation.
+
+### Acceptance Criteria
+- Public/private split is explicit.
+- No public docs imply silent self-mutation.
+- Status docs identify this phase as planned until implemented.
+
+---
+
+## Tranche 7.8.1: Evolution Proposal Schema and Ledgers
+
+### Objective
+Create canonical review-gated proposal records for memory evolution actions.
+
+### Tasks
+1. Add split, merge, supersede, replace, deprecate, forget, redact, and missing-memory proposal types.
+2. Add append-only evolution proposal and review ledgers.
+3. Require evidence references, rationale, projection delta, and review state.
+4. Add schema and ledger tests.
+
+### Acceptance Criteria
+- Evolution proposals are append-only.
+- Every proposal has provenance and `auto_apply=false`.
+- Invalid proposal types are rejected.
+
+---
+
+## Tranche 7.8.2: Arrival Atomicity and Split Proposals
+
+### Objective
+Detect large or multi-topic candidates and propose splits before promotion.
+
+### Tasks
+1. Add deterministic size and topic-boundary heuristics.
+2. Emit child-memory text proposals with parent candidate references.
+3. Keep child candidates unpromoted until review.
+4. Add synthetic oversized-candidate tests.
+
+### Acceptance Criteria
+- Oversized candidates produce reviewable split proposals.
+- Single-topic candidates are not over-split.
+- No split proposal mutates approved memory directly.
+
+---
+
+## Tranche 7.8.3: Duplicate Consolidation Proposals
+
+### Objective
+Detect duplicate or overlapping memories and propose consolidation without losing nuance.
+
+### Tasks
+1. Reuse hygiene duplicate reports and add evolution proposal output.
+2. Add exact-match and transparent token-overlap heuristics.
+3. Mark ambiguous or entity-conflicting proposals high risk.
+4. Add tests for exact duplicates and near-miss non-merges.
+
+### Acceptance Criteria
+- Duplicate consolidation remains proposal-only.
+- Proposed merged memory preserves evidence lineage.
+- Similar-but-distinct memories are not silently merged.
+
+---
+
+## Tranche 7.8.4: Supersession and Replacement Proposals
+
+### Objective
+Use new evidence, feedback, graph context, and confidence events to propose supersession, replacement, challenge, or deprecation.
+
+### Tasks
+1. Detect repeated contradiction, harmful feedback, stale memory, and false-approval/rejection patterns.
+2. Emit graph edge suggestions such as `supersedes` or `contradicted_by`.
+3. Require simulation for retrieval-affecting changes.
+4. Add review-application tests that route through lifecycle helpers.
+
+### Acceptance Criteria
+- New knowledge can propose old-memory replacement.
+- Accepted proposals append lifecycle events; rejected proposals leave memory active.
+- Simulation is required before retrieval-affecting acceptance.
+
+---
+
+## Tranche 7.8.5: Logical Forgetting, Redaction, and Retention Proposals
+
+### Objective
+Support policy-backed forgetting, redaction, and deprecation as logical lifecycle events.
+
+### Tasks
+1. Add proposal types for forget, redact, and deprecate.
+2. Integrate explicit policy and sensitivity signals.
+3. Preserve auditability and projection exclusion semantics.
+4. Add tests proving no physical ledger deletion occurs.
+
+### Acceptance Criteria
+- Forgetting means exclusion via lifecycle state, not silent deletion.
+- Redaction/deprecation proposals require review rationale.
+- Active projections respect accepted lifecycle events.
+
+---
+
+## Tranche 7.8.6: Evolution Simulation and Projection Delta Reports
+
+### Objective
+Show exactly what an accepted evolution proposal would change before review acceptance.
+
+### Tasks
+1. Add read-only proposal simulation.
+2. Report affected IDs, pack/retrieval deltas, graph deltas, and ledger count preservation.
+3. Add API/CLI output for simulation reports.
+4. Add tests proving simulation is read-only.
+
+### Acceptance Criteria
+- Operators can inspect projection delta before acceptance.
+- Simulation does not append lifecycle or memory rows.
+- Reports are deterministic on synthetic fixtures.
+
+---
+
+## Tranche 7.8.7: Evolution Scan Runner and Review Surfaces
+
+### Objective
+Provide explicit scan, proposal, simulation, and review commands plus local service surfaces.
+
+### Tasks
+1. Add `shyftr evolve scan`, `proposals`, `simulate`, and `review` commands.
+2. Add local HTTP endpoints for evolution read models and review actions.
+3. Add browser console and memory-control TUI integration hooks.
+4. Add CLI/API/UI smoke tests.
+
+### Acceptance Criteria
+- Default scan is dry-run.
+- `--write-proposals` writes proposals only.
+- Review action requires rationale and uses append-only ledgers.
+
+---
+
+## Tranche 7.8.8: Operator UI and memory-control TUI Integration
+
+### Objective
+Make evolution proposals operator-visible in both browser console and CLI/TUI operator surfaces.
+
+### Tasks
+1. Add browser console read, scan, simulation, and review controls.
+2. Add memory-control TUI integration hooks using the same read models and review endpoints.
+3. Show proposal risk, rationale, evidence refs, projection delta, simulation state, and review state.
+4. Add console build and read-model smoke tests.
+
+### Acceptance Criteria
+- The browser console and memory-control TUI are projections/controllers, not canonical truth.
+- Operators can inspect and simulate proposals before decisions.
+- No hidden auto-apply control exists.
+
+---
+
+## Tranche 7.8.9: Synthetic Eval and Safety Regression Suite
+
+### Objective
+Prove the evolution layer avoids over-consolidation, runaway self-update, and prompt-injection-driven mutations.
+
+### Tasks
+1. Generate synthetic evolution eval tasks.
+2. Test malicious evidence cannot force auto-apply.
+3. Test proposal rate limits and repeated-scan idempotency.
+4. Run full alpha gate.
+
+### Acceptance Criteria
+- Synthetic evals cover split, merge, supersede, forget, and reject paths.
+- Safety tests prove review gates remain active.
+- Full local gate passes before Phase 8 begins.
+
+---
+
 # Phase 8: Productisation
 
 Goal: prepare ShyftR for real users beyond your internal runtime.
@@ -2067,6 +2253,16 @@ ShyftR becomes:
 - self-improving
 - reputation-aware
 
+## Autonomous memory Platform
+Complete through Phase 7.8.
+
+ShyftR can:
+- propose large-candidate splits on arrival
+- propose duplicate consolidation without losing evidence lineage
+- propose supersession, replacement, deprecation, redaction, and logical forgetting from new evidence
+- simulate memory evolution effects before review acceptance
+- keep autonomous evolution review-gated, append-only, and public-safe
+
 ---
 
 # Recommended Implementation Order
@@ -2128,11 +2324,21 @@ ShyftR becomes:
 48. Tranche 7.5 - memory Reputation System
 49. Tranche 7.6 - Self-Modifying regulator Proposals
 50. Tranche 7.7 - Synthetic Training and Test Data Generator
+51. Tranche 7.8A - Regulated Autonomous Memory Evolution Split and Doctrine Lock
+52. Tranche 7.8.1 - Evolution Proposal Schema and Ledgers
+53. Tranche 7.8.2 - Arrival Atomicity and Split Proposals
+54. Tranche 7.8.3 - Duplicate Consolidation Proposals
+55. Tranche 7.8.4 - Supersession and Replacement Proposals
+56. Tranche 7.8.5 - Logical Forgetting, Redaction, and Retention Proposals
+57. Tranche 7.8.6 - Evolution Simulation and Projection Delta Reports
+58. Tranche 7.8.7 - Evolution Scan Runner and Review Surfaces
+59. Tranche 7.8.8 - Operator UI and memory-control TUI Integration
+60. Tranche 7.8.9 - Synthetic Eval and Safety Regression Suite
 
-51. Tranche 8.1 - Product Landing Docs
-52. Tranche 8.2 - Plugin/Adapter SDK
-53. Tranche 8.3 - Versioned Public API
-54. Tranche 8.4 - Desktop Shell
-55. Tranche 8.5 - Public Alpha
-56. Checkpoint E - Alpha Exit / Beta-Readiness Cut
-57. Checkpoint F - General Availability Cut / Alpha and MVP Language Removal
+61. Tranche 8.1 - Product Landing Docs
+62. Tranche 8.2 - Plugin/Adapter SDK
+63. Tranche 8.3 - Versioned Public API
+64. Tranche 8.4 - Desktop Shell
+65. Tranche 8.5 - Public Alpha
+66. Checkpoint E - Alpha Exit / Beta-Readiness Cut
+67. Checkpoint F - General Availability Cut / Alpha and MVP Language Removal
